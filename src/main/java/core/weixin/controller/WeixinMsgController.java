@@ -2,8 +2,6 @@ package core.weixin.controller;
 
 import com.jfinal.kit.PropKit;
 import com.jfinal.log.Log;
-import com.jfinal.plugin.activerecord.Page;
-import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.weixin.sdk.api.ApiConfig;
 import com.jfinal.weixin.sdk.api.ApiConfigKit;
 import com.jfinal.weixin.sdk.api.ApiResult;
@@ -42,8 +40,6 @@ import java.util.List;
 
 import core.model.User;
 import core.utils.WeiXinUtils;
-import core.weixin.service.competition.CompetitionService;
-import core.weixin.service.competition.impl.CompetitionServiceImpl;
 
 /**
  * 将此 DemoController 在YourJFinalConfig 中注册路由，
@@ -255,24 +251,17 @@ public class WeixinMsgController extends MsgControllerAdapter {
 			String welcome = "";
 			if (user == null) {
 				newUser.save();
-				welcome = "感谢您的关注！\n最近有这些比赛等您去征服";
+				welcome = "感谢您的关注！";
 			} else {
 				newUser.update();
-				welcome = "欢迎回来！\n您不在的时候又有新赛事哦";
+				welcome = "欢迎回来！";
 			}
 			OutNewsMsg outNewsMsg = new OutNewsMsg(inFollowEvent);
 			List<News> articles = new ArrayList<News>();
-			CompetitionService competitionService = new CompetitionServiceImpl();
-			Page<Record> competitionPage = competitionService.listCompetitions(new Integer(1), new Integer(3));
-			List<Record> competition = competitionPage.getList();
-			String frontServer = PropKit.get("server.front.address");
+			String frontServer = PropKit.get("server.front.address", "http://www.baidu.com");
 			articles.add(new News(welcome, "欢迎语", "http://onzsmr037.bkt.clouddn.com/579f016301086.png",
 					frontServer + "list"));
-			for (Record record : competition) {
-				articles.add(new News(record.getStr("TITLE"), record.getStr("CONTENT"), record.getStr("IMG"),
-						frontServer + "detail?id=" + record.getStr("ID")));
-			}
-			articles.add(new News("更多", "", null, frontServer + "list"));
+			articles.add(new News("更多", "", null, frontServer));
 			outNewsMsg.setArticles(articles);
 			logger.debug("关注：" + openid);
 			render(outNewsMsg);
