@@ -1,0 +1,24 @@
+<style>
+	dt,dd{
+		padding-top: 10px;
+	}
+	dt{
+		width: 100px
+	}
+</style>
+<dl class="dl-horizontal" style="font-size: 16px;">
+  <dt class="muted">昵称</dt>
+  <dd class="muted">${(user.NICKNAME)!}</dd>
+  <dt class="text-warning">头像</dt>
+  <dd class="text-warning"><img src="${(user.AVATAR)!}"></dd>
+  <dt class="text-danger">性别</dt>
+  <dd class="text-danger">${(user.SEXSTR)!}</dd>
+  <dt class="text-info">关注时间</dt>
+  <dd class="text-info">${(user.SUBSCRIBE_TIME)!}</dd>
+  <dt class="text-success">创建时间</dt>
+  <dd class="text-success">${(user.CREATE_TIME)!}</dd>
+</dl>
+<script>
+$(function(){
+})
+</script>

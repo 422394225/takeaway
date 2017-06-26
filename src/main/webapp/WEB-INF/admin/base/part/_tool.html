@@ -1,0 +1,21 @@
+<#macro tool map="">
+<!-- Tools -->
+<section id='tools'>
+  <ul class='breadcrumb' id='breadcrumb'>
+  	<#if map?index_of('-')!=-1>
+  		<#list map?split('-') as m>
+  			<#if m_index == 0>
+	        	<li class='title'>${m?if_exists}</li>
+	        <#else>
+	        	<li class='active'>${m?if_exists}</li>
+	        </#if>
+	     </#list>
+  	<#else>
+  		<li class='title'>${map?if_exists}</li>
+  	</#if>
+  </ul>
+  <div id='toolbar'>
+  <#nested>
+  </div>
+  </section>
+</#macro>

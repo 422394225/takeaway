@@ -1,0 +1,140 @@
+<#include "../base/main/_dashboard.html"/>
+<#assign pageMeta>
+</#assign>
+<#assign pageCss>
+<link href="${base}/resources/jQuery/dataTables.bootstrap.min.css" rel="stylesheet" type="text/css" />
+</#assign>
+<#assign pageJavascript>
+<script src="${base}/resources/jQuery/jquery.dataTables.min.js" type="text/javascript"></script>
+<script src="${base}/resources/jQuery/dataTables.bootstrap.min.js" type="text/javascript"></script>
+<script>
+	$(function(){
+		var table = Kit.table("#table",
+		{
+			"ajax": "${base}/role/getData",
+	        "columns": [
+	            { "data": "NAME" },
+	            { "data": "CREATE_TIME" }
+	        ],
+	        "order": [[ 2, "desc" ]],
+	        "columnDefs": [{
+	            "targets": -1,
+	            "data": null,
+	            "defaultContent": "<button class='edit btn btn-info btn-xs' title='编辑'><i class='fa fa-edit'></i></button>"+
+            					  "<button class='view btn btn-success btn-xs' title='查看权限'><i class='fa fa-search-plus'></i></button>"+
+            					  "<button class='remove btn btn-danger btn-xs' title='删除'><i class='fa fa-trash-o'></i></button>"
+	        }]
+		});
+		table.on('click', '.view', function(){
+	        var data = table.row($(this).parents('tr')).data();
+	        BootstrapDialog.show({
+				title: '查看权限',
+				draggable: true,
+			    message: $('<div></div>').load('${base}/role/view?id='+data["ID"]),
+			    buttons: [{
+			        label: '关闭',
+			        cssClass: 'btn btn-primary btn-lg btn-block', 
+			        action: function(dialogRef){    
+			            dialogRef.close();
+			        }
+			    }]
+	        });
+	    });
+		$(".add").on("click",function(){
+			BootstrapDialog.show({
+				title: '添加角色',
+				draggable: true,
+				closeByBackdrop: false,
+			    message: $('<div></div>').load('${base}/role/add'),
+			    buttons: [{
+			    	id:'submitBtn',
+			        label: '提交',
+			        cssClass: 'btn btn-primary', 
+			        action: function(dialogRef){    
+			           
+			        }
+			    },{
+			        label: '取消',
+			        cssClass: 'btn btn-link', 
+			        action: function(dialogRef){    
+			            dialogRef.close();
+			        }
+			    }]
+	        });
+		})
+		table.on('click', '.edit', function(){
+			var data = table.row($(this).parents('tr')).data();
+			BootstrapDialog.show({
+				title: '编辑角色',
+				draggable: true,
+				closeByBackdrop: false,
+			    message: $('<div></div>').load('${base}/role/edit?id='+data["ID"]),
+			    buttons: [{
+			    	id:'submitBtn',
+			        label: '提交',
+			        cssClass: 'btn btn-primary', 
+			        action: function(dialogRef){    
+			           
+			        }
+			    },{
+			        label: '取消',
+			        cssClass: 'btn btn-link', 
+			        action: function(dialogRef){    
+			            dialogRef.close();
+			        }
+			    }]
+	        });
+		})
+		table.on('click', '.remove', function(){
+			var d = table.row($(this).parents('tr')).data();
+			layer.confirm('确认删除该条吗?', {
+				icon:{icon: 1},
+				btn: ['确认','取消'],
+				yes: function(index, layero){
+					layer.close(index);
+					layer.load(1, {shade: [0.3,'#000']});
+					Kit.post("${base}/role/remove",{id:d["ID"]},function(msg){
+						layer.closeAll('loading');
+						layer.msg(msg,{time: 1000});
+						table.ajax.reload(null, false);
+					},
+					function(msg){
+						layer.closeAll('loading');
+						layer.alert(msg,{icon:5});
+					});
+		  		}
+			})
+		});
+		$(".reload").on("click",function(){
+			table.ajax.reload(null, false);// 刷新表格数据，分页信息不会重置
+		})
+	})
+</script>
+</#assign>
+<@dashboard pageTitle="角色管理-厦理大赛公众号后台" currentMenu="administrator" pageMeta=pageMeta pageCss=pageCss pageJavascript=pageJavascript>
+<@tool map="管理员-角色管理">
+   <div class='btn-group'>
+     <button class="add btn btn-light btn-sm radius" title="添加" data-toggle="tooltip" data-placement="bottom">
+     	<i class="fa fa-plus"></i>
+     </button>
+     <button class="reload btn btn-light btn-sm radius" title="刷新" data-toggle="tooltip" data-placement="bottom">
+     	<i class="fa fa-refresh"></i>
+     </button>
+   </div>
+</@tool>
+<div id='content'>
+  <table class='table table-bordered' id="table">
+    <thead>
+      <tr>
+        <th>序号</th>
+        <th>角色</th>
+        <th>创建时间</th>
+        <th class='operation'>
+          	操作
+        </th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</div>
+</@dashboard>

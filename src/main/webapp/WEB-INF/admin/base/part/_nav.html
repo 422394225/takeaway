@@ -1,0 +1,76 @@
+<!-- Navbar -->
+<div class='navbar navbar-default' id='navbar'>
+  <a class='navbar-brand' href='/'>
+  	<dl>
+	  <dt style="font-size: 18px"><i class='fa fa-wechat'></i>&nbsp;微信公众号后台管理系统</dt>
+	  <dd style="font-size: 5px">&nbsp;WECHAT OFFICAL ACCOUNT MANAGE</dd>
+	</dl>
+  </a>
+  <ul class='nav navbar-nav pull-right'>
+    <li class='dropdown user'>
+      <a class='dropdown-toggle' data-toggle='dropdown' href='#'>
+        <strong>${session['administrator'].NAME?if_exists}</strong>
+        <img class="img-rounded" src="${session['administrator'].AVATAR?default('${base}/resources/images/avatar.png')}" />
+        <b class='caret'></b>
+      </a>
+      <ul class='dropdown-menu' style="left:-30px">
+        <li>
+          <a href='javascript:void(0);' onclick="profile();">个人资料</a>
+        </li>
+        <li>
+          <a href='javascript:void(0);' onclick="modPassword();">修改密码</a>
+        </li>
+        <li class='divider'></li>
+        <li>
+          <a href="/admin/logout">注销</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+<script>
+function profile(){
+    BootstrapDialog.show({
+		title: '个人资料',
+		draggable: true,
+		closeByBackdrop: false,
+	    message: $('<div></div>').load("${base}/admin/edit?id=${session['administrator'].ID?if_exists}"),
+	    buttons: [{
+	    	id:'submitBtn',
+	        label: '提交',
+	        cssClass: 'btn btn-primary', 
+	        action: function(dialogRef){    
+	           
+	        }
+	    },{
+	        label: '取消',
+	        cssClass: 'btn btn-link', 
+	        action: function(dialogRef){    
+	            dialogRef.close();
+	        }
+	    }]
+    });
+};
+function modPassword(){
+	BootstrapDialog.show({
+		title: '密码修改',
+		draggable: true,
+		closeByBackdrop: false,
+	    message: $('<div></div>').load("${base}/admin/modPassword"),
+	    buttons: [{
+	    	id:'submitBtn',
+	        label: '提交',
+	        cssClass: 'btn btn-primary', 
+	        action: function(dialogRef){    
+	           
+	        }
+	    },{
+	        label: '取消',
+	        cssClass: 'btn btn-link', 
+	        action: function(dialogRef){    
+	            dialogRef.close();
+	        }
+	    }]
+    });
+}
+</script>

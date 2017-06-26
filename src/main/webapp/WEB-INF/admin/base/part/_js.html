@@ -1,0 +1,23 @@
+<!-- Javascripts -->
+<script src="${base}/resources/jQuery/jquery-1.9.1.min.js" type="text/javascript"></script>
+<script src="${base}/resources/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+<script src="${base}/resources/jQuery/jquery.nicescroll.min.js" type="text/javascript"></script>
+<script src="${base}/resources/javascripts/lay/layer.js" type="text/javascript"></script>
+<script src="${base}/resources/jQuery/jquery.form.min.js" type="text/javascript"></script>
+<script src="${base}/resources/javascripts/Kit.js" type="text/javascript"></script>
+<script src="${base}/resources/javascripts/validate/js/bootstrapValidator.min.js" type="text/javascript"></script>
+<script src="${base}/resources/javascripts/validate/js/language/zh_CN.js" type="text/javascript"></script>
+<script src="${base}/resources/javascripts/dailog/js/bootstrap-dialog.min.js" type="text/javascript"></script>
+<script>
+	$(function(){
+		$("#content").niceScroll({
+			cursorcolor:"#65cea7",
+			background:"#ecf0f1",
+			 autohidemode: "leave",
+			cursorwidth:10
+		});
+		//tooltip提示
+        setTimeout("$('[title]').tooltip()",500);
+	})
+</script>
+${pageJavascript?if_exists}

@@ -1,0 +1,29 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
+  <title>访问出错 :(</title>
+  <link href="${base}/resources/stylesheets/custom.css" rel="stylesheet" type="text/css" />
+  <style>
+    body { text-align: center;}
+    h1 { font-size: 50px; text-align: center }
+    span[frown] { transform: rotate(90deg); display:inline-block; color: #bbb; }
+    article {display:block; text-align: left; width: 500px; margin: 0 auto; }
+    a { color: rgb(36, 109, 56); text-decoration:none;font-weight: bolder; }
+    a:hover { text-shadow: 2px 2px 2px rgba(36, 109, 56, 0.5); }
+    .background{opacity:0.8;}
+  </style>
+</head>
+<body>
+  <div class="background">
+  	<div class="errorContainer">
+	  	<h1>${code?default('500')}&nbsp;本次访问出错</h1>
+		<p style="font-weight: bolder;color: #b50e2c">${msg!}</p>
+		<h2> (╯°Д°)╯︵ ┻━┻</h2>
+		<img alt="" src="/resources/images/hushuo.jpg" style="width: 100%;max-width: 380px;">
+		<p>如果遇到问题请<a href="mailto:xmutwx_competition@163.com">联系管理员</a></p>
+ 	 </div>
+ </div>
+</body>
+</html>

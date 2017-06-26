@@ -1,0 +1,55 @@
+<#include "../base/main/_dashboard.html"/>
+<#assign pageMeta>
+</#assign>
+<#assign pageCss>
+<link href="${base}/resources/jQuery/dataTables.bootstrap.min.css" rel="stylesheet" type="text/css" />
+</#assign>
+<#assign pageJavascript>
+<script src="${base}/resources/jQuery/jquery.dataTables.min.js" type="text/javascript"></script>
+<script src="${base}/resources/jQuery/dataTables.bootstrap.min.js" type="text/javascript"></script>
+<script>
+	$(function(){
+		var table = Kit.table("#table",
+		{
+			"ajax": "${base}/log/getData",
+	        "columns": [
+	            { "data": "ADMIN_NAME" },
+	            { "data": "OPERATION"},
+	            { "data": "CREATE_TIME"}
+	        ],
+	        "columnDefs":[],
+	        "order": [[ 3, "desc" ]],
+			"lColumnNull":false
+		});
+	
+	
+		$(".reload").on("click",function(){
+			table.ajax.reload(null, false);// 刷新表格数据，分页信息不会重置
+		})
+	})
+</script>
+</#assign>
+<@dashboard pageTitle="日志列表-厦理大赛公众号后台" currentMenu="settings" pageMeta=pageMeta pageCss=pageCss pageJavascript=pageJavascript>
+<@tool map="系统管理-日志列表">
+   <div class='btn-group'>
+
+     <button class="reload btn btn-light btn-sm radius" title="刷新" data-toggle="tooltip" data-placement="bottom">
+     	<i class="fa fa-refresh"></i>
+     </button>
+   </div>
+</@tool>
+<div id='content'>
+  <table class='table table-bordered' id="table">
+    <thead>
+      <tr>
+     	<th>序号</th>
+        <th>用户名</th>
+        <th>操作</th>
+        <th>创建时间</th>
+   
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</div>
+</@dashboard>

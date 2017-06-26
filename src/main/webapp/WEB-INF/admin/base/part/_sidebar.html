@@ -1,0 +1,60 @@
+ <!-- Sidebar -->
+<section id="sidebar">
+  <i class="fa fa-align-justify fa-large" id="toggle"></i>
+  <ul id="dock">
+  </ul>
+  <div  id="beaker" title="Power By "></div>
+</section>
+   <script type="text/javascript">
+$(function(){
+	$.ajax({
+		type:"get",
+		url:"/menu/getData",
+		dataType:"json",
+		success:function(data){
+			$('#dock').empty;
+			var html='';
+			var length=data.length;
+			var if_begin=true;
+			var if_end = false;
+			for(var i=0;i<length;i++){
+				if(data[i].ID=='0'){
+					continue
+				}
+				if(data[i].URL!=null && data[i].PARENT_ID=='0'){
+					if(if_end){
+						html+='</ul></li>'
+					}
+					html+='<li class="launcher " id="'+data[i].ATTRI+'"><a href="'+data[i].URL+'"><i  class="'+data[i].ICON+'"></i>'+data[i].NAME+'</a></li>'
+				}else if(data[i].URL==null &&data[i].PARENT_ID=='0'){
+					if(if_end){
+						html+='</ul></li>';
+						if_begin=true;
+						if_end=false;
+					}
+					if(if_begin){
+						html+='<li class="launcher dropdown hover" id ="'+data[i].ATTRI+'" ><a href="javascript:void(0)">'+'<i class="'+data[i].ICON+'"></i>'
+						+data[i].NAME+'</a> <ul class="dropdown-menu">';
+						if_begin=false;
+						if_end=true;
+					}
+				}
+				else{
+					html+='<li><a href="'+data[i].URL+'"><i  class="'+data[i].ICON+'"></i>&nbsp;'+data[i].NAME+'</a></li>';
+				}
+			}
+			$("#dock").html(html);
+			//当前菜单样式
+			var currentMenu = "${currentMenu}";
+			$("#"+currentMenu).addClass("active");
+			//多级菜单
+			$(".dropdown.hover").hover(function() {
+		   		return $(this).find(".dropdown-menu").stop(!0, !0).fadeIn();
+		    },
+		    function() {
+		        return $(this).find(".dropdown-menu").stop(!0, !0).delay(100).fadeOut();
+		    });
+		}
+	});
+})
+</script> 

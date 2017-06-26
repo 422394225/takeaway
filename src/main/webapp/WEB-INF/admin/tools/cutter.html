@@ -1,0 +1,36 @@
+<img src="${base}/resources/images/no-image.png" id="cuttedImg" style="width:100%;max-height: 400px">
+<script>
+	$(function(){
+		var cropperObj = $("#cuttedImg");
+		cropperObj.cropper({
+			viewMode: 1,
+			aspectRatio: ${ratio}
+		});
+		cropperObj.cropper('replace', dialogData.reader.result);
+		$("#cutBtn").on("click",function(){
+			var cData = cropperObj.cropper('getData');
+			$(dialogData.event.currentTarget).parent().parent().next().val("?imageMogr2/crop/!"+cData.width.toFixed(2)+"x"+cData.height.toFixed(2)+"a"+cData.x.toFixed(2)+"a"+cData.y.toFixed(2));
+			
+			var imgData = cropperObj.cropper('getImageData');
+			
+			var preImg = $("img[title='"+dialogData.file.name+"']:first");//取到上传图片的预览图
+			var preImgH = preImg.height();//预览图原高度
+			var preImgW = preImg.width();//预览图原宽度
+			
+			var p = preImg.parent();
+			p.css("overflow","hidden");
+			var cRatio = cData.width/cData.height;//切图的宽高比
+			p.height(preImgH);
+			p.width(preImgH*cRatio);
+			
+			var chRatio = cData.height/imgData.naturalHeight;
+			var cwRatio = cData.width/imgData.naturalWidth;
+			preImg.height(p.height()/chRatio);
+			preImg.width(p.width()/cwRatio);
+			
+			var heightRatio = p.height()/cData.height;//预览图的高和切图的高的比
+			var widthRatio = p.width()/cData.width;//预览图的宽和切图的宽的比
+			preImg.css("transform","translateX(-"+cData.x*widthRatio+"px) translateY(-"+cData.y*heightRatio+"px");
+		})
+	})
+</script>
