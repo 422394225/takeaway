@@ -75,7 +75,7 @@ public class UserController extends Controller {
 		Map<String, String> map = new HashMap<>();
 		map.put("ID", " = '" + id + "'");
 		conditionsVO.getLimitCond().putAll(map);
-		User user = User.dao.findFirst(Db.getSql("user.list", conditionsVO.getConditions()));
+		User user = User.dao.findFirst(Db.getSqlPara("user.list", conditionsVO.getConditions()));
 		setAttr("user", user);
 		render("view.html");
 	}

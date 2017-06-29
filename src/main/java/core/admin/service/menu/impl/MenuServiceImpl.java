@@ -21,7 +21,7 @@ public class MenuServiceImpl extends DataTableServiceImpl implements MenuService
 		List<Menu> menus = new ArrayList<>();
 		ConditionsVO conditionsVO = new ConditionsVO();
 		if ("1".equals(admin.getStr("ID"))) {
-			menus = Menu.dao.find(Db.getSql("menu.list", conditionsVO.getConditions()));
+			menus = Menu.dao.find(Db.getSqlPara("menu.list", conditionsVO.getConditions()));
 		} else {
 			Map<String, String> map = new HashMap<>();
 			String roleId = admin.get("ROLE_ID");
@@ -38,7 +38,7 @@ public class MenuServiceImpl extends DataTableServiceImpl implements MenuService
 					inSql += ")";
 					map.put("ID", " IN " + inSql);
 					conditionsVO.getLimitCond().putAll(map);
-					menus = Menu.dao.find(Db.getSql("menu.list", conditionsVO.getConditions()));
+					menus = Menu.dao.find(Db.getSqlPara("menu.list", conditionsVO.getConditions()));
 				}
 			}
 		}

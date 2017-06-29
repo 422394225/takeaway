@@ -5,7 +5,6 @@
 
 package core.db;
 
-import com.jfinal.kit.JMap;
 import com.jfinal.plugin.activerecord.Db;
 
 import java.util.HashMap;
@@ -32,7 +31,9 @@ public class SqlFactory {
 		if (queryParams != null && queryParams.size() > 0) {
 			cond.putAll(queryParams);
 		}
-		String sql = Db.getSql(sqlTemplate, JMap.create("conditions", cond));
+		Map<String, Object> paramMap = new HashMap<>();
+		paramMap.put("conditions", cond);
+		String sql = Db.getSqlPara(sqlTemplate, paramMap).getSql();
 		return separate(sql);
 	}
 

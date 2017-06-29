@@ -1,11 +1,5 @@
 package core.admin.controller.menu;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.lang3.StringUtils;
-
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Clear;
@@ -14,6 +8,12 @@ import com.jfinal.log.Log;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.ehcache.CacheKit;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang3.StringUtils;
 
 import core.admin.service.menu.MenuService;
 import core.admin.service.menu.impl.MenuServiceImpl;
@@ -25,7 +25,8 @@ import core.model.Role;
 import core.vo.JSONError;
 import core.vo.JSONSuccess;
 import core.vo.MenuVO;
-@Clear({PowerInterceptor.class,LogInterceptor.class})
+
+@Clear({ PowerInterceptor.class, LogInterceptor.class })
 public class MenuController extends Controller {
 	private Log log = Log.getLog(MenuController.class);
 	private MenuService menuService = new MenuServiceImpl();
@@ -37,7 +38,7 @@ public class MenuController extends Controller {
 			CacheKit.put("menuCache", admin.get("ID") + "menus", menuService.getMenuByPower(admin));
 			menus = CacheKit.get("menuCache", admin.get("ID") + "menus");
 		}
-		
+
 		renderJson(menus);
 	}
 
@@ -68,7 +69,7 @@ public class MenuController extends Controller {
 
 	@SuppressWarnings("unchecked")
 	private MenuVO getMenu() {
-		List<Record> menus = Db.find(Db.getSql("menu.list", new HashMap<>()));
+		List<Record> menus = Db.find(Db.getSql("menu.list"));
 		Map<String, MenuVO> map = new HashMap<>();
 		for (Record record : menus) {
 			String id = record.getStr("ID");

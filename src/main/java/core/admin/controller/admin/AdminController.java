@@ -213,7 +213,7 @@ public class AdminController extends Controller {
 
 	public void add() {
 		//角色列表
-		List<Role> roles = Role.dao.find(Db.getSql("role.list", new HashMap<>()));
+		List<Role> roles = Role.dao.find(Db.getSql("role.list"));
 		setAttr("roles", roles);
 		render("add.html");
 	}
@@ -222,7 +222,7 @@ public class AdminController extends Controller {
 		Admin admin = Admin.dao.findById(getPara("id"));
 		setAttr("admin", admin);
 		//角色列表
-		List<Role> roles = Role.dao.find(Db.getSql("role.list", new HashMap<>()));
+		List<Role> roles = Role.dao.find(Db.getSql("role.list"));
 		setAttr("roles", roles);
 		render("add.html");
 	}
