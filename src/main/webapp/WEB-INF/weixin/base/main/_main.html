@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<#macro mainLayout wxTitle="" wxMeta="" wxCss="" wxJavascript="" >
+<html>
+  <head>
+  	<#include "../part/_meta.html"/>
+    <title>${wxTitle}</title>
+    <#include "../part/_css.html"/>
+    <!-- DAMN IE -->
+	<!--[if lt IE 9]>
+		<script src="${base}/resources/javascripts/modernizr-custom.js" type="text/javascript"></script>
+	<![endif]-->
+	<#include "../part/_js.html"/>
+  </head>
+  <body>
+  	<!-- page 容器 -->
+	<div class="page">
+		<#nested>
+	</div>
+  </body>
+</html>
+</#macro>

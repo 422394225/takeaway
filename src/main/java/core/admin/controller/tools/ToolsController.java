@@ -10,7 +10,6 @@ import com.jfinal.aop.Before;
 import com.jfinal.aop.Clear;
 import com.jfinal.core.Controller;
 
-import core.interceptor.AllowOriginInterceptor;
 import core.utils.SMSUtils;
 import core.validate.PhoneValidate;
 import core.vo.JSONError;
@@ -23,7 +22,6 @@ import core.vo.JSONSuccess;
  * @date 2017年4月9日下午1:55:53
  */
 @Clear
-@Before(AllowOriginInterceptor.class)
 public class ToolsController extends Controller {
 
 	public void cutter() {
