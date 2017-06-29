@@ -93,15 +93,6 @@
 	#end
 #end
 
-#namespace("school")
-	#sql("list")
-		SELECT ID,`NAME`,LOGO,`TYPE`,ADDRESS,`PROVINCE`,`CITY`,`DISTRICT`
-		FROM t_school
-		WHERE 1=1
-		#@dbCondition(conditions)
-	#end
-#end
-
 #namespace("menu")
 	#sql("list")
 		SELECT *
