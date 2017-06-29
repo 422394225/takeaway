@@ -2,6 +2,9 @@
 <#assign wxMeta>
 </#assign>
 <#assign wxCss>
+<style>
+.list-block{margin:0}
+</style>
 </#assign>
 <#assign wxJavascript>
 <script>
@@ -46,7 +49,14 @@ $(function(){
 </#assign>
 <@mainLayout wxTitle="测试标题"  wxMeta=wxMeta wxCss=wxCss wxJavascript=wxJavascript>
 <!-- 添加 class infinite-scroll 和 data-distaance -->
-<div class="content infinite-scroll" data-distance="100">
+<div class="content content-padded infinite-scroll" data-distance="100">
+	<div class="searchbar row no-gutter">
+	  <a class="button button-fill button-primary col-15"><span class="fa fa-map-marker"></span></a>
+	  <div class="search-input col-85">
+	  	<label class="icon icon-search" for="search"></label>
+	    <input type="search" id="search" placeholder="觅食...">
+	  </div>
+	</div>
     <div class="list-block">
         <ul class="list-container">
         </ul>
