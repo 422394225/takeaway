@@ -127,7 +127,8 @@ var Kit={
 		var deafaultOption = {
 			"processing": true,//开启服务器负责处理数据
 	        "serverSide": true,//开启服务器负责处理数据
-	        searchable:true,
+	        "searching":false,
+	        searchable:false,
 			pagingType: "full_numbers",//分页样式的类型
 			"bLengthChange": true,  ///是否可以修改页面显示行数
 			"aLengthMenu": [[10, 25, 50, -1], ['10条', '25条', '50条', '全部']], ///设置可选的显示行数
@@ -149,8 +150,8 @@ var Kit={
                  "sInfoFiltered": "(从 _MAX_条数据中检索)",//筛选之后的左下角筛选提示，
                  "sInfoEmtpy": "没有数据",     
                  "sProcessing": '<i class="fa fa-coffee"></i> 正在加载数据...',  
-                 "sSearch":"<i class='fa fa-search'></i>",
- 				 "sSearchPlaceholder":"搜索...",
+//                 "sSearch":"<i class='fa fa-search'></i>",
+// 				 "sSearchPlaceholder":"搜索...",
                  "oPaginate": {     
                      "sFirst": "<i class='fa fa-angle-double-left'></i>",     
                      "sPrevious": "<i class='fa fa-angle-left'></i>",     
