@@ -17,13 +17,13 @@ import java.util.Map;
 
 public class ConditionsVO {
 	private Map<String, Object> conditions = new HashMap<>();
-	private Map<String, Object> whereCond = new HashMap<>();
+	//	private Map<String, Object> whereCond = new HashMap<>();
 	private Map<String, Object> limitCond = new HashMap<>();
 	private Map<String, Object> orderbyCond = new HashMap<>();
 
 	public ConditionsVO() {
 		Map<String, Object> map = new HashMap<>();
-		map.put("whereCond", whereCond);
+		//		map.put("whereCond", whereCond);
 		map.put("limitCond", limitCond);
 		map.put("orderbyCond", orderbyCond);
 		conditions.put("conditions", map);
@@ -37,13 +37,13 @@ public class ConditionsVO {
 		this.conditions = conditions;
 	}
 
-	public Map<String, Object> getWhereCond() {
-		return whereCond;
-	}
-
-	public void setWhereCond(Map<String, Object> whereCond) {
-		this.whereCond = whereCond;
-	}
+	//	public Map<String, Object> getWhereCond() {
+	//		return whereCond;
+	//	}
+	//
+	//	public void setWhereCond(Map<String, Object> whereCond) {
+	//		this.whereCond = whereCond;
+	//	}
 
 	public Map<String, Object> getLimitCond() {
 		return limitCond;
