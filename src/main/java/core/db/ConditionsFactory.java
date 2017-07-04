@@ -23,7 +23,7 @@ import core.vo.DTParams;
 public class ConditionsFactory {
 	public static Map<String, Map<String, Object>> getConditions(DTParams params) {
 		Map<String, Map<String, Object>> conditions = new LinkedHashMap<>();
-		Map<String, Object> whereCond = new HashMap<>();
+		//		Map<String, Object> whereCond = new HashMap<>();
 		Map<String, Object> orderbyCond = new HashMap<>();
 		int i = 0;
 		String data = "";
@@ -34,11 +34,11 @@ public class ConditionsFactory {
 				continue;
 			}
 			if (params.getCSearchable(i)) {
-				String searchValue = params.getSearchValue();
-				if (StringUtils.isNoneEmpty(searchValue)) {
-					searchValue = searchValue.trim();
-					whereCond.put(data, searchValue);
-				}
+				//				String searchValue = params.getSearchValue();
+				//				if (StringUtils.isNoneEmpty(searchValue)) {
+				//					searchValue = searchValue.trim();
+				//					whereCond.put(data, searchValue);
+				//				}
 				if (params.getOrderable(i)) {
 					if (params.getOrderColumn() == i/* && !data.equals("ID")*/) {
 						String orderDir = params.getOrderDir();
@@ -50,7 +50,7 @@ public class ConditionsFactory {
 			}
 			i++;
 		}
-		conditions.put("whereCond", whereCond);
+		//		conditions.put("whereCond", whereCond);
 		conditions.put("orderbyCond", orderbyCond);
 		return conditions;
 	}
