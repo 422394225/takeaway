@@ -5,23 +5,23 @@
 ###表中有别名通用datatable的sql
 #define dbCondition_alias(conditions,mainAlias,aliasMap)
 	#if( conditions )
-		#set(whereCond = conditions["whereCond"])
-		#if( whereCond )
-			AND ( 1=0 
-			#for(wc : whereCond)
-			 	OR 
-			 	#if( mainAlias && aliasMap )
-			 		#set(aliasMapVal = aliasMap[wc.key])
-				 	#if( aliasMapVal ) #(aliasMapVal)
-				 	#else #(mainAlias).`#(wc.key)` 
-				 	#end
-				#else
-					`#(wc.key)` 
-				#end
-			 	LIKE BINARY '%#(wc.value)%'
-			#end
-			 )
-		#end
+--		#set(whereCond = conditions["whereCond"])
+--		#if( whereCond )
+--			AND ( 1=0 
+--			#for(wc : whereCond)
+--			 	OR 
+--			 	#if( mainAlias && aliasMap )
+--			 		#set(aliasMapVal = aliasMap[wc.key])
+--				 	#if( aliasMapVal ) #(aliasMapVal)
+--				 	#else #(mainAlias).`#(wc.key)` 
+--				 	#end
+--				#else
+--					`#(wc.key)` 
+--				#end
+--			 	LIKE BINARY '%#(wc.value)%'
+--			#end
+--			 )
+--		#end
 		
 		#set(limitCond = conditions["limitCond"])
 		#if( limitCond )
@@ -112,6 +112,27 @@
 	t_log AS d
 	LEFT JOIN t_admin t ON d.ADMIN_ID = t.ID
 	WHERE 1=1
+		#@dbCondition_alias(conditions,mainAlias,aliasMap)
+	#end
+#end
+
+#namespace("food")
+	#sql("list")
+	#set(mainAlias = "d")
+		#set(aliasMap = {"SHOP_NAME":"t.`NAME`"})
+		SELECT
+	d.*, t. NAME AS SHOP_NAME
+	FROM
+	t_food AS d
+	LEFT JOIN t_shop t ON d.SHOP_ID = t.ID
+	WHERE 1=1
+		#@dbCondition_alias(conditions,mainAlias,aliasMap)
+	#end
+	#sql("histroy")
+		SELECT	*
+	FROM
+	t_food_histroy
+	WHERE 1=1 
 		#@dbCondition_alias(conditions,mainAlias,aliasMap)
 	#end
 #end
