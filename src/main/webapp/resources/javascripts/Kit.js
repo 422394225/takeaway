@@ -179,6 +179,39 @@ var Kit={
 	            "bSortable":false
 	        }]);
 		}
+		//------------------筛选框--------------------------------
+		var searchParams=[];
+		if($(".filterTable").length>0){
+			var filterTableParams = $(".filterTable input[name]");
+			//绑定筛选按钮事件
+			$(".dataTableSortBtn").on("click",function(){
+				searchParams=[];
+				for(var i=0;i<filterTableParams.length;i++){
+					var obj={};
+					var value = $(filterTableParams[i]).val();
+					if(value!="" && value!=null){
+						var key = $(filterTableParams[i]).attr("name");
+						obj[key] = value;
+						searchParams.push(obj);
+					}
+				}
+				table.ajax.reload(null, false);
+			})
+			//绑定回车键
+			filterTableParams.keydown(function(event) {  
+		       if(event.keyCode == 13) { 
+		    	   $(".dataTableSortBtn").click();
+		       }  
+			});
+			//绑定参数
+			var ajaxUrl = deafaultOption.ajax;
+			deafaultOption.ajax = {};
+			deafaultOption.ajax["url"] = ajaxUrl;
+			deafaultOption.ajax["data"] = {"custom_search":function(){
+				return JSON.stringify(searchParams);
+			}};
+			
+		}
 		var table = $(tableId).DataTable(deafaultOption);
 		//-----------------悬浮行样式Start-------------------------------
 		var lastIdx = null;

@@ -5,23 +5,23 @@
 ###表中有别名通用datatable的sql
 #define dbCondition_alias(conditions,mainAlias,aliasMap)
 	#if( conditions )
---		#set(whereCond = conditions["whereCond"])
---		#if( whereCond )
---			AND ( 1=0 
---			#for(wc : whereCond)
---			 	OR 
---			 	#if( mainAlias && aliasMap )
---			 		#set(aliasMapVal = aliasMap[wc.key])
---				 	#if( aliasMapVal ) #(aliasMapVal)
---				 	#else #(mainAlias).`#(wc.key)` 
---				 	#end
---				#else
---					`#(wc.key)` 
---				#end
---			 	LIKE BINARY '%#(wc.value)%'
---			#end
---			 )
---		#end
+		#set(whereCond = conditions["whereCond"])
+		#if( whereCond )
+			AND ( 1=0 
+			#for(wc : whereCond)
+			 	OR 
+			 	#if( mainAlias && aliasMap )
+			 		#set(aliasMapVal = aliasMap[wc.key])
+				 	#if( aliasMapVal ) #(aliasMapVal)
+				 	#else #(mainAlias).`#(wc.key)` 
+				 	#end
+				#else
+					`#(wc.key)` 
+				#end
+			 	LIKE BINARY '%#(wc.value)%'
+			#end
+			 )
+		#end
 		
 		#set(limitCond = conditions["limitCond"])
 		#if( limitCond )
