@@ -138,6 +138,11 @@ public class DTParams {
 	}
 
 	public JSONArray getCustomParams() {
-		return JSONArray.parseArray(map.get(CUSTOM_PARAMS)[0]);
+		String str = "[]";
+		try {
+			str = map.get(CUSTOM_PARAMS)[0];
+		} catch (Exception e) {
+		}
+		return JSONArray.parseArray(str);
 	}
 }
