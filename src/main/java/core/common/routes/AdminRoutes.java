@@ -11,6 +11,7 @@ import core.admin.controller.index.IndexController;
 import core.admin.controller.log.LogController;
 import core.admin.controller.menu.MenuController;
 import core.admin.controller.role.RoleController;
+import core.admin.controller.shop.type.ShopTypeController;
 import core.admin.controller.tools.ToolsController;
 import core.admin.controller.user.UserController;
 import core.interceptor.AdminLoginInterceptor;
@@ -34,6 +35,7 @@ public class AdminRoutes extends Routes {
 		add("customer", CustomerController.class);
 		add("menu", MenuController.class);
 		add("food", FoodController.class);
+		add("shopType", ShopTypeController.class);
 	}
 
 }

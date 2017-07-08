@@ -1,0 +1,207 @@
+<#include "../base/main/_dashboard.html"/>
+<#assign pageMeta>
+</#assign>
+<#assign pageCss>
+<link href="${base}/resources/jQuery/dataTables.bootstrap.min.css" rel="stylesheet" type="text/css" />
+</#assign>
+<#assign pageJavascript>
+<script src="${base}/resources/jQuery/jquery.dataTables.min.js" type="text/javascript"></script>
+<script src="${base}/resources/jQuery/dataTables.bootstrap.min.js" type="text/javascript"></script>
+<script>
+	$(function(){
+		var table = Kit.table("#table",
+		{
+			"ajax": "${base}/shopType/getData",
+	        "columns": [
+	            { "data": "NAME" },
+	            { "data": "ICON" },
+	            { "data": "DELETED" },
+	            { "data": "CREATE_TIME" }
+	        ],
+	        "order": [[ 4, "desc" ]],
+	        "columnDefs": [{
+	            "targets": -1,
+	            "data": null,
+	            "render": function(data, type, row) {
+	            	if(row["DELETED"]==0){
+	            		return "<button class='edit btn btn-info btn-xs' title='编辑'><i class='fa fa-edit'></i></button>"+
+            					  "<button class='disable btn btn-warning btn-xs' title='停用'><i class='fa fa-ban'></i></button>"+
+            					  "<button class='remove btn btn-danger btn-xs' title='删除'><i class='fa fa-trash-o'></i></button>";
+	            	}else{
+	            		return "<button class='edit btn btn-info btn-xs' title='编辑'><i class='fa fa-edit'></i></button>"+
+  					  	"<button class='enable btn btn-warning btn-xs' title='恢复'><i class='fa fa-reply'></i></button>"+
+  					  "<button class='remove btn btn-danger btn-xs' title='删除'><i class='fa fa-trash-o'></i></button>";
+	            	}
+	            }
+	        },{
+	        	"targets": 2,
+	            "render": function(data, type, row) {
+	                return "<img src='"+data+"' style='width:50px;height:50px'/>";
+	            }
+	        },{
+	        	"targets": 3,
+	            "render": function(data, type, row) {
+	            	if(data==0){
+	            		return "<i class='fa fa-check text-success'></i>";
+	            	}else{
+	            		return "<i class='fa fa-minus'></i>";
+	            	}
+	            }
+	        }]
+		});
+		$(".add").on("click",function(){
+			BootstrapDialog.show({
+				title: '添加店铺类别',
+				draggable: true,
+			    message: $('<div></div>').load('${base}/shopType/add'),
+			    buttons: [{
+			    	id:'submitBtn',
+			        label: '提交',
+			        cssClass: 'btn btn-primary', 
+			        action: function(dialogRef){    
+			           
+			        }
+			    },{
+			        label: '取消',
+			        cssClass: 'btn btn-link', 
+			        action: function(dialogRef){    
+			            dialogRef.close();
+			        }
+			    }]
+	        });
+		})
+		table.on('click', '.edit', function(){
+			var d = table.row($(this).parents('tr')).data();
+	        BootstrapDialog.show({
+				title: '编辑',
+				draggable: true,
+				closeByBackdrop: false,
+			    message: $('<div></div>').load('${base}/shopType/edit?id='+d["ID"]),
+			    buttons: [{
+			    	id:'submitBtn',
+			        label: '提交',
+			        cssClass: 'btn btn-primary', 
+			        action: function(dialogRef){    
+			           
+			        }
+			    },{
+			        label: '取消',
+			        cssClass: 'btn btn-link', 
+			        action: function(dialogRef){    
+			            dialogRef.close();
+			        }
+			    }]
+	        });
+	   
+	    });
+		table.on('click', '.disable', function(){
+			var d = table.row($(this).parents('tr')).data();
+			layer.confirm('确认停用此分类吗?', {
+				icon:{icon: 1},
+				btn: ['确认','取消'],
+				yes: function(index, layero){
+					layer.close(index);
+					layer.load(1, {shade: [0.3,'#000']});
+					Kit.post("${base}/shopType/disable",{id:d["ID"]},function(msg){
+						layer.closeAll('loading');
+						layer.msg(msg,{time: 1000});
+						table.ajax.reload(null, false);
+					},
+					function(msg){
+						layer.closeAll('loading');
+						layer.alert(msg,{icon:5});
+					});
+		  		}
+			})
+		});
+		
+		table.on('click', '.enable', function(){
+			var d = table.row($(this).parents('tr')).data();
+			layer.confirm('确认恢复此分类吗?', {
+				icon:{icon: 1},
+				btn: ['确认','取消'],
+				yes: function(index, layero){
+					layer.close(index);
+					layer.load(1, {shade: [0.3,'#000']});
+					Kit.post("${base}/shopType/enable",{id:d["ID"]},function(msg){
+						layer.closeAll('loading');
+						layer.msg(msg,{time: 1000});
+						table.ajax.reload(null, false);
+					},
+					function(msg){
+						layer.closeAll('loading');
+						layer.alert(msg,{icon:5});
+					});
+		  		}
+			})
+		});
+		table.on('click', '.remove', function(){
+			var d = table.row($(this).parents('tr')).data();
+			layer.confirm('确认删除该条吗?', {
+				icon:{icon: 1},
+				btn: ['确认','取消'],
+				yes: function(index, layero){
+					layer.close(index);
+					layer.load(1, {shade: [0.3,'#000']});
+					Kit.post("${base}/shopType/remove",{id:d["ID"]},function(msg){
+						layer.closeAll('loading');
+						layer.msg(msg,{time: 1000});
+						table.ajax.reload(null, false);
+					},
+					function(msg){
+						layer.closeAll('loading');
+						layer.alert(msg,{icon:5});
+					});
+		  		}
+			})
+		});
+		$(".reload").on("click",function(){
+			table.ajax.reload(null, false);// 刷新表格数据，分页信息不会重置
+		})
+	})
+</script>
+</#assign>
+<@dashboard pageTitle="商家分类" currentMenu="shop" pageMeta=pageMeta pageCss=pageCss pageJavascript=pageJavascript>
+<@tool map="商家-商家分类">
+   <div class='btn-group'>
+     <button class="add btn btn-light btn-sm radius" title="添加" data-toggle="tooltip" data-placement="bottom">
+     	<i class="fa fa-plus"></i>
+     </button>
+     <button class="reload btn btn-light btn-sm radius" title="刷新" data-toggle="tooltip" data-placement="bottom">
+     	<i class="fa fa-refresh"></i>
+     </button>
+   </div>
+</@tool>
+<div id='content'>
+   <table class="filterTable">
+  	<tr>
+  		<td><label>类别名称</label></td>
+  		<td><input name="NAME" class="form-control"></td>
+  		<td><label>是否启用</label></td>
+  		<td>
+  			<select name="DELETED" class="form-control">
+  				<option value="">请选择</option>
+  				<option value="0">是</option>
+  				<option value="1">否</option>
+  			</select>
+  		</td>
+  		<td><button class="btn btn-success dataTableSortBtn">筛选</button></td>
+  	</tr>
+  </table>
+  <table class='table table-bordered' id="table">
+    <thead>
+      <tr>
+        <th>序号</th>
+        <th>类别名称</th>
+        <th>图标</th>
+        <th>是否启用</th>
+        <th>创建时间</th>
+        <th class='operation'>
+          	操作
+        </th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</div>
+</@dashboard>

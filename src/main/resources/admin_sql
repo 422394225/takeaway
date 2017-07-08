@@ -137,6 +137,15 @@
 	#end
 #end
 
+#namespace("shopType")
+	#sql("list")
+		SELECT *
+		FROM t_shop_type
+		WHERE 1=1 
+		#@dbCondition(conditions)
+	#end
+#end
+
 #namespace("feedback")
 	#sql("list")
 		SELECT *
