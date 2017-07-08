@@ -182,15 +182,17 @@ var Kit={
 		//------------------筛选框--------------------------------
 		var searchParams=[];
 		if($(".filterTable").length>0){
-			var filterTableParams = $(".filterTable input[name]");
+			var filterTableParams = $(".filterTable input[name],select");
 			//绑定筛选按钮事件
 			$(".dataTableSortBtn").on("click",function(){
 				searchParams=[];
 				for(var i=0;i<filterTableParams.length;i++){
+					var ftps = $(filterTableParams[i]);
 					var obj={};
-					var value = $(filterTableParams[i]).val();
-					if(value!="" && value!=null){
-						var key = $(filterTableParams[i]).attr("name");
+					
+					var key = ftps.attr("name");
+					var value  = ftps.val();
+					if(value!="" && value!=null && value!=undefined){
 						obj[key] = value;
 						searchParams.push(obj);
 					}
