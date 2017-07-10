@@ -199,6 +199,12 @@ var Kit={
 				}
 				table.ajax.reload(null, false);
 			})
+			//重置按钮
+			$(".dataTableResetBtn").on("click",function(){
+				searchParams=[];
+				$("#filterForm")[0].reset();
+				table.ajax.reload(null, false);
+			});
 			//绑定回车键
 			filterTableParams.keydown(function(event) {  
 		       if(event.keyCode == 13) { 
