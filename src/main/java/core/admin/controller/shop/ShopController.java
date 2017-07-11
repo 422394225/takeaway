@@ -10,11 +10,13 @@ import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
 import com.jfinal.kit.PropKit;
 import com.jfinal.log.Log;
+import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -61,6 +63,9 @@ public class ShopController extends Controller {
 	}
 
 	public void add() {
+		Map<String, String> params = new HashMap<>();
+		params.put("not_deleted", "1");
+		setAttr("shopTypes", ShopType.dao.find(Db.getSqlPara("shopType.list", params)));
 		render("add.html");
 	}
 

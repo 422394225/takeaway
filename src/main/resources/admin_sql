@@ -120,19 +120,21 @@
 	#sql("list")
 	#set(mainAlias = "d")
 		#set(aliasMap = {"SHOP_NAME":"t.`NAME`"})
+		#set(aliasMap = {"TYPE_NAME":"c.`NAME`"})
 		SELECT
-	d.*, t. NAME AS SHOP_NAME
+	d.*, t. NAME AS SHOP_NAME,c.NAME AS TYPE_NAME
 	FROM
 	t_food AS d
 	LEFT JOIN t_shop t ON d.SHOP_ID = t.ID
-	WHERE 1=1
+	LEFT JOIN t_food_type c ON d.TYPE_ID = c.ID
+	WHERE 1=1 AND d.STATE='1'
 		#@dbCondition_alias(conditions,mainAlias,aliasMap)
 	#end
 	#sql("histroy")
 		SELECT	*
 	FROM
 	t_food_histroy
-	WHERE 1=1 
+	WHERE 1=1
 		#@dbCondition_alias(conditions,mainAlias,aliasMap)
 	#end
 #end
@@ -151,6 +153,9 @@
 		SELECT *
 		FROM t_shop_type
 		WHERE 1=1 
+		#if(not_deleted)
+		AND `DELETED` !=1
+		#end
 		#@dbCondition(conditions)
 	#end
 #end
