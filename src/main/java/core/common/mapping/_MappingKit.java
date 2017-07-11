@@ -6,7 +6,11 @@ import core.model.Admin;
 import core.model.Customer;
 import core.model.Data;
 import core.model.DictCode;
+import core.model.Discount;
 import core.model.Feedback;
+import core.model.Food;
+import core.model.FoodHistroy;
+import core.model.FoodType;
 import core.model.Log;
 import core.model.Menu;
 import core.model.Role;
@@ -30,5 +34,9 @@ public class _MappingKit {
 		arp.addMapping("t_shop_type", "ID", ShopType.class);
 		arp.addMapping("t_shop_type_relation", "ID", ShopTypeRelation.class);
 		arp.addMapping("t_dict_code", "ID", DictCode.class);
+		arp.addMapping("t_food", "ID", Food.class);
+		arp.addMapping("t_food_histroy", "ID", FoodHistroy.class);
+		arp.addMapping("t_food_type", "ID", FoodType.class);
+		arp.addMapping("t_discount", "ID", Discount.class);
 	}
 }
