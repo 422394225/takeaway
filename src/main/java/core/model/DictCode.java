@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-
-=======
->>>>>>> branch 'master' of https://github.com/422394225/takeaway.git
 /**
  * Created At 2017年2月20日下午9:29:01 
  * 
