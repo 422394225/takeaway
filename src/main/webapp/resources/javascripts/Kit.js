@@ -179,6 +179,47 @@ var Kit={
 	            "bSortable":false
 	        }]);
 		}
+		//------------------筛选框--------------------------------
+		var searchParams=[];
+		if($(".filterTable").length>0){
+			var filterTableParams = $(".filterTable input[name],select");
+			//绑定筛选按钮事件
+			$(".dataTableSortBtn").on("click",function(){
+				searchParams=[];
+				for(var i=0;i<filterTableParams.length;i++){
+					var ftps = $(filterTableParams[i]);
+					var obj={};
+					
+					var key = ftps.attr("name");
+					var value  = ftps.val();
+					if(value!="" && value!=null && value!=undefined){
+						obj[key] = value;
+						searchParams.push(obj);
+					}
+				}
+				table.ajax.reload(null, false);
+			})
+			//重置按钮
+			$(".dataTableResetBtn").on("click",function(){
+				searchParams=[];
+				$("#filterForm")[0].reset();
+				table.ajax.reload(null, false);
+			});
+			//绑定回车键
+			filterTableParams.keydown(function(event) {  
+		       if(event.keyCode == 13) { 
+		    	   $(".dataTableSortBtn").click();
+		       }  
+			});
+			//绑定参数
+			var ajaxUrl = deafaultOption.ajax;
+			deafaultOption.ajax = {};
+			deafaultOption.ajax["url"] = ajaxUrl;
+			deafaultOption.ajax["data"] = {"custom_search":function(){
+				return JSON.stringify(searchParams);
+			}};
+			
+		}
 		var table = $(tableId).DataTable(deafaultOption);
 		//-----------------悬浮行样式Start-------------------------------
 		var lastIdx = null;

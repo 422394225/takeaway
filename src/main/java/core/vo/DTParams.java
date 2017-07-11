@@ -5,6 +5,8 @@
 
 package core.vo;
 
+import com.alibaba.fastjson.JSONArray;
+
 import java.util.Map;
 
 /**
@@ -41,6 +43,10 @@ public class DTParams {
 	private final String ORDER = "order[";
 	private final String ORDER_DIR = "][dir]";
 	private final String ORDER_COLUMN = "][column]";
+	/**
+	 * 自定义参数
+	 */
+	private final String CUSTOM_PARAMS = "custom_search";
 
 	/**
 	 * 传入parameterMap
@@ -129,5 +135,14 @@ public class DTParams {
 	 */
 	public long getTimeStamp() {
 		return Long.parseLong(map.get(TIME_STAMP)[0]);
+	}
+
+	public JSONArray getCustomParams() {
+		String str = "[]";
+		try {
+			str = map.get(CUSTOM_PARAMS)[0];
+		} catch (Exception e) {
+		}
+		return JSONArray.parseArray(str);
 	}
 }
