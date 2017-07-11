@@ -5,23 +5,23 @@
 ###表中有别名通用datatable的sql
 #define dbCondition_alias(conditions,mainAlias,aliasMap)
 	#if( conditions )
---		#set(whereCond = conditions["whereCond"])
---		#if( whereCond )
---			AND ( 1=0 
---			#for(wc : whereCond)
---			 	OR 
---			 	#if( mainAlias && aliasMap )
---			 		#set(aliasMapVal = aliasMap[wc.key])
---				 	#if( aliasMapVal ) #(aliasMapVal)
---				 	#else #(mainAlias).`#(wc.key)` 
---				 	#end
---				#else
---					`#(wc.key)` 
---				#end
---			 	LIKE BINARY '%#(wc.value)%'
---			#end
---			 )
---		#end
+		#set(whereCond = conditions["whereCond"])
+		#if( whereCond )
+			AND ( 1=0 
+			#for(wc : whereCond)
+			 	OR 
+			 	#if( mainAlias && aliasMap )
+			 		#set(aliasMapVal = aliasMap[wc.key])
+				 	#if( aliasMapVal ) #(aliasMapVal)
+				 	#else #(mainAlias).`#(wc.key)` 
+				 	#end
+				#else
+					`#(wc.key)` 
+				#end
+			 	LIKE BINARY '%#(wc.value)%'
+			#end
+			 )
+		#end
 		
 		#set(limitCond = conditions["limitCond"])
 		#if( limitCond )
@@ -120,20 +120,40 @@
 	#sql("list")
 	#set(mainAlias = "d")
 		#set(aliasMap = {"SHOP_NAME":"t.`NAME`"})
+		#set(aliasMap = {"TYPE_NAME":"c.`NAME`"})
 		SELECT
-	d.*, t. NAME AS SHOP_NAME
+	d.*, t. NAME AS SHOP_NAME,c.NAME AS TYPE_NAME
 	FROM
 	t_food AS d
 	LEFT JOIN t_shop t ON d.SHOP_ID = t.ID
-	WHERE 1=1
+	LEFT JOIN t_food_type c ON d.TYPE_ID = c.ID
+	WHERE 1=1 AND d.STATE='1'
 		#@dbCondition_alias(conditions,mainAlias,aliasMap)
 	#end
 	#sql("histroy")
 		SELECT	*
 	FROM
 	t_food_histroy
-	WHERE 1=1 
+	WHERE 1=1
 		#@dbCondition_alias(conditions,mainAlias,aliasMap)
+	#end
+#end
+
+#namespace("shop")
+	#sql("list")
+		SELECT *
+		FROM t_shop
+		WHERE 1=1 
+		#@dbCondition(conditions)
+	#end
+#end
+
+#namespace("shopType")
+	#sql("list")
+		SELECT *
+		FROM t_shop_type
+		WHERE 1=1 
+		#@dbCondition(conditions)
 	#end
 #end
 
@@ -143,5 +163,20 @@
 		FROM t_feedback 
 		WHERE 1=1 
 		#@dbCondition(conditions)
+	#end
+#end
+
+#namespace("dictCode")
+	#sql("name")
+		SELECT `NAME`,`CODE` 
+		FROM t_dict_code 
+		WHERE FIELD = '#(field)'
+		#if(codes)
+		AND `CODE` IN ( 
+			#for(code : codes)
+				#(for.index > 0 ? ",":"")'#(code)' 
+			#end
+			)
+		#end
 	#end
 #end
