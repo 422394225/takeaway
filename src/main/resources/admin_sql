@@ -137,6 +137,15 @@
 	#end
 #end
 
+#namespace("shop")
+	#sql("list")
+		SELECT *
+		FROM t_shop
+		WHERE 1=1 
+		#@dbCondition(conditions)
+	#end
+#end
+
 #namespace("shopType")
 	#sql("list")
 		SELECT *
@@ -152,5 +161,20 @@
 		FROM t_feedback 
 		WHERE 1=1 
 		#@dbCondition(conditions)
+	#end
+#end
+
+#namespace("dictCode")
+	#sql("name")
+		SELECT `NAME`,`CODE` 
+		FROM t_dict_code 
+		WHERE FIELD = '#(field)'
+		#if(codes)
+		AND `CODE` IN ( 
+			#for(code : codes)
+				#(for.index > 0 ? ",":"")'#(code)' 
+			#end
+			)
+		#end
 	#end
 #end

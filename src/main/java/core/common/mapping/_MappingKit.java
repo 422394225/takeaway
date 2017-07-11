@@ -5,6 +5,7 @@ import com.jfinal.plugin.activerecord.ActiveRecordPlugin;
 import core.model.Admin;
 import core.model.Customer;
 import core.model.Data;
+import core.model.DictCode;
 import core.model.Feedback;
 import core.model.Log;
 import core.model.Menu;
@@ -28,5 +29,6 @@ public class _MappingKit {
 		arp.addMapping("t_shop", "ID", Shop.class);
 		arp.addMapping("t_shop_type", "ID", ShopType.class);
 		arp.addMapping("t_shop_type_relation", "ID", ShopTypeRelation.class);
+		arp.addMapping("t_dict_code", "ID", DictCode.class);
 	}
 }
