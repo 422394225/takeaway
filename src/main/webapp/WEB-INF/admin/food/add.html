@@ -1,0 +1,155 @@
+<link href="${base}/resources/javascripts/cropper/cropper.min.css" rel="stylesheet" type="text/css" />
+<script src="${base}/resources/javascripts/cropper/cropper.min.js" type="text/javascript"></script>
+<link href="${base}/resources/javascripts/fileinput/css/fileinput.min.css" rel="stylesheet" type="text/css" />
+<script src="${base}/resources/javascripts/fileinput/js/fileinput.min.js" type="text/javascript"></script>
+<script src="${base}/resources/javascripts/fileinput/js/locales/zh.js" type="text/javascript"></script>
+<form action="${base}/food/save" class="form-horizontal" id="add-form" enctype="multipart/form-data" method="post">
+	<div class="form-group form-group-md">
+	    <label class="col-sm-3 control-label" for="formGroupInputLarge">
+	    	所属商家名<span style="color:red">*</span>
+	    </label>
+	    <div class="col-sm-6">
+			<input class="form-control" type="text" name="shopName" oninput='onShopNameInput(event)' id="formGroupInputLarge" value="">
+	    </div>
+		<label id="checkShopName"></label>
+	</div>
+	<div class="form-group form-group-md">
+	    <label class="col-sm-3 control-label" for="formGroupInputLarge">
+	    	商品名称<span style="color:red">*</span>
+	    </label>
+	    <div class="col-sm-6">
+			<input class="form-control" type="text" name="NAME"  oninput='onFoodNameInput(event)' id="formGroupInputLarge" value="">
+	    </div>
+		<label id="checkFoodName"></label>
+	</div>
+		<label></label>
+	<div class="form-group form-group-md">
+		<label class="col-lg-3 control-label" for="formGroupInputLarge">
+		商品图片
+		</label>
+		<div class="col-lg-6 col-md-12">
+			<input type="file" name="IMG" id="imgInput" />
+			<input type="hidden" name="crop" id="crop">
+			<input type="hidden" name="defaultImg" value=""/>
+		</div>
+	</div>
+	<div class="form-group form-group-md">
+	    <label class="col-sm-3 control-label" for="formGroupInputLarge">
+	    	价格<span style="color:red">*</span>
+	    </label>
+	    <div class="col-sm-6">
+			<input class="form-control" type="text" name="price" id="formGroupInputLarge" value="">
+	    </div>
+	</div>
+	<div class="form-group form-group-md">
+	    <label class="col-sm-3 control-label" for="formGroupInputLarge">
+	    	原价
+	    </label>
+	    <div class="col-sm-6">
+			<input class="form-control" type="text" name="ORIGN_PRICE" id="formGroupInputLarge" value="">
+	    </div>
+	</div>
+	<div class="form-group form-group-md">
+	    <label class="col-sm-3 control-label" for="formGroupInputLarge">
+	    	单位<span style="color:red">*</span>
+	    </label>
+	    <div class="col-sm-6">
+			<input class="form-control" type="text" name="UNIT" id="formGroupInputLarge" value="">
+	    </div>
+	</div>
+	<div class="form-group form-group-md">
+	    <label class="col-sm-3 control-label" for="formGroupInputLarge">
+	    	描述
+	    </label>
+	    <div class="col-sm-6">
+			<input class="form-control" type="text" name="DECSRIPTION" id="formGroupInputLarge" value="">
+	    </div>
+	</div>
+	<div class="form-group form-group-md">
+	    <label class="col-sm-3 control-label" for="formGroupInputLarge">
+	    	使用库存
+	    </label>
+	    <div class="col-sm-6">
+			<input class="form-control" type="checkbox" name="USE_STOCK" id="formGroupInputLarge" value="false">
+			<div class="icheckbox_square-green checked" style="position: relative;">
+			</div>
+	    </div>
+	</div>
+	<div class="form-group form-group-md" style="display:none" id="STOCK_DIV">
+	    <label class="col-sm-3 control-label" for="formGroupInputLarge">
+	    	库存
+	    </label>
+	    <div class="col-sm-6">
+			<input class="form-control show" type="text" name="STOCK" id="formGroupInputLarge" value="">
+			</div>
+	    </div>
+	</div>
+</from>
+<script>  
+$("[title]").tooltip();
+Kit.form({btnId:"#submitBtn",formId:"#add-form",
+	validate:{
+		shopName: {validators: {notEmpty: {}}},
+		NAME: {validators: {notEmpty: {}}},
+		price: {validators: {notEmpty: {}}},
+		UNIT: {validators: {notEmpty: {}}},
+		DECSRIPTION: {validators: {notEmpty: {}}},
+		USE_STOCK: {validators: {}},
+		STOCK: {validators: {}}
+	},
+    successFunc:function(msg,data){
+    	$(".reload ").click();
+ 	   BootstrapDialog.closeAll();
+ 	},
+ 	failFunc:function(msg){
+ 		layer.msg(msg);
+ 	}
+});
+function onShopNameInput(event){
+	var result =$.ajax({url:"${base}/food/checkShopName?shopName="+event.target.value,async:false});
+	$("#checkShopName").html(result.responseText);
+}
+function onFoodNameInput(event){
+	var result =$.ajax({url:"${base}/food/checkFoodName?foodName="+event.target.value,async:false});
+	$("#checkFoodName").html(result.responseText);
+}
+$("input[name='USE_STOCK']").click(function(){
+	if($("input[name='USE_STOCK']").prop('checked'))
+		$('#STOCK_DIV').show();
+	else
+		$('#STOCK_DIV').hide();
+});
+$("#imgInput").fileupload({
+	allowedFileExtensions:['jpg','jpeg','gif','png','bmp'],
+	initialPreview: [
+	   '${(admin.AVATAR)!}'
+	],
+	initialPreviewAsData: true
+});
+$("#imgInput").fileupload({
+	allowedFileExtensions:['jpg','jpeg','gif','png','bmp'],
+	initialPreview: [
+	],
+	initialPreviewAsData: true
+});
+$('#imgInput').on('fileloaded', function(event, file, previewId, index, reader) {
+	dialogData = {event:event,file:file,previewId:previewId,index:index,reader:reader};
+	BootstrapDialog.show({
+		type:BootstrapDialog.TYPE_DEFAULT,
+		closeByBackdrop: false,
+		closable:false,
+		title: '图片裁剪',
+		draggable: true,
+	    message: $('<div></div>').load('${base}/tools/cutter?ratio=1/1'),
+	    buttons: [{
+	    	id:'cutBtn',
+	    	cssClass: 'btn btn-default btn-lg btn-block cut',
+	        label: '裁剪',
+	        icon: 'fa fa-cut',  
+	        action: function(dialogRef){    
+	        	dialogRef.close();
+	        }
+	    }]
+	})
+});
+</script>
