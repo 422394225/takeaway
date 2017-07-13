@@ -9,6 +9,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Clear;
 import com.jfinal.core.Controller;
+import com.jfinal.kit.PropKit;
 
 import core.utils.SMSUtils;
 import core.validate.PhoneValidate;
@@ -38,6 +39,11 @@ public class ToolsController extends Controller {
 		} else {
 			renderJson(new JSONError());
 		}
+	}
+
+	public void getLocation() {
+		setAttr("key", PropKit.get("amap.key"));
+		render("map.html");
 	}
 
 }

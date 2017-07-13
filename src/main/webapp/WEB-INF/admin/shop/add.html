@@ -48,7 +48,7 @@
 		商家地址
 		</label>
 		<div class="col-lg-6 col-md-12">
-			<button class="btn btn-info" type="button">选择地址</button>
+			<button class="btn btn-info" type="button" id="chooseAddress">选择地址</button>
 	   </div>
 	</div>
 </form>
@@ -96,5 +96,25 @@ $(function(){
 		    }]
 		})
 	});
+	$("#chooseAddress").on("click",function(){
+		BootstrapDialog.show({
+			type:BootstrapDialog.TYPE_DEFAULT,
+			size: BootstrapDialog.SIZE_WIDE,
+			closeByBackdrop: false,
+			closable:false,
+			title: '地图选点',
+			draggable: true,
+		    message: $('<div></div>').load('${base}/tools/getLocation'),
+		    buttons: [{
+		    	id:'cutBtn',
+		    	cssClass: 'btn btn-default btn-lg btn-block chooseAddress',
+		        label: '定位',
+		        icon: 'fa fa-location-arrow',  
+		        action: function(dialogRef){    
+		        	dialogRef.close();
+		        }
+		    }]
+		})
+	})
 })
 </script>
