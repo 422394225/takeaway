@@ -101,17 +101,19 @@ $(function(){
 			type:BootstrapDialog.TYPE_DEFAULT,
 			size: BootstrapDialog.SIZE_WIDE,
 			closeByBackdrop: false,
-			closable:false,
 			title: '地图选点',
 			draggable: true,
 		    message: $('<div></div>').load('${base}/tools/getLocation'),
 		    buttons: [{
 		    	id:'cutBtn',
-		    	cssClass: 'btn btn-default btn-lg btn-block chooseAddress',
-		        label: '定位',
-		        icon: 'fa fa-location-arrow',  
+		    	cssClass: 'btn btn-default getLocalCity',
+		        label: '定位到当前城市',
+		        icon: 'fa fa-location-arrow'
+		    },{
+		        label: '取消',
+		        cssClass: 'btn btn-link', 
 		        action: function(dialogRef){    
-		        	dialogRef.close();
+		            dialogRef.close();
 		        }
 		    }]
 		})
