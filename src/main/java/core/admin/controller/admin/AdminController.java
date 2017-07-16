@@ -70,7 +70,8 @@ public class AdminController extends Controller {
 		String remember = getPara("remember");
 		Admin admin = adminService.findByUsername(username);
 		if (admin != null) {
-			if (admin.getStr("PASSWORD").equals(MD5Util.encrypt(password + ENCRIPT_KEY))) {
+			String encriptPassword = MD5Util.encrypt(password + ENCRIPT_KEY);
+			if (admin.getStr("PASSWORD").equals(encriptPassword)) {
 				setSessionAttr("administrator", admin);
 				if (remember != null) {
 					long now = System.currentTimeMillis();
