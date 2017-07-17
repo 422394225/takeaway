@@ -1,3 +1,4 @@
+function initAMapUI(){
 (function(window){
 window.AMapUI_DEBUG = false;
 !function(global) {
@@ -795,3 +796,4 @@ AMapUI.uiMods = [
 }(AMapUI, window);
 window.AMapUI = AMapUI;
 }(window));
+};

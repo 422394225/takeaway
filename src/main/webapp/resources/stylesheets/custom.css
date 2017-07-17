@@ -3286,7 +3286,6 @@ table.dataTable tbody td {
 	-ms-transform: translate3d(-50%, -50%, 0);
 	transform: translate3d(-50%, -50%, 0); 
 }
-
 .filterTable td{
 	padding:5px
 }

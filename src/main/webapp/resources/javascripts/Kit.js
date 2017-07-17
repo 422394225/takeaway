@@ -288,3 +288,40 @@ $.fn.fileupload = function(option){
 	$.extend(option,defaultOption);
 	$(this).fileinput(option);
 }
+$.fn.getLocation = function(option){
+	$(this).on("click",function(){
+		BootstrapDialog.show({
+			type:BootstrapDialog.TYPE_DEFAULT,
+			size: BootstrapDialog.SIZE_WIDE,
+			closeByBackdrop: false,
+			title: '地图选点',
+			draggable: true,
+		    message: $('<div></div>').load(getProjectName()+'/tools/getLocation'),
+		    buttons: [{
+		    	id:'localBtn',
+		    	cssClass: 'btn btn-default',
+		        label: '移动到当前城市',
+		        icon: 'fa fa-location-arrow'
+		    },{
+		    	id:'submitLocalBtn',
+		    	cssClass: 'btn btn-info',
+		        label: '确定',
+		        icon: 'fa fa-ok'
+		    },{
+		        label: '取消',
+		        cssClass: 'btn btn-link', 
+		        action: function(dialogRef){    
+		            dialogRef.close();
+		        }
+		    }]
+		})
+	})
+}
+function getProjectName(){
+    var curWwwPath=window.document.location.href;
+    var pathName=window.document.location.pathname;
+    var pos=curWwwPath.indexOf(pathName);
+    var localhostPaht=curWwwPath.substring(0,pos);
+    var projectName=pathName.substring(0,pathName.substr(1).indexOf('/')+1);
+    return projectName;
+}
