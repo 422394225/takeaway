@@ -109,21 +109,8 @@
 			BootstrapDialog.show({
 				title: '添加商家',
 				draggable: true,
-			    message: $('<div></div>').load('${base}/shop/add'),
-			    buttons: [{
-			    	id:'submitBtn',
-			        label: '提交',
-			        cssClass: 'btn btn-primary', 
-			        action: function(dialogRef){    
-			           
-			        }
-			    },{
-			        label: '取消',
-			        cssClass: 'btn btn-link', 
-			        action: function(dialogRef){    
-			            dialogRef.close();
-			        }
-			    }]
+				closeByBackdrop: false,
+			    message: $('<div></div>').load('${base}/shop/add')
 	        });
 		})
 		table.on('click', '.edit', function(){
@@ -132,21 +119,7 @@
 				title: '编辑',
 				draggable: true,
 				closeByBackdrop: false,
-			    message: $('<div></div>').load('${base}/shop/edit?id='+d["ID"]),
-			    buttons: [{
-			    	id:'submitBtn',
-			        label: '提交',
-			        cssClass: 'btn btn-primary', 
-			        action: function(dialogRef){    
-			           
-			        }
-			    },{
-			        label: '取消',
-			        cssClass: 'btn btn-link', 
-			        action: function(dialogRef){    
-			            dialogRef.close();
-			        }
-			    }]
+			    message: $('<div></div>').load('${base}/shop/edit?id='+d["ID"])
 	        });
 	   
 	    });

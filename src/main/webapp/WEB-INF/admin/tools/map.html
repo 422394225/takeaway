@@ -25,6 +25,7 @@
 <script src="${base}/resources/javascripts/main-async.js"></script>
 <script type="text/javascript">
 	var map;
+	var currentPoi = {};
 	function mapInit(){
 		initAMapUI();//异步组件调用
 		map = new AMap.Map("container", {
@@ -96,9 +97,13 @@
 	    function getAddressInfo(lnglat){
 			geocoder.getAddress(lnglat, function(status, result) {
 	            if (status === 'complete' && result.info === 'OK') {
+	            	var address = result.regeocode.formattedAddress;
 	            	infoWindow.setPosition(lnglat);
-		            infoWindow.setContent("地址："+result.regeocode.formattedAddress);
+		            infoWindow.setContent("地址："+address);
 		            infoWindow.open(map, lnglat);
+		            currentPoi.lat = lnglat.lat;
+		            currentPoi.lng = lnglat.lng;
+		            currentPoi.address = address;
 	            }
 	        });
 		}
@@ -123,6 +128,9 @@
     });
 	 
 	 $("#submitLocalBtn").on("click",function() {
+		 $("#latitude").val(currentPoi.lat)
+		 $("#longitude").val(currentPoi.lng)
+		 $("#address").val(currentPoi.address);
     });
 </script>
 </body>

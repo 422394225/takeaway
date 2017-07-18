@@ -3,63 +3,125 @@
 <link href="${base}/resources/javascripts/fileinput/css/fileinput.min.css" rel="stylesheet" type="text/css" />
 <script src="${base}/resources/javascripts/fileinput/js/fileinput.min.js" type="text/javascript"></script>
 <script src="${base}/resources/javascripts/fileinput/js/locales/zh.js" type="text/javascript"></script>
-<form action="${base}/shop/save" class="form-horizontal" id="add-form" enctype="multipart/form-data" method="post">
-	<input class="form-control" type="hidden" name="id" value="${(shop.ID)!}" />
-	<div class="form-group form-group-md" id="hostId">
-    <label class="col-sm-3 control-label" for="formGroupInputLarge">
-    	商家类型<span style="color:red">(必填)</span>
-    </label>
-    <div class="col-sm-6">
-    	<select class="form-control" name="shopTypeId">
-    		<#list shopTypes as st>
-				<option value="${st.ID}">${st.NAME}</option>
-			</#list>
-    	</select>
-    </div>
-  </div>
-	<div class="form-group form-group-md">
-	    <label class="col-sm-3 control-label" for="formGroupInputLarge">
-	    	商家名称<span style="color:red">(必填)</span>
-	    </label>
-	    <div class="col-sm-6">
-			<input class="form-control" type="text" name="name" id="formGroupInputLarge" value="${(shop.NAME)!}">
-	    </div>
+<script src="${base}/resources/bootstrap/js/jquery.bootstrap.wizard.min.js" type="text/javascript"></script>
+<script src="${base}/resources/bootstrap/js/datatimepicker/bootstrap-datetimepicker.min.js" type="text/javascript"></script>
+<script src="${base}/resources/bootstrap/js/datatimepicker/locales/bootstrap-datetimepicker.zh-CN.js" type="text/javascript"></script>
+<script src="${base}/resources/javascripts/pinyin/pinyin_dict_firstletter.js" type="text/javascript"></script>
+<script src="${base}/resources/javascripts/pinyin/pinyinUtil.js" type="text/javascript"></script>
+<link href="${base}/resources/bootstrap/js/datatimepicker/bootstrap-datetimepicker.min.css" rel="stylesheet" type="text/css" />
+<div id="rootwizard">
+	<div class="navbar">
+	  <div class="navbar-inner">
+	    <div class="container">
+			<ul>
+			  	<li><a href="#tab1" data-toggle="tab">1.基本资料</a></li>
+			  	<li><a href="#tab2" data-toggle="tab">2.账号相关 </a></li>
+				<li><a href="#tab3" data-toggle="tab">3.营业信息</a></li>
+			</ul>
+	 	</div>
+	  </div>
 	</div>
-	<div class="form-group form-group-md">
-		<label class="col-lg-3 control-label" for="formGroupInputLarge">
-		商家LOGO<span style="color:red">(必填)</span>
-		</label>
-		<div class="col-lg-6 col-md-12">
-			<input type="file" name="img" id="imgInput" />
-			<input type="hidden" name="crop" id="crop">
-			<input type="hidden" name="defaultImg" value="${(shop.IMG)!}"/>
-	   </div>
-	</div>
-	<div class="form-group form-group-md">
-		<label class="col-lg-3 control-label" for="formGroupInputLarge">
-		商家自述
-		</label>
-		<div class="col-lg-8 col-md-12">
-			<textarea name="description" class="form-control" rows="" cols="" style="height:100px">${(shop.DESCRIPTION)!}</textarea>
-	   </div>
-	</div>
-	<div class="form-group form-group-md">
-		<label class="col-lg-3 control-label" for="formGroupInputLarge">
-		商家地址
-		</label>
-		<div class="col-lg-6 col-md-12">
-			<button class="btn btn-info" type="button" id="chooseAddress">选择地址</button>
-	   </div>
-	</div>
-</form>
+	<form action="${base}/shop/save" class="form-horizontal" id="add-form" enctype="multipart/form-data" method="post">
+		<div class="tab-content">
+		    <div class="tab-pane" id="tab1">
+				<input class="form-control" type="hidden" name="id" value="${(shop.ID)!}" />
+				<div class="form-group form-group-md" id="hostId">
+				    <label class="col-sm-3 control-label" for="formGroupInputLarge">
+				    	商家类型<span style="color:red">(必填)</span>
+				    </label>
+				    <div class="col-sm-6">
+				    	<select class="form-control" name="shopTypeId">
+				    		<#list shopTypes as st>
+								<option value="${st.ID}">${st.NAME}</option>
+							</#list>
+				    	</select>
+				    </div>
+			  </div>
+				<div class="form-group form-group-md">
+				    <label class="col-sm-3 control-label" for="formGroupInputLarge">
+				    	商家名称<span style="color:red">(必填)</span>
+				    </label>
+				    <div class="col-sm-6">
+						<input class="form-control" type="text" name="name" id="shopName" value="${(shop.NAME)!}">
+				    </div>
+				</div>
+				<div class="form-group form-group-md">
+					<label class="col-lg-3 control-label" for="formGroupInputLarge">
+					商家LOGO<span style="color:red">(必填)</span>
+					</label>
+					<div class="col-lg-6 col-md-12">
+						<input type="file" name="img" id="imgInput" />
+						<input type="hidden" name="crop" id="crop">
+						<input type="hidden" name="defaultImg" value="${(shop.IMG)!}"/>
+				   </div>
+				</div>
+				<div class="form-group form-group-md">
+					<label class="col-lg-3 control-label" for="formGroupInputLarge">
+					商家自述
+					</label>
+					<div class="col-lg-8 col-md-12">
+						<textarea name="description" class="form-control" rows="" cols="" style="height:100px">${(shop.DESCRIPTION)!}</textarea>
+				   </div>
+				</div>
+				<div class="form-group form-group-md">
+					<label class="col-lg-3 col-md-3 control-label" for="formGroupInputLarge">
+					商家地址<span style="color:red">(必填)</span>
+					</label>
+					<div class="col-lg-6 col-md-6">
+						<input type="text" name="address" id="address" class="form-control">
+				   </div>
+				   <div class="col-lg-3 col-md-3 no-padding">
+				   		<button class="btn btn-info" type="button" id="chooseAddress">选择地址</button>
+						<input name="latitude" id="latitude" type="hidden">
+						<input name="longitude" id="longitude" type="hidden">
+				   </div>
+				</div>
+			</div>
+			<div class="tab-pane" id="tab2">
+				<div class="form-group form-group-md" id="hostId">
+				    <label class="col-sm-3 control-label" for="formGroupInputLarge">
+				    	账号<span style="color:red">(必填)</span>
+				    </label>
+				    <div class="col-sm-6">
+				    	<input class="form-control" type="text" name="username" id="username" value="${(shop.USERNAME)!}" autoComplete="new-password">
+				    </div>
+			  </div>
+			  <div class="form-group form-group-md" id="hostId">
+				    <label class="col-sm-3 control-label" for="formGroupInputLarge">
+				    	密码<span style="color:red">(必填)</span><br><span style="font-size: 8px">默认与账号相同</span>
+				    </label>
+				    <div class="col-sm-6">
+				    	<input class="form-control" type="password" name="password" id="password" value="" autoComplete="new-password">
+				    </div>
+			  </div>
+			</div>
+			<div class="tab-pane" id="tab3">
+				1
+			</div>
+			<ul class="pager wizard">
+				<li class="previous"><a href="#">上一步</a></li>
+				<li id="submitLi" style="display: none"><button class="btn btn-primary" id="submitBtn">完成</button></li>
+			  	<li class="next"><a href="#">下一步</a></li>
+			</ul>
+		</div>
+	</form>
+</div>
 <script>
 $(function(){
     $("[title]").tooltip();
+    $('.form_datetime').datetimepicker({
+        language:  'zh-CN',
+        format:'yyyy-mm-dd hh:ii:ss',
+        weekStart: 1,
+        todayBtn:  1,
+		autoclose: 1,
+		todayHighlight: 1,
+		startView: 2,
+		forceParse: 1
+    });
 	Kit.form({btnId:"#submitBtn",formId:"#add-form",
 		validate:{
-			name: {validators: {notEmpty: {}}},
-			//icon: {validators: {notEmpty: {}}},
-			deleted: {validators: {notEmpty: {}}}
+			
 		},
 	    successFunc:function(msg,data){
 	    	$(".reload ").click();
@@ -97,5 +159,10 @@ $(function(){
 		})
 	});
 	$("#chooseAddress").getLocation();
+	$("#rootwizard").stepwizard();
+	$("#shopName").on("change",function(){
+		$("#username").val(pinyinUtil.getFirstLetter($("#shopName").val()));
+		$("#password").val(pinyinUtil.getFirstLetter($("#shopName").val()));
+	})
 })
 </script>

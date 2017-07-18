@@ -306,7 +306,10 @@ $.fn.getLocation = function(option){
 		    	id:'submitLocalBtn',
 		    	cssClass: 'btn btn-info',
 		        label: '确定',
-		        icon: 'fa fa-ok'
+		        icon: 'fa fa-ok',  
+		        action: function(dialogRef){    
+		        	dialogRef.close();
+		        }
 		    },{
 		        label: '取消',
 		        cssClass: 'btn btn-link', 
@@ -316,6 +319,40 @@ $.fn.getLocation = function(option){
 		    }]
 		})
 	})
+}
+$.fn.stepwizard = function(){
+	$(this).bootstrapWizard({
+		firstSelector: $(this).selector+' li.first',
+		onTabClick: function(tab, navigation, currentIndex, clickedIndex) {
+			var vaild = check(tab, navigation, currentIndex+1);
+			if(!vaild){return false;}
+		},
+		onNext: function(tab, navigation, index){
+			var vaild = check(tab, navigation, index);
+			if(!vaild){return false;}
+		},
+		onPrevious: function(tab, navigation, index){
+			var vaild = check(tab, navigation, index+2);
+			if(!vaild){return false;}
+		}
+	});
+	function check(tab, navigation, index){
+		showSubmit();
+		var invaid = $("#tab"+index).find("[data-bv-result='INVALID']");
+		if(invaid.length==0){return true;}
+		return false;
+	}
+	function showSubmit(){
+		var bootstrapValidator = $("#add-form").data('bootstrapValidator');
+		bootstrapValidator.validate();
+		if(bootstrapValidator.isValid()){
+			$("#submitLi").show();
+			$("#submitBtn").removeAttr("disabled");
+		}
+	}
+	showSubmit();//编辑的不先验证还得点下一步
+	$("#add-form").data('bootstrapValidator').resetForm();
+	$(".next").removeClass("disabled");
 }
 function getProjectName(){
     var curWwwPath=window.document.location.href;
