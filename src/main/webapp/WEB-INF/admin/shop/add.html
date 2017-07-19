@@ -127,7 +127,7 @@
 		       </div>
 		       <div class="form-group form-group-md">
 					<label class="col-sm-3 control-label" for="formGroupInputLarge">
-				    	是否自动开店<br><span style="color:red">(必填)</span>
+				    	自动开店打烊<br><span style="color:red">(必填)</span>
 				    </label>
 				    <div class="col-sm-6">
 				    	<input class="form-control" type="checkbox" name="autoOpen" checked="checked">
@@ -135,26 +135,53 @@
 		       </div>
 		       <div class="form-group form-group-md">
 				    <label class="col-sm-3 control-label" for="formGroupInputLarge">
-				    	起送价
+				    	起送价<span style="color:red">(必填)</span>
 				    </label>
 				    <div class="col-sm-3">
 				    	<div class="input-group">
-				    		<input class="form-control" type="text" name="deliveryPrice" value="">
+				    		<input class="form-control" type="text" name="deliveryPrice">
 				    		<span class="input-group-addon">元</span>
 				    	</div>
 				    </div>
 			  </div>
 			  <div class="form-group form-group-md">
 				    <label class="col-sm-3 control-label" for="formGroupInputLarge">
-				    	满减
+				    	配送费满减
 				    </label>
 				    <div class="col-sm-6">
 				    	<div class="input-group">
 				    		<span class="input-group-addon">满</span>
-				    		<input class="form-control" type="text" name="deliveryPrice" value="">
+				    		<input class="form-control" type="text" name="deliveryOffThreshold" value=""  placeholder="15">
 				    		<span class="input-group-addon">元,减</span>
-				    		<input class="form-control" type="text" name="deliveryPrice" value="">
+				    		<input class="form-control" type="text" name="deliveryOff" value=""  placeholder="5">
 				    		<span class="input-group-addon">元</span>
+				    	</div>
+				    </div>
+			  </div>
+			  <div class="form-group form-group-md">
+				    <label class="col-sm-3 control-label" for="formGroupInputLarge">
+				    	消费满减
+				    </label>
+				    <div class="col-sm-6">
+				    	<div class="input-group">
+				    		<span class="input-group-addon">满</span>
+				    		<input class="form-control" type="text" name="redutionThreshold" value="" placeholder="20">
+				    		<span class="input-group-addon">元,减</span>
+				    		<input class="form-control" type="text" name="redutionOff" value=""  placeholder="2">
+				    		<span class="input-group-addon">元</span>
+				    	</div>
+				    </div>
+			  </div>
+			  <div class="form-group form-group-md">
+				    <label class="col-sm-3 control-label" for="formGroupInputLarge">
+				    	赠品
+				    </label>
+				    <div class="col-sm-8">
+				    	<div class="input-group">
+				    		<span class="input-group-addon">满</span>
+				    		<input class="form-control" type="text" name="giftThreshold" value="" placeholder="5">
+				    		<span class="input-group-addon">元,送</span>
+				    		<input class="form-control" type="text" name="gift" value="" placeholder="一瓶可乐">
 				    	</div>
 				    </div>
 			  </div>
@@ -187,7 +214,20 @@ $(function(){
     });
 	Kit.form({btnId:"#submitBtn",formId:"#add-form",
 		validate:{
-			
+			shopTypeId: {validators: {notEmpty: {}}},
+			name: {validators: {notEmpty: {}}},
+			address: {validators: {notEmpty: {}}},
+			username: {validators: {notEmpty: {}}},
+			password: {validators: {notEmpty: {}}},
+			phone: {validators: {notEmpty: {},phone:{country:'CN'}}},
+			qq: {validators: {notEmpty: {},integer: {}}},
+			autoOpen: {validators: {notEmpty: {}}},
+			deliveryPrice: {validators: {notEmpty: {},numeric: {}}},
+			deliveryOffThreshold: {validators: {numeric: {}}},
+			deliveryOff: {validators: {numeric: {}}},
+			redutionThreshold: {validators: {numeric: {}}},
+			redutionOff: {validators: {numeric: {}}},
+			giftThreshold: {validators: {numeric: {}}}
 		},
 	    successFunc:function(msg,data){
 	    	$(".reload ").click();
