@@ -9,7 +9,7 @@
 	    	所属商家名<span style="color:red">*</span>
 	    </label>
 	    <div class="col-sm-6">
-			<input class="form-control" type="text" name="shopName" oninput='onShopNameInput(event)' id="formGroupInputLarge" value="">
+			<input class="form-control" type="text" name="shopName" oninput='onShopNameInput()' id="formGroupInputLarge" value="">
 	    </div>
 		<label id="checkShopName"></label>
 	</div>
@@ -20,9 +20,19 @@
 	    <div class="col-sm-6">
 			<input class="form-control" type="text" name="NAME"  oninput='onFoodNameInput(event)' id="formGroupInputLarge" value="">
 	    </div>
-		<label id="checkFoodName"></label>
+		<label id="checkFoodName"value=""></label>
 	</div>
-		<label></label>
+	<div class="form-group form-group-md">
+	    <label class="col-sm-3 control-label" for="formGroupInputLarge">
+	    	商品分类<span style="color:red">*</span>
+	    </label>
+		<div class="col-sm-4">
+		    <select id="formGroupInputLarge" name="TYPE" class="selectpicker show-tick form-control" data-live-search="false">
+		    </select>
+		</div>
+	    <input type="button" class="btn btn-primary" id="addTypeBtn" value="添加" onclick="addType()"/>
+
+	</div>
 	<div class="form-group form-group-md">
 		<label class="col-lg-3 control-label" for="formGroupInputLarge">
 		商品图片
@@ -62,7 +72,7 @@
 	    	描述
 	    </label>
 	    <div class="col-sm-6">
-			<input class="form-control" type="text" name="DECSRIPTION" id="formGroupInputLarge" value="">
+			<input class="form-control" type="text" name="DESCRIPTION" id="formGroupInputLarge" value="">
 	    </div>
 	</div>
 	<div class="form-group form-group-md">
@@ -85,13 +95,58 @@
 	    </div>
 	</div>
 </from>
-<script>  
-$("[title]").tooltip();
+<script>
+function addType(){
+	 var modalHeight=$(window).height() / 2 - $('#youModel .modal-dialog').height() / 2; 
+	 if($("#checkShopName").text()!='存在商家'){
+		var a= BootstrapDialog.show({
+			size: BootstrapDialog.SIZE_SMALL,
+			type:BootstrapDialog.TYPE_DANGER,
+			title:'error',
+			message:'请先输入存在的商家名'
+		});
+		return;
+	}
+	BootstrapDialog.show({
+	type:BootstrapDialog.TYPE_DEFAULT,
+	size: BootstrapDialog.SIZE_SMALL,
+	closeByBackdrop: false,
+	closable:false,
+	title: '添加商品分类',
+	draggable: true,
+    message: $('<div><input id="addTypeText" type="text" class="form-control"></div>'),
+    buttons: [{
+    	id:'addBtn',
+    	cssClass: 'btn btn-default btn-small btn-block',
+        label: '添加',
+        icon: 'fa fa-check-circle',  
+        action: function(dialogRef){
+	       	if($('#addTypeText').val()!=null&&$('#addTypeText').val()!=''){
+	       		$.getJSON("${base}/food/addFoodType?type="+$("#addTypeText").val()+"&shopName="+$("input[name='shopName']").val(),function(json){
+    	       		layer.msg(json.msg);
+	       			if(!json.error)
+	       		       	dialogRef.close();
+	       			onShopNameInput();
+	     	    });
+	       	}
+        }
+    },{
+    	id:'closeBtn',
+    	cssClass: 'btn btn-default btn-small btn-block',
+        label: '取消',
+        icon: 'fa fa-ban',  
+        action: function(dialogRef){    
+        	dialogRef.close();
+        }
+    }]
+})
+};
 Kit.form({btnId:"#submitBtn",formId:"#add-form",
 	validate:{
 		shopName: {validators: {notEmpty: {}}},
 		NAME: {validators: {notEmpty: {}}},
 		price: {validators: {notEmpty: {}}},
+		ORIGN_PRICE: {validators: {}},
 		UNIT: {validators: {notEmpty: {}}},
 		DECSRIPTION: {validators: {notEmpty: {}}},
 		USE_STOCK: {validators: {}},
@@ -99,15 +154,20 @@ Kit.form({btnId:"#submitBtn",formId:"#add-form",
 	},
     successFunc:function(msg,data){
     	$(".reload ").click();
- 	   BootstrapDialog.closeAll();
+ 	 	  BootstrapDialog.closeAll();
  	},
  	failFunc:function(msg){
  		layer.msg(msg);
  	}
 });
-function onShopNameInput(event){
-	var result =$.ajax({url:"${base}/food/checkShopName?shopName="+event.target.value,async:false});
-	$("#checkShopName").html(result.responseText);
+function onShopNameInput(){
+	$.getJSON("${base}/food/checkShopName?shopName="+$("input[name='shopName']").val(),function(json){
+    $("#checkShopName").text(json.mess);
+    $("select[name='TYPE']").empty();
+    $.each(json.type, function(i, field){
+    	 $("select[name='TYPE']").append("<option value='"+field.id+"'>"+field.name+"</option>");
+      });
+    });
 }
 function onFoodNameInput(event){
 	var result =$.ajax({url:"${base}/food/checkFoodName?foodName="+event.target.value,async:false});
@@ -122,15 +182,8 @@ $("input[name='USE_STOCK']").click(function(){
 $("#imgInput").fileupload({
 	allowedFileExtensions:['jpg','jpeg','gif','png','bmp'],
 	initialPreview: [
-	   '${(admin.AVATAR)!}'
 	],
-	initialPreviewAsData: true
-});
-$("#imgInput").fileupload({
-	allowedFileExtensions:['jpg','jpeg','gif','png','bmp'],
-	initialPreview: [
-	],
-	initialPreviewAsData: true
+	initialPreviewAsData: false
 });
 $('#imgInput').on('fileloaded', function(event, file, previewId, index, reader) {
 	dialogData = {event:event,file:file,previewId:previewId,index:index,reader:reader};
