@@ -97,13 +97,13 @@
 	    function getAddressInfo(lnglat){
 			geocoder.getAddress(lnglat, function(status, result) {
 	            if (status === 'complete' && result.info === 'OK') {
-	            	var address = result.regeocode.formattedAddress;
+	            	currentPoi = result.regeocode;
+	            	currentPoi.lat = lnglat.lat;
+		            currentPoi.lng = lnglat.lng;
+	            	var address = currentPoi.formattedAddress;
 	            	infoWindow.setPosition(lnglat);
 		            infoWindow.setContent("地址："+address);
 		            infoWindow.open(map, lnglat);
-		            currentPoi.lat = lnglat.lat;
-		            currentPoi.lng = lnglat.lng;
-		            currentPoi.address = address;
 	            }
 	        });
 		}
@@ -130,7 +130,8 @@
 	 $("#submitLocalBtn").on("click",function() {
 		 $("#latitude").val(currentPoi.lat)
 		 $("#longitude").val(currentPoi.lng)
-		 $("#address").val(currentPoi.address);
+		 $("#addressCode").val(currentPoi.addressComponent.adcode)
+		 $("#address").val(currentPoi.formattedAddress.toString());
     });
 </script>
 </body>

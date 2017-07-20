@@ -3292,3 +3292,8 @@ table.dataTable tbody td {
 .filterTable tr td:first-child{
 	padding-left:0px
 }
+.input-group-addon{
+	color: white;
+	background-color: #1abc9c;
+	border: 0px !important;
+}
