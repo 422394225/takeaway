@@ -3276,6 +3276,13 @@ table.dataTable tbody td {
 .datetimepicker.datetimepicker-dropdown-bottom-right.dropdown-menu{
 	background: white;
 }
+.bootstrap-timepicker-widget.dropdown-menu{
+	background-color: white;
+	border: 1px solid #cccccc !important;
+}
+.bootstrap-timepicker-widget table td a{
+	color: #1abc9c !important;
+}
 .errorContainer{
 	width: 50%;  
 	text-align: center;  

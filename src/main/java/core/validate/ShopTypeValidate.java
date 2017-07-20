@@ -3,11 +3,12 @@ package core.validate;
 import com.jfinal.core.Controller;
 import com.jfinal.render.JsonRender;
 import com.jfinal.upload.UploadFile;
-import com.jfinal.validate.Validator;
 
 import org.apache.commons.lang3.StringUtils;
 
-public class ShopTypeValidate extends Validator {
+import core.validate.base.ShortCircuitValidate;
+
+public class ShopTypeValidate extends ShortCircuitValidate {
 
 	@Override
 	protected void validate(Controller c) {

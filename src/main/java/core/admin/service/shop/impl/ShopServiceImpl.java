@@ -7,7 +7,8 @@ package core.admin.service.shop.impl;
 
 import core.admin.service.base.impl.DataTableServiceImpl;
 import core.admin.service.shop.ShopService;
-import core.admin.service.shop.type.ShopTypeService;
+import core.model.Order;
+import core.model.Shop;
 
 /**
  * Description:
@@ -17,5 +18,21 @@ import core.admin.service.shop.type.ShopTypeService;
  */
 
 public class ShopServiceImpl extends DataTableServiceImpl implements ShopService {
+	public boolean hasOrder(String shopId) {
+		String sql = "SELECT ID FROM t_order WHERE SHOP_ID =?";
+		Order order = Order.dao.findFirst(sql, shopId);
+		if (order == null) {
+			return false;
+		}
+		return true;
+	}
 
+	public boolean registerd(String username) {
+		String sql = "SELECT ID FROM t_shop WHERE UERNAME =?";
+		Shop shop = Shop.dao.findFirst(sql, username);
+		if (shop == null) {
+			return false;
+		}
+		return true;
+	}
 }

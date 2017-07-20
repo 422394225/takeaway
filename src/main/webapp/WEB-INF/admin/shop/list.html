@@ -90,18 +90,9 @@
 	            	}
 	            }
 	        },{
-	        	"targets": 2,
+	        	"targets": 1,
 	            "render": function(data, type, row) {
 	                return "<img src='"+data+"' style='width:50px;height:50px'/>";
-	            }
-	        },{
-	        	"targets": 3,
-	            "render": function(data, type, row) {
-	            	if(data==0){
-	            		return "<i class='fa fa-check text-success'></i>";
-	            	}else{
-	            		return "<i class='fa fa-minus'></i>";
-	            	}
 	            }
 	        }]
 		});
@@ -166,7 +157,7 @@
 		});
 		table.on('click', '.remove', function(){
 			var d = table.row($(this).parents('tr')).data();
-			layer.confirm('确认删除该条吗?', {
+			layer.confirm('确认删除店铺\"'+d["NAME"]+'\"吗?', {
 				icon:{icon: 1},
 				btn: ['确认','取消'],
 				yes: function(index, layero){

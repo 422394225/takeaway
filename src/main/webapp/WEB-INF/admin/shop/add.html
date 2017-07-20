@@ -4,13 +4,12 @@
 <script src="${base}/resources/javascripts/fileinput/js/fileinput.min.js" type="text/javascript"></script>
 <script src="${base}/resources/javascripts/fileinput/js/locales/zh.js" type="text/javascript"></script>
 <script src="${base}/resources/bootstrap/js/jquery.bootstrap.wizard.min.js" type="text/javascript"></script>
-<script src="${base}/resources/bootstrap/js/datatimepicker/bootstrap-datetimepicker.min.js" type="text/javascript"></script>
-<script src="${base}/resources/bootstrap/js/datatimepicker/locales/bootstrap-datetimepicker.zh-CN.js" type="text/javascript"></script>
+<script src="${base}/resources/bootstrap/js/datatimepicker/bootstrap-timepicker.min.js" type="text/javascript"></script>
 <script src="${base}/resources/javascripts/pinyin/pinyin_dict_firstletter.js" type="text/javascript"></script>
 <script src="${base}/resources/javascripts/pinyin/pinyinUtil.js" type="text/javascript"></script>
 <script src="${base}/resources/javascripts/icheck/icheck.min.js" type="text/javascript"></script>
 <link href="${base}/resources/javascripts/icheck/skins/all.css" rel="stylesheet" type="text/css" />
-<link href="${base}/resources/bootstrap/js/datatimepicker/bootstrap-datetimepicker.min.css" rel="stylesheet" type="text/css" />
+<link href="${base}/resources/bootstrap/js/datatimepicker/bootstrap-timepicker.min.css" rel="stylesheet" type="text/css" />
 <div id="rootwizard">
 	<div class="navbar">
 	  <div class="navbar-inner">
@@ -94,7 +93,7 @@
 				    	密码<span style="color:red">(必填)</span><br><span style="font-size: 8px">默认与账号相同</span>
 				    </label>
 				    <div class="col-sm-6">
-				    	<input class="form-control" type="password" name="password" id="password" value="" autoComplete="new-password">
+				    	<input class="form-control" type="password" name="password" id="password" value="${(shop.PASSWORD)!}" autoComplete="new-password">
 				    </div>
 			  </div>
 			  <div class="form-group form-group-md" id="hostId">
@@ -117,11 +116,11 @@
 			<div class="tab-pane" id="tab3">
 				<div class="form-group form-group-md">
 					<label class="control-label col-lg-3 col-md-3">营业时间</label>
-		            <div class="col-lg-9 col-md-9">
+		            <div class="col-lg-6 col-md-6">
 		             <div class="input-group">
-		                 <input type="text" class="input-sm form-control form_datetime" name="openTime" id="openTime" value="${(apply.HOTEL_BEGIN)!}"/>
+		                 <input type="text" class="input-sm form-control timepicker" name="openTime" id="openTime" value="${(apply.HOTEL_BEGIN)!}"/>
 		             	<span class="input-group-addon">至</span>
-		             	<input type="text" class="input-sm form-control form_datetime" name="hotelEnd" id="hotelEnd" value="${(apply.HOTEL_END)!}"/>
+		             	<input type="text" class="input-sm form-control timepicker" name="closeTime" id="hotelEnd" value="${(apply.HOTEL_END)!}"/>
 		             </div>
 		            </div>
 		       </div>
@@ -167,7 +166,7 @@
 				    		<span class="input-group-addon">满</span>
 				    		<input class="form-control" type="text" name="redutionThreshold" value="" placeholder="20">
 				    		<span class="input-group-addon">元,减</span>
-				    		<input class="form-control" type="text" name="redutionOff" value=""  placeholder="2">
+				    		<input class="form-control" type="text" name="redution" value=""  placeholder="2">
 				    		<span class="input-group-addon">元</span>
 				    	</div>
 				    </div>
@@ -202,22 +201,32 @@ $(function(){
         radioClass: 'iradio_square-blue',
         increaseArea: '20%' // optional
       });
-    $('.form_datetime').datetimepicker({
-        language:  'zh-CN',
-        format:'yyyy-mm-dd hh:ii:ss',
-        weekStart: 1,
-        todayBtn:  1,
-		autoclose: 1,
-		todayHighlight: 1,
-		startView: 2,
-		forceParse: 1
+    $('.timepicker').timepicker({
+    	autoclose: true,
+   	    minuteStep: 1,
+   	    showSeconds: true,
+   	    showMeridian: false
     });
 	Kit.form({btnId:"#submitBtn",formId:"#add-form",
 		validate:{
 			shopTypeId: {validators: {notEmpty: {}}},
 			name: {validators: {notEmpty: {}}},
 			address: {validators: {notEmpty: {}}},
-			username: {validators: {notEmpty: {}}},
+			username: {validators: {
+				notEmpty: {},
+				remote:{
+					url: '${base}/shop/validateUsername',//验证地址
+                    message: '该账号已注册！',//提示消息
+                    type: 'POST',
+                    data:function(validator) {
+                        return {
+                            username: $('[name="username"]').val(),
+                            id: $('[name="id"]').val()
+                    	}
+                    }
+				}
+			  }
+			},
 			password: {validators: {notEmpty: {}}},
 			phone: {validators: {notEmpty: {},phone:{country:'CN'}}},
 			qq: {validators: {notEmpty: {},integer: {}}},
@@ -226,7 +235,7 @@ $(function(){
 			deliveryOffThreshold: {validators: {numeric: {}}},
 			deliveryOff: {validators: {numeric: {}}},
 			redutionThreshold: {validators: {numeric: {}}},
-			redutionOff: {validators: {numeric: {}}},
+			redution: {validators: {numeric: {}}},
 			giftThreshold: {validators: {numeric: {}}}
 		},
 	    successFunc:function(msg,data){

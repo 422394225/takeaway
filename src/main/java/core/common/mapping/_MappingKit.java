@@ -13,6 +13,7 @@ import core.model.FoodHistroy;
 import core.model.FoodType;
 import core.model.Log;
 import core.model.Menu;
+import core.model.Order;
 import core.model.Role;
 import core.model.Shop;
 import core.model.ShopType;
@@ -38,5 +39,6 @@ public class _MappingKit {
 		arp.addMapping("t_food_histroy", "ID", FoodHistroy.class);
 		arp.addMapping("t_food_type", "ID", FoodType.class);
 		arp.addMapping("t_discount", "ID", Discount.class);
+		arp.addMapping("t_order", "ID", Order.class);
 	}
 }
