@@ -27,6 +27,7 @@ import core.admin.service.shop.impl.ShopServiceImpl;
 import core.common.utils.QiniuUtils;
 import core.model.Shop;
 import core.model.ShopType;
+import core.model.ShopTypeRelation;
 import core.utils.MD5Util;
 import core.validate.ShopValidate;
 import core.vo.DTParams;
@@ -72,8 +73,15 @@ public class ShopController extends BaseController {
 		if (StringUtils.isEmpty(id)) {
 			renderJson(new JSONError("该ID不存在"));
 		}
-		ShopType shopType = ShopType.dao.findById(id);
-		setAttr("shopType", shopType);
+		Shop shop = Shop.dao.findById(id);
+
+		Record shopType = Db.findFirst(Db.getSql("shopTyperRelations.getShopType"), id);
+		if (shopType != null) {
+			setAttr("shopType", shopType);
+		}
+		Map<String, String> params = new HashMap<>();
+		setAttr("shopTypes", ShopType.dao.find(Db.getSqlPara("shopType.list", params)));
+		setAttr("shop", shop);
 		render("add.html");
 	}
 
@@ -81,7 +89,10 @@ public class ShopController extends BaseController {
 	public void save() {
 		String id = getPara("id");
 
-		Shop shop = new Shop();
+		Shop shop = Shop.dao.findById(id);
+		if (shop == null) {
+			shop = new Shop();
+		}
 		shop.set("NAME", getPara("name"));
 		shop.set("DESCRIPTION", getPara("description"));
 		shop.set("ADDRESS", getPara("address"));
@@ -109,6 +120,13 @@ public class ShopController extends BaseController {
 		shop.set("GIFT_THRESHOLD", getParaToDouble("giftThreshold"));
 		shop.set("GIFT", getPara("gift"));
 		shop.set("AUDIT_STATE", 0);
+		ShopTypeRelation shopTypeRelation = ShopTypeRelation.dao.findFirst(Db.getSql("shopTyperRelations.getShopType"),
+				id);
+		if (shopTypeRelation == null) {
+			shopTypeRelation = new ShopTypeRelation();
+		}
+		Integer ads = getParaToInt("shopTypeId");
+		shopTypeRelation.set("TYPEID", getParaToInt("shopTypeId"));
 		//先设置默认图片防止没上传的
 		String defaultImg = getPara("defaultImg");
 		if (StringUtils.isNotEmpty(defaultImg)) {
@@ -129,13 +147,16 @@ public class ShopController extends BaseController {
 			e.printStackTrace();
 		}
 		if (StringUtils.isNotEmpty(id)) {
-			shop.set("ID", id);
-			shop.set("UERNAME", getPara("username"));
 			shop.update();
+			shopTypeRelation.set("SHOPID", shop.getInt("ID"));
+			shopTypeRelation.update();
 		} else {
+			shop.set("USERNAME", getPara("username"));
 			shop.save();
+			shopTypeRelation.set("SHOPID", shop.getInt("ID"));
+			shopTypeRelation.save();
 		}
-		renderJson(new JSONSuccess());
+		renderJson(new JSONSuccess("商家保存成功"));
 	}
 
 	public void disable() {
@@ -164,13 +185,15 @@ public class ShopController extends BaseController {
 		String shopId = getPara("id");
 		if (StringUtils.isNotEmpty(shopId)) {
 			if (service.hasOrder(shopId)) {
-				renderJson(new JSONError("该店铺下有关联订单不能删除！"));
+				renderJson(new JSONError("该商家下有关联订单不能删除！"));
+			} else if (service.hasFood(shopId)) {
+				renderJson(new JSONError("该商家下有关联商品不能删除！"));
 			} else {
 				Shop.dao.deleteById(shopId);
-				renderJson(new JSONSuccess("删除店铺成功！"));
+				renderJson(new JSONSuccess("删除商家成功！"));
 			}
 		} else {
-			renderJson(new JSONError("店铺ID不存在！"));
+			renderJson(new JSONError("商家ID不存在！"));
 		}
 	}
 

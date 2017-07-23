@@ -118,7 +118,7 @@
 
 #namespace("food")
 	#sql("list")
-	#set(mainAlias = "d")
+		#set(mainAlias = "d")
 		#set(aliasMap = {"SHOP_NAME":"t.`NAME`"})
 		#set(aliasMap = {"TYPE_NAME":"c.`NAME`"})
 		SELECT
@@ -141,10 +141,14 @@
 
 #namespace("shop")
 	#sql("list")
-		SELECT *
-		FROM t_shop
-		WHERE 1=1 
-		#@dbCondition(conditions)
+		#set(mainAlias = "s")
+		#set(aliasMap = {"STATE_NAME":"d.`NAME`"})
+		SELECT s.*,d.`NAME` AS STATE_NAME 
+		FROM t_shop AS s
+		LEFT JOIN t_dict_code AS d
+		ON s.STATE = d.`CODE` 
+		WHERE d.FIELD = 't_shop.STATE' 
+		#@dbCondition_alias(conditions,mainAlias,aliasMap)
 	#end
 #end
 
@@ -157,6 +161,16 @@
 		AND `DELETED` !=1
 		#end
 		#@dbCondition(conditions)
+	#end
+#end
+
+#namespace("shopTyperRelations")
+	#sql("getShopType")
+		SELECT st.`NAME` AS TYPE_NAME,st.ICON AS TYPE_ICON,st.ID AS ID
+		FROM t_shop_type_relation AS str
+		LEFT JOIN t_shop_type AS st 
+		ON str.TYPEID = st.ID
+		WHERE str.SHOPID =?
 	#end
 #end
 

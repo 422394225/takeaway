@@ -147,7 +147,7 @@
 		 $("#latitude").val(currentPoi.lat)
 		 $("#longitude").val(currentPoi.lng)
 		 $("#addressCode").val(currentPoi.adcode)
-		 $("#address").val(currentPoi.address);
+		 $("#address").changeVal(currentPoi.address,"address");
     });
 	 
 	 function setCurrentPoi(adcode,lat,lng,address){

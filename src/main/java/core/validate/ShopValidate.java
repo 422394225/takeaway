@@ -42,14 +42,15 @@ public class ShopValidate extends ShortCircuitValidate {
 		validateRequired("latitude", "msg", "请从地图上选择一个坐标,将用于定位");
 		validateRequired("longitude", "msg", "请从地图上选择一个坐标,将用于定位");
 		validateRequired("addressCode", "msg", "请从地图上选择一个坐标,将用于定位");
-		validateRequired("username", "msg", "请输入商家账号");
-		if (StringUtils.isEmpty(c.getPara("id")) && service.registerd(c.getPara("username"))) {
-			addError("msg", "该账号已注册！");
+		if (StringUtils.isEmpty(c.getPara("id"))) {
+			validateRequired("username", "msg", "请输入商家账号");
+			if (service.registerd(c.getPara("username"))) {
+				addError("msg", "该账号已注册！");
+			}
+			validateRequired("password", "msg", "请输入商家密码");
 		}
-		validateRequired("password", "msg", "请输入商家密码");
 		validateRequired("phone", "msg", "请输入手机号");
 		validatePhone("phone", "msg", "请输入正确的手机号");
-		validateRequired("autoOpen", "msg", "请选择是否自动开店打烊");
 		validateRequired("deliveryPrice", "msg", "请输入起送价");
 		validateDouble("deliveryPrice", "msg", "请输入正确的起送价(数字)");
 		if (StringUtils.isNotEmpty(c.getPara("deliveryOffThreshold"))) {

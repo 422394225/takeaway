@@ -362,3 +362,9 @@ function getProjectName(){
     var projectName=pathName.substring(0,pathName.substr(1).indexOf('/')+1);
     return projectName;
 }
+//val不能被bootstrapvalidator触发的bug
+$.fn.changeVal = function(v,f){
+	$(this).val(v);
+    $(this).parents("form:first").bootstrapValidator('updateStatus', f, 'VALID');
+    return this;
+};

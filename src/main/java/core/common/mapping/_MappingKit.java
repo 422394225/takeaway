@@ -3,7 +3,6 @@ package core.common.mapping;
 import com.jfinal.plugin.activerecord.ActiveRecordPlugin;
 
 import core.model.Admin;
-import core.model.Customer;
 import core.model.Data;
 import core.model.DictCode;
 import core.model.Discount;
@@ -28,7 +27,6 @@ public class _MappingKit {
 		arp.addMapping("t_log", "ID", Log.class);
 		arp.addMapping("t_role", "ID", Role.class);
 		arp.addMapping("t_user", "ID", User.class);
-		arp.addMapping("t_customer", "ID", Customer.class);
 		arp.addMapping("t_menu", "ID", Menu.class);
 		arp.addMapping("t_data", "ID", Data.class);
 		arp.addMapping("t_shop", "ID", Shop.class);
