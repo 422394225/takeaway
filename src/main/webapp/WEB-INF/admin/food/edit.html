@@ -3,14 +3,23 @@
 <link href="${base}/resources/javascripts/fileinput/css/fileinput.min.css" rel="stylesheet" type="text/css" />
 <script src="${base}/resources/javascripts/fileinput/js/fileinput.min.js" type="text/javascript"></script>
 <script src="${base}/resources/javascripts/fileinput/js/locales/zh.js" type="text/javascript"></script>
-<form action="${base}/food/save" class="form-horizontal" id="add-form" enctype="multipart/form-data" method="post">
+<form action="${base}/food/saveEdit" class="form-horizontal" id="add-form" enctype="multipart/form-data" method="post">
 </head>
+<div class="form-group form-group-md" style="display:none">
+	    <label class="col-sm-3 control-label" for="formGroupInputLarge">
+	    	id<span style="color:red">*</span>
+	    </label>
+	    <div class="col-sm-6">
+			<input class="form-control" type="text" name="foodId" oninput='onShopNameInput()' id="formGroupInputLarge" value="${foodId}">
+	    </div>
+		<label id="checkShopName"></label>
+	</div>
 	<div class="form-group form-group-md">
 	    <label class="col-sm-3 control-label" for="formGroupInputLarge">
 	    	所属商家名<span style="color:red">*</span>
 	    </label>
 	    <div class="col-sm-6">
-			<input class="form-control" type="text" name="shopName" oninput='onShopNameInput()' id="formGroupInputLarge" value="">
+			<input class="form-control" type="text" name="shopName" oninput='onShopNameInput()' id="formGroupInputLarge" readonly= "true" value="${shopName}">
 	    </div>
 		<label id="checkShopName"></label>
 	</div>
@@ -19,7 +28,7 @@
 	    	商品名称<span style="color:red">*</span>
 	    </label>
 	    <div class="col-sm-6">
-			<input class="form-control" type="text" name="NAME"  oninput='onFoodNameInput(event)' id="formGroupInputLarge" value="">
+			<input class="form-control" type="text" name="NAME"  oninput='onFoodNameInput(event)' id="formGroupInputLarge" value="${NAME}">
 	    </div>
 		<label id="checkFoodName"value=""></label>
 	</div>
@@ -39,7 +48,7 @@
 		商品图片
 		</label>
 		<div class="col-lg-6 col-md-12">
-			<input type="file" name="IMG" id="imgInput" />
+			<input type="file" name="IMG" id="imgInput" value="" />
 			<input type="hidden" name="crop" id="crop">
 			<input type="hidden" name="defaultImg" value=""/>
 		</div>
@@ -49,7 +58,7 @@
 	    	价格<span style="color:red">*</span>
 	    </label>
 	    <div class="col-sm-6">
-			<input class="form-control" type="text" name="price" id="formGroupInputLarge" value="">
+			<input class="form-control" type="text" name="price" id="formGroupInputLarge" value="${price}">
 	    </div>
 	</div>
 	<div class="form-group form-group-md">
@@ -57,7 +66,7 @@
 	    	原价
 	    </label>
 	    <div class="col-sm-6">
-			<input class="form-control" type="text" name="ORIGN_PRICE" id="formGroupInputLarge" value="">
+			<input class="form-control" type="text" name="ORIGN_PRICE" id="formGroupInputLarge" value="${ORIGN_PRICE}">
 	    </div>
 	</div>
 	<div class="form-group form-group-md">
@@ -65,7 +74,7 @@
 	    	单位<span style="color:red">*</span>
 	    </label>
 	    <div class="col-sm-6">
-			<input class="form-control" type="text" name="UNIT" id="formGroupInputLarge" value="">
+			<input class="form-control" type="text" name="UNIT" id="formGroupInputLarge" value="${UNIT}">
 	    </div>
 	</div>
 	<div class="form-group form-group-md">
@@ -73,7 +82,7 @@
 	    	描述
 	    </label>
 	    <div class="col-sm-6">
-			<input class="form-control" type="text" name="DESCRIPTION" id="formGroupInputLarge" value="">
+			<input class="form-control" type="text" name="DESCRIPTION" id="formGroupInputLarge" value="${DESCRIPTION}">
 	    </div>
 	</div>
 	<div class="form-group form-group-md">
@@ -91,23 +100,14 @@
 	    	库存
 	    </label>
 	    <div class="col-sm-6">
-			<input class="form-control show" type="text" name="STOCK" id="formGroupInputLarge" value="">
+			<input class="form-control show" type="text" name="STOCK" id="formGroupInputLarge" value="${STOCK}">
 			</div>
 	    </div>
 	</div>
 </from>
 <script>
 function addType(){
-	 var modalHeight=$(window).height() / 2 - $('#youModel .modal-dialog').height() / 2; 
-	 if($("#checkShopName").text()!='存在商家'){
-		var a= BootstrapDialog.show({
-			size: BootstrapDialog.SIZE_SMALL,
-			type:BootstrapDialog.TYPE_DANGER,
-			title:'error',
-			message:'请先输入存在的商家名'
-		});
-		return;
-	}
+	var modalHeight=$(window).height() / 2 - $('#youModel .modal-dialog').height() / 2;
 	BootstrapDialog.show({
 	type:BootstrapDialog.TYPE_DEFAULT,
 	size: BootstrapDialog.SIZE_SMALL,
@@ -161,34 +161,22 @@ Kit.form({btnId:"#submitBtn",formId:"#add-form",
  		layer.msg(msg);
  	}
 });
-function onShopNameInput(){
-	$.getJSON("${base}/food/checkShopName?shopName="+$("input[name='shopName']").val(),function(json){
-    $("#checkShopName").text(json.mess);
-    $("select[name='TYPE']").empty();
-    $.each(json.type, function(i, field){
-    	 $("select[name='TYPE']").append("<option value='"+field.id+"'>"+field.name+"</option>");
-      });
-    });
-}
 function onFoodNameInput(event){
 	var result =$.ajax({url:"${base}/food/checkFoodName?foodName="+event.target.value,async:false});
 	$("#checkFoodName").html(result.responseText);
 }
 $("input[name='USE_STOCK']").click(function(){
-	if($("input[name='USE_STOCK']").prop('checked')){
+	if($("input[name='USE_STOCK']").prop('checked'))
 		$('#STOCK_DIV').show();
-		$("input[name='USE_STOCK']").val("true");
-	}
-	else{
+	else
 		$('#STOCK_DIV').hide();
-		$("input[name='USE_STOCK']").val("false");
-	}
 });
 $("#imgInput").fileupload({
 	allowedFileExtensions:['jpg','jpeg','gif','png','bmp'],
 	initialPreview: [
+		"${IMG}"
 	],
-	initialPreviewAsData: false
+	initialPreviewAsData: true
 });
 $('#imgInput').on('fileloaded', function(event, file, previewId, index, reader) {
 	dialogData = {event:event,file:file,previewId:previewId,index:index,reader:reader};
@@ -209,5 +197,20 @@ $('#imgInput').on('fileloaded', function(event, file, previewId, index, reader) 
 	        }
 	    }]
 	})
+});
+$(function(){
+	var nowType="${(nowType)!}";
+	if("${(USE_STOCK)!}"==1)
+		$("input[name='USE_STOCK']").val('ture');
+	else
+		$("input[name='USE_STOCK']").val('false');
+	$.getJSON("${base}/food/checkShopName?shopName="+$("input[name='shopName']").val(),function(json){
+	    $("#checkShopName").text(json.mess);
+	    $("select[name='TYPE']").empty();
+	    $.each(json.type, function(i, field){
+	    	 $("select[name='TYPE']").append("<option value='"+field.id+"'>"+field.name+"</option>");
+	      });
+		$("select[name='TYPE']>option[value='2']").selected(true);
+	    });
 });
 </script>

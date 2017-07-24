@@ -25,6 +25,12 @@ public class FoodServiceImpl extends DataTableServiceImpl implements FoodService
 	}
 
 	@Override
+	public Shop findShopById(int id) {
+		Shop shop = Shop.dao.findFirst("select * from t_shop where ID=?", id);
+		return shop;
+	}
+
+	@Override
 	public boolean checkFoodName(String shopName) {
 		Food food = Food.dao.findFirst("select * from t_food where name=?", shopName);
 		return food != null;

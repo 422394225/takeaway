@@ -70,7 +70,7 @@
 			        }
 			    }]
 	        });
-		})
+		});
 		table.on("click",'.xiajia',function(){
 	        var data = table.row($(this).parents('tr')).data();
 			var foodId=data['ID'];
@@ -109,10 +109,33 @@
             }]
         });
 		})
+		table.on("click",'.edit',function(){
+	        var data = table.row($(this).parents('tr')).data();
+			var foodId=data['ID'];
+			BootstrapDialog.show({
+				title: '编辑商品',
+				draggable: true,
+			    message: $('<div></div>').load('${base}/food/edit?foodId='+foodId),
+			    buttons: [{
+			    	id:'submitBtn',
+			        label: '提交',
+			        cssClass: 'btn btn-primary', 
+			        action: function(dialogRef){    
+			           
+			        }
+			    },{
+			        label: '取消',
+			        cssClass: 'btn btn-link', 
+			        action: function(dialogRef){    
+			            dialogRef.close();
+			        }
+			    }]
+	        });
+		});
 	})
 </script>
 </#assign>
-<@dashboard pageTitle="商品列表" pageMeta=pageMeta pageCss=pageCss pageJavascript=pageJavascript>
+<@dashboard pageTitle="商品列表" pageMeta=pageMeta pageCss=pageCss pageJavascript=pageJavascript currentMenu="food">
 <@tool map="系统管理-商品列表">
    <div class='btn-group'>
 	<button class="add btn btn-light btn-sm radius" title="添加" data-toggle="tooltip" data-placement="bottom">

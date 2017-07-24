@@ -11,6 +11,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.core.Controller;
 import com.jfinal.log.Log;
+import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
@@ -53,6 +54,36 @@ public class FoodController extends Controller {
 		renderJson(result);
 	}
 
+	public void edit() {
+		String foodId = getPara("foodId");
+		Record record = Db.findFirst(
+				"select a.*,b.name as SHOP_NAME from t_food a left join t_shop b on a.shop_id=b.id where a.id=?",
+				foodId);
+		setAttr("foodId", record.get("ID"));
+		setAttr("shopName", record.get("SHOP_NAME"));
+		setAttr("NAME", record.get("NAME"));
+		setAttr("ORIGN_PRICE", record.get("ORIGN_PRICE"));
+		setAttr("IMG", record.get("IMG") == null ? "" : record.get("IMG"));
+		setAttr("price", record.get("PRICE"));
+		setAttr("nowType", record.get("TYPE_ID"));
+		setAttr("UNIT", record.get("UNIT"));
+		setAttr("DESCRIPTION", record.get("DESCRIPTION"));
+		setAttr("USE_STOCK", record.get("USE_STOCK"));
+		setAttr("STOCK", record.get("STOCK"));
+		// List<Record> records = Db.find("select * from t_food_type where
+		// SHOP_ID=? and deleted='0'",
+		// record.get("SHOP_ID") + "");
+		// JSONArray jsonArray = new JSONArray();
+		// for (Record record2 : records) {
+		// JSONObject jsonObject = new JSONObject();
+		// jsonObject.put("ID", record2.get("ID"));
+		// jsonObject.put("NAME", record2.get("NAME"));
+		// jsonArray.add(jsonObject);
+		// }
+		// setAttr("typeData", jsonArray.toJSONString());
+		render("edit.html");
+	}
+
 	public void histroy() {
 		setAttr("GOOD_NAME", getPara("GOOD_NAME"));
 		setAttr("SHOP_ID", getPara("SHOP_ID"));
@@ -91,18 +122,77 @@ public class FoodController extends Controller {
 			String DESCRIPTION = getPara("DESCRIPTION");
 			Boolean USE_STOCK = getParaToBoolean("USE_STOCK");
 			String STOCK = getPara("STOCK");
+			String TYPE = getPara("TYPE");
+			String ORIGN_PRICE = getPara("ORIGN_PRICE");
 			food.set("SHOP_ID", shop.get("ID"));
 			food.set("NAME", name);
 			food.set("PRICE", price);
+			food.set("TYPE_ID", TYPE);
+			food.set("ORIGN_PRICE", ORIGN_PRICE == null || ORIGN_PRICE.equals("") ? 0 : Double.valueOf(ORIGN_PRICE));
 			food.set("UNIT", UNIT);
 			food.set("DESCRIPTION", DESCRIPTION);
-			food.set("USE_STOCK", USE_STOCK);
+			USE_STOCK = USE_STOCK == null ? false : USE_STOCK;
+			food.set("USE_STOCK", USE_STOCK ? 1 : 0);
 			if (USE_STOCK != null && USE_STOCK)
 				food.set("STOCK", STOCK);
 			else
 				food.set("STOCK", 999999);
 			food.set("STATE", 1);
 			food.save();
+			renderJson(new JSONSuccess("添加成功"));
+		} catch (Exception e) {
+			e.printStackTrace();
+			renderJson(new JSONError("1"));
+
+		}
+	}
+
+	public void saveEdit() {
+		try {
+			Food food = new Food();
+			try {
+				UploadFile file = getFile("IMG");
+				if (file != null) {
+					String localFilePath = file.getUploadPath() + File.separator + file.getFileName();
+					String path = QiniuUtils.upload(localFilePath);
+					String crop = getPara("crop");// 截图参数
+					food.set("IMG", path + (StringUtils.isNotEmpty(crop) ? crop : ""));
+				}
+			} catch (Exception e) {
+				renderJson(new JSONError("图片错误"));
+				return;
+			}
+			String shopName = getPara("shopName");
+			Shop shop = foodService.findByShopName(shopName);
+			if (shop == null) {
+				renderJson(new JSONError("店铺不存在"));
+				return;
+			}
+			String foodId = getPara("foodId");
+			String name = getPara("NAME");
+			String price = getPara("price");
+			String UNIT = getPara("UNIT");
+			String DESCRIPTION = getPara("DESCRIPTION");
+			Boolean USE_STOCK = getParaToBoolean("USE_STOCK");
+			String STOCK = getPara("STOCK");
+			String TYPE = getPara("TYPE");
+			String ORIGN_PRICE = getPara("ORIGN_PRICE");
+			food.set("ID", foodId);
+			food.set("SHOP_ID", shop.get("ID"));
+			food.set("NAME", name);
+			food.set("PRICE", price);
+			food.set("TYPE_ID", TYPE);
+			food.set("ORIGN_PRICE", ORIGN_PRICE == null || ORIGN_PRICE.equals("") ? 0 : Double.valueOf(ORIGN_PRICE));
+			food.set("UNIT", UNIT);
+			food.set("DESCRIPTION", DESCRIPTION);
+			USE_STOCK = USE_STOCK == null ? false : USE_STOCK;
+			food.set("USE_STOCK", USE_STOCK ? 1 : 0);
+			if (USE_STOCK != null && USE_STOCK)
+				food.set("STOCK", STOCK);
+			else
+				food.set("STOCK", 999999);
+			food.set("STATE", 1);
+			food.update();
 			renderJson(new JSONSuccess("添加成功"));
 		} catch (Exception e) {
 			e.printStackTrace();
