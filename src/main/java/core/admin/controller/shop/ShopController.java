@@ -7,6 +7,7 @@ package core.admin.controller.shop;
 
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Before;
+import com.jfinal.aop.Clear;
 import com.jfinal.kit.PropKit;
 import com.jfinal.log.Log;
 import com.jfinal.plugin.activerecord.Db;
@@ -24,11 +25,15 @@ import org.apache.commons.lang3.StringUtils;
 import core.admin.controller.base.BaseController;
 import core.admin.service.shop.ShopService;
 import core.admin.service.shop.impl.ShopServiceImpl;
+import core.admin.service.shop.relation.ShopTypeRelationService;
+import core.admin.service.shop.relation.impl.ShopTypeRelationServiceImpl;
 import core.common.utils.QiniuUtils;
+import core.interceptor.PowerInterceptor;
 import core.model.Shop;
 import core.model.ShopType;
 import core.model.ShopTypeRelation;
 import core.utils.MD5Util;
+import core.validate.ModPassValidate;
 import core.validate.ShopValidate;
 import core.vo.DTParams;
 import core.vo.JSONError;
@@ -44,6 +49,15 @@ import core.vo.JSONSuccess;
 public class ShopController extends BaseController {
 	private final Log log = Log.getLog(ShopController.class);
 	private ShopService service = new ShopServiceImpl();
+	private ShopTypeRelationService strService = new ShopTypeRelationServiceImpl();
+
+	@Override
+	public void index() {
+		Map<String, String> params = new HashMap<>();
+		params.put("not_deleted", "1");
+		setAttr("shopTypes", ShopType.dao.find(Db.getSqlPara("shopType.list", params)));
+		render("list.html");
+	}
 
 	public void getData() {
 		getData(null);
@@ -75,10 +89,8 @@ public class ShopController extends BaseController {
 		}
 		Shop shop = Shop.dao.findById(id);
 
-		Record shopType = Db.findFirst(Db.getSql("shopTyperRelations.getShopType"), id);
-		if (shopType != null) {
-			setAttr("shopType", shopType);
-		}
+		List<Record> shopTypes = Db.find(Db.getSql("shopTyperRelations.getShopType"), id);
+		setAttr("types", shopTypes);
 		Map<String, String> params = new HashMap<>();
 		setAttr("shopTypes", ShopType.dao.find(Db.getSqlPara("shopType.list", params)));
 		setAttr("shop", shop);
@@ -120,13 +132,6 @@ public class ShopController extends BaseController {
 		shop.set("GIFT_THRESHOLD", getParaToDouble("giftThreshold"));
 		shop.set("GIFT", getPara("gift"));
 		shop.set("AUDIT_STATE", 0);
-		ShopTypeRelation shopTypeRelation = ShopTypeRelation.dao.findFirst(Db.getSql("shopTyperRelations.getShopType"),
-				id);
-		if (shopTypeRelation == null) {
-			shopTypeRelation = new ShopTypeRelation();
-		}
-		Integer ads = getParaToInt("shopTypeId");
-		shopTypeRelation.set("TYPEID", getParaToInt("shopTypeId"));
 		//先设置默认图片防止没上传的
 		String defaultImg = getPara("defaultImg");
 		if (StringUtils.isNotEmpty(defaultImg)) {
@@ -148,37 +153,21 @@ public class ShopController extends BaseController {
 		}
 		if (StringUtils.isNotEmpty(id)) {
 			shop.update();
-			shopTypeRelation.set("SHOPID", shop.getInt("ID"));
-			shopTypeRelation.update();
+			strService.deleteAll(id);
 		} else {
 			shop.set("USERNAME", getPara("username"));
 			shop.save();
-			shopTypeRelation.set("SHOPID", shop.getInt("ID"));
-			shopTypeRelation.save();
 		}
-		renderJson(new JSONSuccess("商家保存成功"));
-	}
-
-	public void disable() {
-		String id = getPara("id");
-		if (StringUtils.isEmpty(id)) {
-			renderJson(new JSONError("该ID不存在"));
+		Integer[] shopTypeId = getParaValuesToInt("shopTypeId");
+		if (shopTypeId != null) {
+			for (Integer typeId : shopTypeId) {
+				ShopTypeRelation shopTypeRelation = new ShopTypeRelation();
+				shopTypeRelation.set("TYPEID", typeId);
+				shopTypeRelation.set("SHOPID", shop.getInt("ID"));
+				shopTypeRelation.save();
+			}
 		}
-		ShopType shopType = ShopType.dao.findById(id);
-		shopType.set("DELETED", 1);
-		shopType.update();
-		renderJson(new JSONSuccess("停用成功"));
-	}
-
-	public void enable() {
-		String id = getPara("id");
-		if (StringUtils.isEmpty(id)) {
-			renderJson(new JSONError("该ID不存在"));
-		}
-		ShopType shopType = ShopType.dao.findById(id);
-		shopType.set("DELETED", 0);
-		shopType.update();
-		renderJson(new JSONSuccess("恢复成功"));
+		renderJson(new JSONSuccess());
 	}
 
 	public void remove() {
@@ -206,5 +195,18 @@ public class ShopController extends BaseController {
 		}
 		result.put("valid", valid);
 		renderJson(result);
+	}
+
+	//修改密码
+	@Clear(PowerInterceptor.class)
+	@Before({ ModPassValidate.class })
+	public void modPass() {
+		String newPass = getPara("confirm");
+		Shop shop = getSessionAttr("shop");
+		shop.set("PASSWORD", MD5Util.encrypt(newPass + PropKit.get("encrypt_key")));
+		shop.update();
+		removeSessionAttr("shop");
+		removeCookie("shop");
+		renderJson(new JSONSuccess());
 	}
 }

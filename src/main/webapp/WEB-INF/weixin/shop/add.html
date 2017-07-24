@@ -1,0 +1,123 @@
+<#include "../base/main/_main.html"/>
+<#assign wxMeta>
+</#assign>
+<#assign wxCss>
+<style>
+.bar .bar-nav{
+	background-color: #65d1ff !important;
+}
+.list-block{
+	margin-top: 0px
+}
+</style>
+</#assign>
+<#assign wxJavascript>
+<script>
+$(function(){
+	
+});
+</script>
+</#assign>
+<@mainLayout wxTitle="加入那里"  wxMeta=wxMeta wxCss=wxCss wxJavascript=wxJavascript>
+<header class="bar bar-nav">
+  <h1 class='title'>店铺申请表</h1>
+</header>
+<div class="content">
+  <div class="list-block">
+    <ul>
+      <!-- Text inputs -->
+      <li>
+        <div class="item-content">
+          <div class="item-media"><i class="fa fa-user"></i></div>
+          <div class="item-inner">
+            <div class="item-title label">店铺名称</div>
+            <div class="item-input">
+              <input type="text" placeholder="Your name">
+            </div>
+          </div>
+        </div>
+      </li>
+      <li>
+        <div class="item-content">
+          <div class="item-media"><i class="icon icon-form-email"></i></div>
+          <div class="item-inner">
+            <div class="item-title label">Email</div>
+            <div class="item-input">
+              <input type="email" placeholder="E-mail">
+            </div>
+          </div>
+        </div>
+      </li>
+      <li>
+        <div class="item-content">
+          <div class="item-media"><i class="icon icon-form-password"></i></div>
+          <div class="item-inner">
+            <div class="item-title label">Password</div>
+            <div class="item-input">
+              <input type="password" placeholder="Password" class="">
+            </div>
+          </div>
+        </div>
+      </li>
+      <li>
+        <div class="item-content">
+          <div class="item-media"><i class="icon icon-form-gender"></i></div>
+          <div class="item-inner">
+            <div class="item-title label">Gender</div>
+            <div class="item-input">
+              <select>
+                <option>Male</option>
+                <option>Female</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </li>
+      <!-- Date -->
+      <li>
+        <div class="item-content">
+          <div class="item-media"><i class="icon icon-form-calendar"></i></div>
+          <div class="item-inner">
+            <div class="item-title label">Birthday</div>
+            <div class="item-input">
+              <input type="date" placeholder="Birth day" value="2014-04-30">
+            </div>
+          </div>
+        </div>
+      </li>
+      <!-- Switch (Checkbox) -->
+      <li>
+        <div class="item-content">
+          <div class="item-media"><i class="icon icon-form-toggle"></i></div>
+          <div class="item-inner">
+            <div class="item-title label">Switch</div>
+            <div class="item-input">
+              <label class="label-switch">
+                <input type="checkbox">
+                <div class="checkbox"></div>
+              </label>
+            </div>
+          </div>
+        </div>
+      </li>
+      <li class="align-top">
+        <div class="item-content">
+          <div class="item-media"><i class="icon icon-form-comment"></i></div>
+          <div class="item-inner">
+            <div class="item-title label">Textarea</div>
+            <div class="item-input">
+              <textarea></textarea>
+            </div>
+          </div>
+        </div>
+      </li>
+    </ul>
+  </div>
+  <div class="content-block">
+    <div class="row">
+      <div class="col-50"><a href="#" class="button button-big button-fill button-danger">Cancel</a></div>
+      <div class="col-50"><a href="#" class="button button-big button-fill button-success">Submit</a></div>
+    </div>
+  </div>
+</div>
+</@mainLayout>

@@ -172,6 +172,9 @@
 		ON str.TYPEID = st.ID
 		WHERE str.SHOPID =?
 	#end
+	#sql("getRelation")
+		SELECT * FROM t_shop_type_relation WHERE TYPEID=? AND SHOPID=?
+	#end
 #end
 
 #namespace("feedback")

@@ -28,14 +28,21 @@
 				<input class="form-control" type="hidden" name="id" value="${(shop.ID)!}" />
 				<div class="form-group form-group-md" id="hostId">
 				    <label class="col-sm-3 control-label" for="formGroupInputLarge">
-				    	商家类型<span style="color:red">(必填)</span>
+				    	商家类型<span style="color:red">(必填)</span><br><span style="font-size: 8px">按住Ctrl或Shift多选</span>
 				    </label>
 				    <div class="col-sm-6">
-				    	<select class="form-control" name="shopTypeId">
+				    	<select class="form-control" name="shopTypeId" multiple="multiple">
 				    		<#list shopTypes as st>
-				    			<#if shopType?? && shopType.ID == st.ID>
-									<option value="${st.ID}" selected="selected">${st.NAME}</option>
-								<#else>
+				    			<#assign eqType = false>
+			    				<#if types??>
+					    			<#list types as t>
+						    			<#if t?? && t.ID == st.ID && !eqType>
+											<option value="${st.ID}" selected="selected">${st.NAME}</option>
+											<#assign eqType = true>
+										</#if>
+									</#list>
+								</#if>
+								<#if !eqType>
 									<option value="${st.ID}">${st.NAME}</option>
 								</#if>
 							</#list>

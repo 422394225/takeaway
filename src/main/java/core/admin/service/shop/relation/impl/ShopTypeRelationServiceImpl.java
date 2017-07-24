@@ -5,6 +5,8 @@
 
 package core.admin.service.shop.relation.impl;
 
+import com.jfinal.plugin.activerecord.Db;
+
 import core.admin.service.base.impl.DataTableServiceImpl;
 import core.admin.service.shop.relation.ShopTypeRelationService;
 
@@ -16,5 +18,8 @@ import core.admin.service.shop.relation.ShopTypeRelationService;
  */
 
 public class ShopTypeRelationServiceImpl extends DataTableServiceImpl implements ShopTypeRelationService {
-
+	public void deleteAll(String shopId) {
+		String sql = "DELETE FROM t_shop_type_relation WHERE SHOPID=?";
+		Db.update(sql, shopId);
+	}
 }

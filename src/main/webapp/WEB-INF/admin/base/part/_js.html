@@ -18,6 +18,10 @@
 		});
 		//tooltip提示
         setTimeout("$('[title]').tooltip()",500);
+        $("#add-form").on("submit",function(e){
+            e.preventDefault();
+            alert("Submit prevented");
+          });
 	})
 </script>
 ${pageJavascript?if_exists}
