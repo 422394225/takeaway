@@ -7,6 +7,8 @@ package core.admin.controller.base;
 
 import com.jfinal.core.Controller;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * Description:
  * 
@@ -17,6 +19,14 @@ import com.jfinal.core.Controller;
 public class BaseController extends Controller {
 	public void index() {
 		render("list.html");
+	}
+
+	public Double getParaToDouble(String name) {
+		String value = getPara(name);
+		if (StringUtils.isEmpty(value)) {
+			value = "0";
+		}
+		return Double.parseDouble(value);
 	}
 
 }

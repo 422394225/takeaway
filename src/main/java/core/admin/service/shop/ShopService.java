@@ -15,5 +15,9 @@ import core.admin.service.base.DataTableService;
  */
 
 public interface ShopService extends DataTableService {
+	boolean hasOrder(String shopId);
 
+	boolean registerd(String username);
+
+	boolean hasFood(String shopId);
 }

@@ -4,13 +4,12 @@
 <script src="${base}/resources/javascripts/fileinput/js/fileinput.min.js" type="text/javascript"></script>
 <script src="${base}/resources/javascripts/fileinput/js/locales/zh.js" type="text/javascript"></script>
 <script src="${base}/resources/bootstrap/js/jquery.bootstrap.wizard.min.js" type="text/javascript"></script>
-<script src="${base}/resources/bootstrap/js/datatimepicker/bootstrap-datetimepicker.min.js" type="text/javascript"></script>
-<script src="${base}/resources/bootstrap/js/datatimepicker/locales/bootstrap-datetimepicker.zh-CN.js" type="text/javascript"></script>
+<script src="${base}/resources/bootstrap/js/datatimepicker/bootstrap-timepicker.min.js" type="text/javascript"></script>
 <script src="${base}/resources/javascripts/pinyin/pinyin_dict_firstletter.js" type="text/javascript"></script>
 <script src="${base}/resources/javascripts/pinyin/pinyinUtil.js" type="text/javascript"></script>
 <script src="${base}/resources/javascripts/icheck/icheck.min.js" type="text/javascript"></script>
 <link href="${base}/resources/javascripts/icheck/skins/all.css" rel="stylesheet" type="text/css" />
-<link href="${base}/resources/bootstrap/js/datatimepicker/bootstrap-datetimepicker.min.css" rel="stylesheet" type="text/css" />
+<link href="${base}/resources/bootstrap/js/datatimepicker/bootstrap-timepicker.min.css" rel="stylesheet" type="text/css" />
 <div id="rootwizard">
 	<div class="navbar">
 	  <div class="navbar-inner">
@@ -34,7 +33,11 @@
 				    <div class="col-sm-6">
 				    	<select class="form-control" name="shopTypeId">
 				    		<#list shopTypes as st>
-								<option value="${st.ID}">${st.NAME}</option>
+				    			<#if shopType?? && shopType.ID == st.ID>
+									<option value="${st.ID}" selected="selected">${st.NAME}</option>
+								<#else>
+									<option value="${st.ID}">${st.NAME}</option>
+								</#if>
 							</#list>
 				    	</select>
 				    </div>
@@ -70,18 +73,19 @@
 					商家地址<span style="color:red">(必填)</span>
 					</label>
 					<div class="col-lg-6 col-md-6">
-						<input type="text" name="address" id="address" class="form-control">
+						<input type="text" name="address" id="address" class="form-control" value="${(shop.ADDRESS)!}"/>
 				   </div>
 				   <div class="col-lg-3 col-md-3 no-padding">
 				   		<button class="btn btn-info" type="button" id="chooseAddress">选择地址</button>
-						<input name="latitude" id="latitude" type="hidden">
-						<input name="longitude" id="longitude" type="hidden">
-						<input name="addressCode" id="addressCode" type="hidden">
+						<input name="latitude" id="latitude" type="hidden" value="${(shop.LATIDUTE)!}">
+						<input name="longitude" id="longitude" type="hidden" value="${(shop.LONGITUDE)!}">
+						<input name="addressCode" id="addressCode" type="hidden" value="${(shop.PTCODE)!}">
 				   </div>
 				</div>
 			</div>
 			<div class="tab-pane" id="tab2">
-				<div class="form-group form-group-md" id="hostId">
+			<#if !(shop.USERNAME)??>
+				<div class="form-group form-group-md">
 				    <label class="col-sm-3 control-label" for="formGroupInputLarge">
 				    	账号<span style="color:red">(必填)</span>
 				    </label>
@@ -94,15 +98,16 @@
 				    	密码<span style="color:red">(必填)</span><br><span style="font-size: 8px">默认与账号相同</span>
 				    </label>
 				    <div class="col-sm-6">
-				    	<input class="form-control" type="password" name="password" id="password" value="" autoComplete="new-password">
+				    	<input class="form-control" type="password" name="password" id="password" value="${(shop.PASSWORD)!}" autoComplete="new-password">
 				    </div>
 			  </div>
+			  </#if>
 			  <div class="form-group form-group-md" id="hostId">
 				    <label class="col-sm-3 control-label" for="formGroupInputLarge">
 				    	手机号<span style="color:red">(必填)</span>
 				    </label>
 				    <div class="col-sm-6">
-				    	<input class="form-control" type="text" name="phone" value="">
+				    	<input class="form-control" type="text" name="phone" value="${(shop.TEL)!}">
 				    </div>
 			  </div>
 			  <div class="form-group form-group-md">
@@ -110,18 +115,18 @@
 				    	QQ
 				    </label>
 				    <div class="col-sm-6">
-				    	<input class="form-control" type="text" name="qq" value="">
+				    	<input class="form-control" type="text" name="qq" value="${(shop.QQ)!}">
 				    </div>
 			  </div>
 			</div>
 			<div class="tab-pane" id="tab3">
 				<div class="form-group form-group-md">
 					<label class="control-label col-lg-3 col-md-3">营业时间</label>
-		            <div class="col-lg-9 col-md-9">
+		            <div class="col-lg-6 col-md-6">
 		             <div class="input-group">
-		                 <input type="text" class="input-sm form-control form_datetime" name="openTime" id="openTime" value="${(apply.HOTEL_BEGIN)!}"/>
+		                 <input type="text" class="input-sm form-control timepicker" name="openTime" id="openTime" value="${(shop.OPEN_TIME)!}"/>
 		             	<span class="input-group-addon">至</span>
-		             	<input type="text" class="input-sm form-control form_datetime" name="hotelEnd" id="hotelEnd" value="${(apply.HOTEL_END)!}"/>
+		             	<input type="text" class="input-sm form-control timepicker" name="closeTime" id="hotelEnd" value="${(shop.CLOSE_TIME)!}"/>
 		             </div>
 		            </div>
 		       </div>
@@ -130,7 +135,7 @@
 				    	自动开店打烊<br><span style="color:red">(必填)</span>
 				    </label>
 				    <div class="col-sm-6">
-				    	<input class="form-control" type="checkbox" name="autoOpen" checked="checked">
+				    	<input class="form-control" type="checkbox" name="autoOpen" ${(shop??&&shop.AUTO_OPEN)?string('checked="checked"','')} >
 				    </div>
 		       </div>
 		       <div class="form-group form-group-md">
@@ -139,7 +144,7 @@
 				    </label>
 				    <div class="col-sm-3">
 				    	<div class="input-group">
-				    		<input class="form-control" type="text" name="deliveryPrice">
+				    		<input class="form-control" type="text" name="deliveryPrice" value="${(shop.DELIVERY_PRICE)!}">
 				    		<span class="input-group-addon">元</span>
 				    	</div>
 				    </div>
@@ -151,9 +156,9 @@
 				    <div class="col-sm-6">
 				    	<div class="input-group">
 				    		<span class="input-group-addon">满</span>
-				    		<input class="form-control" type="text" name="deliveryOffThreshold" value=""  placeholder="15">
+				    		<input class="form-control" type="text" name="deliveryOffThreshold"  value="${(shop.DELIVERY_OFF_THRESHOLD)!}"  placeholder="15">
 				    		<span class="input-group-addon">元,减</span>
-				    		<input class="form-control" type="text" name="deliveryOff" value=""  placeholder="5">
+				    		<input class="form-control" type="text" name="deliveryOff"  value="${(shop.DELIVERY_OFF)!}"  placeholder="5">
 				    		<span class="input-group-addon">元</span>
 				    	</div>
 				    </div>
@@ -165,9 +170,9 @@
 				    <div class="col-sm-6">
 				    	<div class="input-group">
 				    		<span class="input-group-addon">满</span>
-				    		<input class="form-control" type="text" name="redutionThreshold" value="" placeholder="20">
+				    		<input class="form-control" type="text" name="redutionThreshold"  value="${(shop.REDUCTION_THRESHOLD)!}" placeholder="20">
 				    		<span class="input-group-addon">元,减</span>
-				    		<input class="form-control" type="text" name="redutionOff" value=""  placeholder="2">
+				    		<input class="form-control" type="text" name="redution"  value="${(shop.REDUCTION)!}"  placeholder="2">
 				    		<span class="input-group-addon">元</span>
 				    	</div>
 				    </div>
@@ -179,9 +184,9 @@
 				    <div class="col-sm-8">
 				    	<div class="input-group">
 				    		<span class="input-group-addon">满</span>
-				    		<input class="form-control" type="text" name="giftThreshold" value="" placeholder="5">
+				    		<input class="form-control" type="text" name="giftThreshold"  value="${(shop.GIFT_THRESHOLD)!}" placeholder="5">
 				    		<span class="input-group-addon">元,送</span>
-				    		<input class="form-control" type="text" name="gift" value="" placeholder="一瓶可乐">
+				    		<input class="form-control" type="text" name="gift"  value="${(shop.GIFT)!}" placeholder="一瓶可乐">
 				    	</div>
 				    </div>
 			  </div>
@@ -202,31 +207,40 @@ $(function(){
         radioClass: 'iradio_square-blue',
         increaseArea: '20%' // optional
       });
-    $('.form_datetime').datetimepicker({
-        language:  'zh-CN',
-        format:'yyyy-mm-dd hh:ii:ss',
-        weekStart: 1,
-        todayBtn:  1,
-		autoclose: 1,
-		todayHighlight: 1,
-		startView: 2,
-		forceParse: 1
+    $('.timepicker').timepicker({
+    	autoclose: true,
+   	    minuteStep: 1,
+   	    showSeconds: true,
+   	    showMeridian: false
     });
 	Kit.form({btnId:"#submitBtn",formId:"#add-form",
 		validate:{
 			shopTypeId: {validators: {notEmpty: {}}},
 			name: {validators: {notEmpty: {}}},
 			address: {validators: {notEmpty: {}}},
-			username: {validators: {notEmpty: {}}},
+			username: {validators: {
+				notEmpty: {},
+				remote:{
+					url: '${base}/shop/validateUsername',//验证地址
+                    message: '该账号已注册！',//提示消息
+                    type: 'POST',
+                    data:function(validator) {
+                        return {
+                            username: $('[name="username"]').val(),
+                            id: $('[name="id"]').val()
+                    	}
+                    }
+				}
+			  }
+			},
 			password: {validators: {notEmpty: {}}},
 			phone: {validators: {notEmpty: {},phone:{country:'CN'}}},
 			qq: {validators: {notEmpty: {},integer: {}}},
-			autoOpen: {validators: {notEmpty: {}}},
 			deliveryPrice: {validators: {notEmpty: {},numeric: {}}},
 			deliveryOffThreshold: {validators: {numeric: {}}},
 			deliveryOff: {validators: {numeric: {}}},
 			redutionThreshold: {validators: {numeric: {}}},
-			redutionOff: {validators: {numeric: {}}},
+			redution: {validators: {numeric: {}}},
 			giftThreshold: {validators: {numeric: {}}}
 		},
 	    successFunc:function(msg,data){
@@ -240,7 +254,7 @@ $(function(){
 	$("#imgInput").fileupload({
 		allowedFileExtensions:['jpg','jpeg','gif','png','bmp'],
 		initialPreview: [
-		   '${(shopType.ICON)!}'
+		   '${(shop.IMG)!}'
 		],
 		initialPreviewAsData: true
 	});
@@ -267,8 +281,8 @@ $(function(){
 	$("#chooseAddress").getLocation();
 	$("#rootwizard").stepwizard();
 	$("#shopName").on("change",function(){
-		$("#username").val(pinyinUtil.getFirstLetter($("#shopName").val()));
-		$("#password").val(pinyinUtil.getFirstLetter($("#shopName").val()));
+		$("#username").changeVal(pinyinUtil.getFirstLetter($("#shopName").val()),"username");
+		$("#password").changeVal(pinyinUtil.getFirstLetter($("#shopName").val()),"password");
 	})
 })
 </script>

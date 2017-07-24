@@ -28,11 +28,17 @@
 	var currentPoi = {};
 	function mapInit(){
 		initAMapUI();//异步组件调用
-		map = new AMap.Map("container", {
+		var latitude = $("#latitude").val();
+		var longitude = $("#longitude").val();
+		var option = {
 	        resizeEnable: true,
 	        zoom: 13
-	    });//初始化地图
-	 
+		}
+	 	if(latitude!=""&&longitude!=""){
+			$.extend(option,{center:[parseFloat(longitude),parseFloat(latitude)]});
+		}
+		map = new AMap.Map("container", option);//初始化地图
+		
 		//基础控件
 		map.plugin(['AMap.Scale','AMap.CitySearch',"AMap.ToolBar"], function() {
             map.addControl(new AMap.Scale());
@@ -60,6 +66,7 @@
     		animation:"AMAP_ANIMATION_DROP",
     		map: map
 		});
+	    
 	    //初始化信息窗体
 	    var infoWindow = new AMap.InfoWindow({
             offset: new AMap.Pixel(0, -20)
@@ -73,6 +80,7 @@
 	    map.on('click', function(e) {
 	    	infoWindow.close();
 	    	marker.setPosition(e.lnglat);
+	    	map.setCenter(e.lnglat);
 	    	getAddressInfo(e.lnglat)
 	    });
 	    
@@ -85,11 +93,17 @@
 	            infoWindow.setMap(map);
 	            var poi = poiResult.item;
 	            marker.setPosition(poi.location);
+	            
 	            infoWindow.setPosition(poi.location);
 	            infoWindow.setContent(poi.name+"<br>地址："+poi.address);
-	            infoWindow.open(map, marker.getPosition());
-
-	            map.setCenter(marker.getPosition());
+	            infoWindow.open(map, poi.location);
+				
+	            map.setCenter(poi.location);
+            	var adcode = poi.adcode;
+            	var lat = poi.location.lat;
+	            var lng = poi.location.lng;
+	            var address = poi.address;
+	            setCurrentPoi(adcode,lat,lng,address);
 	        });
 
 	    }
@@ -97,10 +111,12 @@
 	    function getAddressInfo(lnglat){
 			geocoder.getAddress(lnglat, function(status, result) {
 	            if (status === 'complete' && result.info === 'OK') {
-	            	currentPoi = result.regeocode;
-	            	currentPoi.lat = lnglat.lat;
-		            currentPoi.lng = lnglat.lng;
-	            	var address = currentPoi.formattedAddress;
+	            	var regeocode = result.regeocode;
+	            	var adcode = regeocode.addressComponent.adcode;
+	            	var lat = lnglat.lat;
+		            var lng = lnglat.lng;
+		            var address = regeocode.formattedAddress.toString();
+		            setCurrentPoi(adcode,lat,lng,address);
 	            	infoWindow.setPosition(lnglat);
 		            infoWindow.setContent("地址："+address);
 		            infoWindow.open(map, lnglat);
@@ -130,9 +146,16 @@
 	 $("#submitLocalBtn").on("click",function() {
 		 $("#latitude").val(currentPoi.lat)
 		 $("#longitude").val(currentPoi.lng)
-		 $("#addressCode").val(currentPoi.addressComponent.adcode)
-		 $("#address").val(currentPoi.formattedAddress.toString());
+		 $("#addressCode").val(currentPoi.adcode)
+		 $("#address").changeVal(currentPoi.address,"address");
     });
+	 
+	 function setCurrentPoi(adcode,lat,lng,address){
+		currentPoi.adcode = adcode;
+     	currentPoi.lat = lat;
+        currentPoi.lng = lng;
+        currentPoi.address = address;
+	 }
 </script>
 </body>
 </html>

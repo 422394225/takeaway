@@ -3,7 +3,6 @@ package core.common.mapping;
 import com.jfinal.plugin.activerecord.ActiveRecordPlugin;
 
 import core.model.Admin;
-import core.model.Customer;
 import core.model.Data;
 import core.model.DictCode;
 import core.model.Discount;
@@ -13,6 +12,7 @@ import core.model.FoodHistroy;
 import core.model.FoodType;
 import core.model.Log;
 import core.model.Menu;
+import core.model.Order;
 import core.model.Role;
 import core.model.Shop;
 import core.model.ShopType;
@@ -27,7 +27,6 @@ public class _MappingKit {
 		arp.addMapping("t_log", "ID", Log.class);
 		arp.addMapping("t_role", "ID", Role.class);
 		arp.addMapping("t_user", "ID", User.class);
-		arp.addMapping("t_customer", "ID", Customer.class);
 		arp.addMapping("t_menu", "ID", Menu.class);
 		arp.addMapping("t_data", "ID", Data.class);
 		arp.addMapping("t_shop", "ID", Shop.class);
@@ -38,5 +37,6 @@ public class _MappingKit {
 		arp.addMapping("t_food_histroy", "ID", FoodHistroy.class);
 		arp.addMapping("t_food_type", "ID", FoodType.class);
 		arp.addMapping("t_discount", "ID", Discount.class);
+		arp.addMapping("t_order", "ID", Order.class);
 	}
 }
