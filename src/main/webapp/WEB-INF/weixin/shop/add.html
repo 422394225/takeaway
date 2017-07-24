@@ -3,8 +3,12 @@
 </#assign>
 <#assign wxCss>
 <style>
-.bar .bar-nav{
+.bar{
 	background-color: #65d1ff !important;
+}
+.bar h1{
+	color: white;
+	font-weight: bold;
 }
 .list-block{
 	margin-top: 0px
@@ -14,7 +18,14 @@
 <#assign wxJavascript>
 <script>
 $(function(){
-	
+	/* wx.config({
+	    debug: true, 
+	    appId: 'wx7d654593ab6ec6a4', 
+	    timestamp: new Date().getTime(),
+	    nonceStr: '1', 
+	    signature: '',
+	    jsApiList: []
+	}); */
 });
 </script>
 </#assign>
@@ -32,7 +43,7 @@ $(function(){
           <div class="item-inner">
             <div class="item-title label">店铺名称</div>
             <div class="item-input">
-              <input type="text" placeholder="Your name">
+              <input type="text" placeholder="叫个什么好呢...">
             </div>
           </div>
         </div>
