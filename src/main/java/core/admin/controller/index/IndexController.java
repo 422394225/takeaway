@@ -1,25 +1,13 @@
 package core.admin.controller.index;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.UUID;
-
 import com.jfinal.aop.Clear;
 import com.jfinal.core.Controller;
 import com.jfinal.kit.PropKit;
 import com.jfinal.weixin.sdk.api.ApiConfig;
-import com.jfinal.weixin.sdk.api.ApiConfigKit;
-import com.jfinal.weixin.sdk.api.ApiResult;
 
 import core.interceptor.AdminLoginInterceptor;
 import core.interceptor.PowerInterceptor;
-import core.model.Data;
 import core.utils.SecurityCodeTool;
-import core.weixin.api.InterfaceAnalysisApi;
 
 /**
  * 
@@ -47,8 +35,9 @@ public class IndexController extends Controller {
 		ac.setEncodingAesKey(PropKit.get("encodingAesKey", "setting it in config file"));
 		return ac;
 	}
+
 	public void index() {
-		
+		/*
 		String JsonData="";
 		//获取昨天的日期
 		Data data = new Data();
@@ -61,7 +50,7 @@ public class IndexController extends Controller {
 		if (w==-1) {
 			w=6;
 		}
-	
+		
 		InterfaceAnalysisApi iApi = new InterfaceAnalysisApi();
 		ApiConfigKit.setThreadLocalApiConfig(getApiConfig());
 		
@@ -72,7 +61,7 @@ public class IndexController extends Controller {
 		List<Data> yesterday = Data.dao.find("select * from t_data where REF_DATE= ?",date);
 		if (yesterday.isEmpty()) {
 				ApiResult apiResult = iApi.getInterfaceSummaryHour();
-
+		
 					
 					List<Map<String, Object>> apiList = (List<Map<String, Object>>) apiResult.get("list");
 					
@@ -118,7 +107,7 @@ public class IndexController extends Controller {
 		}
 		JsonData="["+JsonData+"]";
 		
-		setAttr("data", JsonData);
+		setAttr("data", JsonData);*/
 		render("index.html");
 	}
 

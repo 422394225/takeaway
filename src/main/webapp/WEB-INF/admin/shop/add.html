@@ -26,7 +26,15 @@
 		<div class="tab-content">
 		    <div class="tab-pane" id="tab1">
 				<input class="form-control" type="hidden" name="id" value="${(shop.ID)!}" />
-				<div class="form-group form-group-md" id="hostId">
+				<div class="form-group form-group-md">
+				    <label class="col-sm-3 control-label" for="formGroupInputLarge">
+				    	商家名称<span style="color:red">(必填)</span>
+				    </label>
+				    <div class="col-sm-6">
+						<input class="form-control" type="text" name="name" id="shopName" value="${(shop.NAME)!}">
+				    </div>
+				</div>
+				<div class="form-group form-group-md">
 				    <label class="col-sm-3 control-label" for="formGroupInputLarge">
 				    	商家类型<span style="color:red">(必填)</span><br><span style="font-size: 8px">按住Ctrl或Shift多选</span>
 				    </label>
@@ -49,14 +57,6 @@
 				    	</select>
 				    </div>
 			  </div>
-				<div class="form-group form-group-md">
-				    <label class="col-sm-3 control-label" for="formGroupInputLarge">
-				    	商家名称<span style="color:red">(必填)</span>
-				    </label>
-				    <div class="col-sm-6">
-						<input class="form-control" type="text" name="name" id="shopName" value="${(shop.NAME)!}">
-				    </div>
-				</div>
 				<div class="form-group form-group-md">
 					<label class="col-lg-3 control-label" for="formGroupInputLarge">
 					商家LOGO<span style="color:red">(必填)</span>

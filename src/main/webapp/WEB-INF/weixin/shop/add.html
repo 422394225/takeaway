@@ -3,12 +3,16 @@
 </#assign>
 <#assign wxCss>
 <style>
+*{
+	font-family: "Microsoft YaHei";
+}
 .bar{
 	background-color: #65d1ff !important;
 }
-.bar h1{
+.bar h1,.bar .button-link{
 	color: white;
-	font-weight: bold;
+}
+.bar h1{
 }
 .list-block{
 	margin-top: 0px
@@ -30,78 +34,111 @@ $(function(){
 </script>
 </#assign>
 <@mainLayout wxTitle="加入那里"  wxMeta=wxMeta wxCss=wxCss wxJavascript=wxJavascript>
+<div class="page page-current" id='addShop'>
 <header class="bar bar-nav">
   <h1 class='title'>店铺申请表</h1>
 </header>
 <div class="content">
   <div class="list-block">
     <ul>
-      <!-- Text inputs -->
       <li>
         <div class="item-content">
-          <div class="item-media"><i class="fa fa-user"></i></div>
+          <div class="item-media"><i class="fa fa-home"></i></div>
           <div class="item-inner">
-            <div class="item-title label">店铺名称</div>
+            <div class="item-title label">名称</div>
             <div class="item-input">
-              <input type="text" placeholder="叫个什么好呢...">
+              <input type="text" placeholder="叫个什么好呢..." name="name">
             </div>
           </div>
         </div>
       </li>
       <li>
         <div class="item-content">
-          <div class="item-media"><i class="icon icon-form-email"></i></div>
+          <div class="item-media"><i class="fa fa-bookmark"></i></div>
+          <div class="item-inner" onclick="javascript:$.router.loadPage('#chooseType');">
+            <div class="item-title label">类型</div>
+       		<div class="item-media"><font color="#999">选择类型&nbsp;<i class="fa fa-angle-right"></i></font></div>
+          </div>
+        </div>
+      </li>
+       <li>
+        <div class="item-content">
+          <div class="item-media"><i class="fa fa-image"></i></div>
           <div class="item-inner">
-            <div class="item-title label">Email</div>
+            <div class="item-title label">LOGO</div>
+            <div class="item-media"><font color="#999">选择照片&nbsp;<i class="fa fa-angle-right"></i></font></div>
+            </div>
+        </div>
+      </li>
+      <li class="align-top">
+        <div class="item-content">
+          <div class="item-media"><i class="fa fa-file-o"></i></div>
+          <div class="item-inner">
+            <div class="item-title label">介绍</div>
             <div class="item-input">
-              <input type="email" placeholder="E-mail">
+              <textarea name="description" placeholder="说些什么吧..."></textarea>
             </div>
           </div>
         </div>
       </li>
       <li>
         <div class="item-content">
-          <div class="item-media"><i class="icon icon-form-password"></i></div>
+          <div class="item-media"><i class="fa fa-map-marker"></i></div>
           <div class="item-inner">
-            <div class="item-title label">Password</div>
+            <div class="item-title label">地址</div>
+            <div class="item-media"><font color="#999">选择位置&nbsp;<i class="fa fa-angle-right"></i></font></div>
+            </div>
+        </div>
+      </li>
+      <li>
+        <div class="item-content">
+          <div class="item-media"><i class="fa fa-user-circle"></i></div>
+          <div class="item-inner">
+            <div class="item-title label">账号</div>
             <div class="item-input">
-              <input type="password" placeholder="Password" class="">
+              <input type="text" name="username" placeholder="将用于微信端与后台登录">
             </div>
           </div>
         </div>
       </li>
       <li>
         <div class="item-content">
-          <div class="item-media"><i class="icon icon-form-gender"></i></div>
+          <div class="item-media"><i class="fa fa-drivers-license-o"></i></div>
           <div class="item-inner">
-            <div class="item-title label">Gender</div>
+            <div class="item-title label">密码</div>
             <div class="item-input">
-              <select>
-                <option>Male</option>
-                <option>Female</option>
-              </select>
+              <input type="password" placeholder="请妥善保管您的密码">
             </div>
           </div>
         </div>
       </li>
-      <!-- Date -->
       <li>
         <div class="item-content">
-          <div class="item-media"><i class="icon icon-form-calendar"></i></div>
+          <div class="item-media"><i class="fa fa-mobile"></i></div>
           <div class="item-inner">
-            <div class="item-title label">Birthday</div>
+            <div class="item-title label">联系电话</div>
             <div class="item-input">
-              <input type="date" placeholder="Birth day" value="2014-04-30">
+              <input type="text" name="phone" placeholder="手机或电话(请加区号)">
             </div>
           </div>
         </div>
       </li>
-      <!-- Switch (Checkbox) -->
       <li>
         <div class="item-content">
-          <div class="item-media"><i class="icon icon-form-toggle"></i></div>
+          <div class="item-media"><i class="fa fa-qq"></i></div>
           <div class="item-inner">
-            <div class="item-title label">Switch</div>
+            <div class="item-title label">QQ</div>
+            <div class="item-input">
+              <input type="text" name="qq" placeholder="">
+            </div>
+          </div>
+        </div>
+      </li>
+      <li>
+        <div class="item-content">
+          <div class="item-media"><i class="fa fa-cloud"></i></div>
+          <div class="item-inner">
+            <div class="item-title label">自动开店/打烊</div>
             <div class="item-input">
               <label class="label-switch">
                 <input type="checkbox">
@@ -111,24 +148,53 @@ $(function(){
           </div>
         </div>
       </li>
-      <li class="align-top">
-        <div class="item-content">
-          <div class="item-media"><i class="icon icon-form-comment"></i></div>
-          <div class="item-inner">
-            <div class="item-title label">Textarea</div>
-            <div class="item-input">
-              <textarea></textarea>
-            </div>
-          </div>
-        </div>
-      </li>
     </ul>
   </div>
   <div class="content-block">
     <div class="row">
-      <div class="col-50"><a href="#" class="button button-big button-fill button-danger">Cancel</a></div>
-      <div class="col-50"><a href="#" class="button button-big button-fill button-success">Submit</a></div>
+      <div class="col-50"><a href="javascript:void(0);" onclick="javascript:closeWxWin();" class="button button-big button-fill button-danger">取消</a></div>
+      <div class="col-50"><a href="javascript:void(0);" onclick="javascript:closeWxWin();" class="button button-big button-fill button-success">申请</a></div>
     </div>
   </div>
 </div>
+</div>
+<div class="page" id="chooseType">
+  <header class="bar bar-nav">
+    <div class="button button-link button-nav pull-left" onclick="resetType();">
+     	 清空
+    </div>
+    <h1 class='title'>选择店铺类型</h1>
+    <div class="button button-link button-nav pull-right" onclick="javascript:$.router.loadPage('#addShop');">
+     	 完成
+    </div>
+  </header>
+  <div class="content">
+   	<div class="list-block">
+	    <ul>
+	      <#list shopTypes as st>
+			<li class="item-content">
+		        <div class="item-media"><img src="${st.ICON}" style="width: 50px;height: 50px;"></div>
+		        <div class="item-inner">
+		          <div class="item-title">${st.NAME}</div>
+		          <div class="item-after"></div>
+		        </div>
+		      </li>
+		</#list>
+		</ul>
+   	</div>
+</div>
+<script>
+	$(".item-content").on("click",function(){
+		var chooseHtml = $("<i class='fa fa-check-circle-o' style='color: #4cd964;font'></i>");
+		var itemAfter = $(this).find(".item-after").html();
+		if(itemAfter==""){
+			$(this).find(".item-after").html(chooseHtml);
+		}else{
+			$(this).find(".item-after").html("");
+		}
+	})
+	function resetType(){
+		$(".item-content").find(".item-after").html("");
+	}
+</script>
 </@mainLayout>
