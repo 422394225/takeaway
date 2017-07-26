@@ -2,6 +2,7 @@
 <#assign wxMeta>
 </#assign>
 <#assign wxCss>
+<link href="${base}/resources/javascripts/timedropper/timedropper.min.css" rel="stylesheet" type="text/css" />
 <style>
 *{
 	font-family: "Microsoft YaHei";
@@ -20,6 +21,7 @@
 </style>
 </#assign>
 <#assign wxJavascript>
+<script src="${base}/resources/javascripts/timedropper/timedropper.min.js" type="text/javascript"></script>
 <script>
 $(function(){
 	/* wx.config({
@@ -84,7 +86,7 @@ $(function(){
       <li>
         <div class="item-content">
           <div class="item-media"><i class="fa fa-map-marker"></i></div>
-          <div class="item-inner">
+          <div class="item-inner" onclick="javascript:$.router.loadPage('${base}/wx/tools/mapMobile');">
             <div class="item-title label">地址</div>
             <div class="item-media"><font color="#999">选择位置&nbsp;<i class="fa fa-angle-right"></i></font></div>
             </div>
@@ -129,7 +131,20 @@ $(function(){
           <div class="item-inner">
             <div class="item-title label">QQ</div>
             <div class="item-input">
-              <input type="text" name="qq" placeholder="">
+              <input type="text" name="qq" placeholder="有事也可以QQ聊哦~">
+            </div>
+          </div>
+        </div>
+      </li>
+       <li>
+        <div class="item-content">
+          <div class="item-media"><i class="fa fa-qq"></i></div>
+          <div class="item-inner">
+            <div class="item-title label">营业时间</div>
+            <div class="item-input">
+              <input type="text" class="timepicker" name="openTime" id="openTime" value="${(shop.OPEN_TIME)!}" style="position:relative;display:inline;left:0;width: 30%;"/>
+				<span>至</span>
+		       <input type="text" class="timepicker" name="closeTime" id="closeTime" value="${(shop.CLOSE_TIME)!}" style="position:relative;display:inline;right:0;width: 30%;"/>
             </div>
           </div>
         </div>
@@ -144,6 +159,17 @@ $(function(){
                 <input type="checkbox">
                 <div class="checkbox"></div>
               </label>
+            </div>
+          </div>
+        </div>
+      </li>
+      <li>
+        <div class="item-content">
+          <div class="item-media"><i class="fa fa-motorcycle"></i></div>
+          <div class="item-inner">
+            <div class="item-title label">起送价</div>
+            <div class="item-input">
+                <input type="text" name="deliveryPrice" placeholder="送送送！">
             </div>
           </div>
         </div>
@@ -196,5 +222,9 @@ $(function(){
 	function resetType(){
 		$(".item-content").find(".item-after").html("");
 	}
+	$(".timepicker").timeDropper({
+		format:"HH:mm",
+		autoswitch:true
+	});
 </script>
 </@mainLayout>
