@@ -1,0 +1,171 @@
+<#include "../base/main/_dashboard.html"/>
+<#assign pageMeta>
+</#assign>
+<#assign pageCss>
+<link href="${base}/resources/jQuery/dataTables.bootstrap.min.css" rel="stylesheet" type="text/css" />
+</#assign>
+<#assign pageJavascript>
+<script src="${base}/resources/jQuery/jquery.dataTables.min.js" type="text/javascript"></script>
+<script src="${base}/resources/jQuery/dataTables.bootstrap.min.js" type="text/javascript"></script>
+<script>
+	$(function(){
+		var table = Kit.table("#table",
+		{
+			"ajax": "${base}/delivery/getData",
+	        "columns": [
+	            { "data": "NAME" },
+	            { "data": "TEL"},
+	            { "data": "CITY"},
+	            { "data": "ORDER_NUM"},
+	            { "data": "DELIVERY_TIME"},
+	            { "data": "STATESTRING"},
+	            { "data": "CREATE_TIME"}
+	        ],
+	        "columnDefs":[{
+	            "targets": 8,
+	            "data": null,
+	            "render": function(data,type,row){
+	            	if(row["STATE"]==1){
+	            		return "<button class='place btn btn-info btn-xs' title='查看位置'><i class='fa fa-globe'></i>";
+	            	}
+	            	else{
+	            		return "<button class='btn btn-info btn-xs' title='查看位置' disabled='disabled'><i class='fa fa-globe'></i>";
+	            	}
+	            }
+	        },{
+	            "targets": 9,
+	            "data": null,
+	            "render": function(data,type,row){
+	            	if(row["STATE"]==-1){
+	            		return "</button><button class='edit btn btn-success btn-xs' title='修改'><i class='fa fa-edit'></i></button>"+
+	  				  "<button class='huifu btn btn-warning btn-xs' title='恢复'><i class='fa fa-reply '></i></button>";
+	            	}
+	            	else{
+	            		return "</button><button class='edit btn btn-success btn-xs' title='修改'><i class='fa fa-edit'></i></button>"+
+	  				  "<button class='lizhi btn btn-danger btn-xs' title='离职'><i class='fa fa-caret-down fa-lg'></i></button>";
+	            	}
+	            }
+	        }],
+	        "order": [[7, "asc" ]]
+		});
+		table.on('click', '.lizhi', function(){
+	        var data = table.row($(this).parents('tr')).data();
+	        $.ajax({
+	               url:'${base}/delivery/lizhi?deliveryId='+data["ID"], // /api/leds/1
+	               async: true,
+	               type: 'GET',
+	               success: function(data , textStatus){
+	               layer.msg(data);
+	               table.ajax.reload(null, false);
+	               },
+	               error: function(jqXHR , textStatus , errorThrown){
+	                 console.log("error");
+	               },
+	        });
+		});
+		table.on('click', '.huifu', function(){
+	        var data = table.row($(this).parents('tr')).data();
+	        $.ajax({
+	               url:'${base}/delivery/huifu?deliveryId='+data["ID"], // /api/leds/1
+	               async: true,
+	               type: 'GET',
+	               success: function(data , textStatus){
+	               layer.msg(data);
+	               table.ajax.reload(null, false);
+	               },
+	              
+	               error: function(jqXHR , textStatus , errorThrown){
+	                 console.log("error");
+	               },
+	             });
+		});
+		table.on("click",'.edit',function(){
+	        var data = table.row($(this).parents('tr')).data();
+			var deliveryId=data['ID'];
+			BootstrapDialog.show({
+				title: '编辑配送员',
+				draggable: true,
+			    message: $('<div></div>').load('${base}/delivery/edit?deliveryId='+deliveryId),
+			    buttons:[{
+			        label: '关闭',
+			        cssClass: 'btn btn-link', 
+			        action: function(dialogRef){    
+			            dialogRef.close();
+			        }
+			    }]
+	        });
+		});
+		table.on("click",'.place',function(){
+	        var data = table.row($(this).parents('tr')).data();
+			var deliveryId=data['ID'];
+			BootstrapDialog.show({
+				title: '查看位置',
+				draggable: true,
+			    message: $('<div></div>').load('${base}/delivery/placeSingle?deliveryId='+deliveryId),
+			    buttons:[{
+			        label: '关闭',
+			        cssClass: 'btn btn-link', 
+			        action: function(dialogRef){    
+			            dialogRef.close();
+			        }
+			    }]
+	        });
+		});
+		$(".reload").on("click",function(){
+			table.ajax.reload(null, false);// 刷新表格数据，分页信息不会重置
+		})
+		$(".add").on("click",function(){
+			BootstrapDialog.show({
+				title: '添加配送员',
+				draggable: true,
+			    message: $('<div></div>').load('${base}/delivery/add'),
+			    buttons: [{
+			    	id:'submitBtn',
+			        label: '提交',
+			        cssClass: 'btn btn-primary', 
+			        action: function(dialogRef){    
+			           
+			        }
+			    },{
+			        label: '取消',
+			        cssClass: 'btn btn-link', 
+			        action: function(dialogRef){    
+			            dialogRef.close();
+			        }
+			    }]
+	        });
+		});
+	})
+</script>
+</#assign>
+<@dashboard pageTitle="配送员" pageMeta=pageMeta pageCss=pageCss pageJavascript=pageJavascript currentMenu="delivery">
+<@tool map="系统管理-配送员">
+   <div class='btn-group'>
+	<button class="add btn btn-light btn-sm radius" title="添加" data-toggle="tooltip" data-placement="bottom">
+     	<i class="fa fa-plus"></i>
+	</button>
+     <button class="reload btn btn-light btn-sm radius" title="刷新" data-toggle="tooltip" data-placement="bottom">
+     	<i class="fa fa-refresh"></i>
+     </button>
+   </div>
+</@tool>
+<div id='content'>
+  <table class='table table-bordered' id="table">
+    <thead>
+      <tr>
+     	<th>序号</th>
+        <th>姓名</th>
+        <th>电话</th>
+        <th>所在地区</th>
+        <th>配送单数</th>
+        <th>平均配送时间（分钟）</th>
+        <th>状态</th>
+        <th>创建时间</th>
+        <th>查看位置</th>
+        <th>操作</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</div>
+</@dashboard>

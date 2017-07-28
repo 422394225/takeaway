@@ -4,6 +4,7 @@ import com.jfinal.plugin.activerecord.ActiveRecordPlugin;
 
 import core.model.Admin;
 import core.model.Data;
+import core.model.Delivery;
 import core.model.DictCode;
 import core.model.Discount;
 import core.model.Feedback;
@@ -38,5 +39,6 @@ public class _MappingKit {
 		arp.addMapping("t_food_type", "ID", FoodType.class);
 		arp.addMapping("t_discount", "ID", Discount.class);
 		arp.addMapping("t_order", "ID", Order.class);
+		arp.addMapping("t_delivery", "ID", Delivery.class);
 	}
 }
