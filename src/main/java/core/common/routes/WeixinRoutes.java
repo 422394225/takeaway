@@ -8,7 +8,9 @@ import core.weixin.controller.WeiXinOauthController;
 import core.weixin.controller.WeixinApiController;
 import core.weixin.controller.WeixinMsgController;
 import core.weixin.controller.feedback.FeedbackController;
+import core.weixin.controller.shop.ShopController;
 import core.weixin.controller.test.TestController;
+import core.weixin.controller.tools.ToolsController;
 import core.weixin.controller.user.UserController;
 
 public class WeixinRoutes extends Routes {
@@ -24,6 +26,8 @@ public class WeixinRoutes extends Routes {
 
 		//controller路由
 		add("/wx/test", TestController.class, "/test");
+		add("/wx/shop", ShopController.class, "/shop");
+		add("/wx/tools", ToolsController.class, "/tools");
 
 		// api接口
 		add("/api/v1/user", UserController.class);

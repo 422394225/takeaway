@@ -15,5 +15,5 @@ import core.admin.service.base.DataTableService;
  */
 
 public interface ShopTypeRelationService extends DataTableService {
-
+	void deleteAll(String shopId);
 }

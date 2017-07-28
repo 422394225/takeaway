@@ -4,6 +4,14 @@
 $.config = {
 	autoInit: true 
 }
+function closeWxWin(){
+	try{
+		WeixinJSBridge.call('closeWindow');
+	}catch(e){
+		console.error("WeixinJSBridge.call('closeWindow');执行失败！当前可能为非微信浏览器。")
+	}
+}
 </script>
 <script src="${base}/resources/light7/js/light7.min.js" type="text/javascript"></script>
+<script src="${base}/resources/javascripts/jweixin-1.2.0.js" type="text/javascript"></script>
 ${wxJavascript?if_exists}

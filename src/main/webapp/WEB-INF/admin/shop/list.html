@@ -79,15 +79,8 @@
 	            "targets": -1,
 	            "data": null,
 	            "render": function(data, type, row) {
-	            	if(row["DELETED"]==0){
-	            		return "<button class='edit btn btn-info btn-xs' title='编辑'><i class='fa fa-edit'></i></button>"+
-            					  "<button class='disable btn btn-warning btn-xs' title='停用'><i class='fa fa-ban'></i></button>"+
-            					  "<button class='remove btn btn-danger btn-xs' title='删除'><i class='fa fa-trash-o'></i></button>";
-	            	}else{
-	            		return "<button class='edit btn btn-info btn-xs' title='编辑'><i class='fa fa-edit'></i></button>"+
-  					  	"<button class='enable btn btn-warning btn-xs' title='恢复'><i class='fa fa-reply'></i></button>"+
-  					  "<button class='remove btn btn-danger btn-xs' title='删除'><i class='fa fa-trash-o'></i></button>";
-	            	}
+            		return "<button class='edit btn btn-info btn-xs' title='编辑'><i class='fa fa-edit'></i></button>"+
+				  	"<button class='remove btn btn-danger btn-xs' title='删除'><i class='fa fa-trash-o'></i></button>";
 	            }
 	        },{
 	        	"targets": 1,

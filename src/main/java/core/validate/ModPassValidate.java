@@ -8,12 +8,12 @@ import com.jfinal.validate.Validator;
 public class ModPassValidate extends Validator {
 	@Override
 	protected void validate(Controller c) {
-		String id =c.getPara("id");
-		String password =  c.getPara("password");
+		String id = c.getPara("id");
+		String password = c.getPara("password");
 		String newpass = c.getPara("newpass");
 		String confirmPass = c.getPara("confirm");
-		String pString = Db.queryStr("select PASSWORD from t_admin where id=?",id);
-		validateRequired("password","msg", "原密码不能为空");
+		String pString = Db.queryStr("select PASSWORD from t_shop where ID=?", id);
+		validateRequired("password", "msg", "原密码不能为空");
 		validateRequired("newpass", "msg", "新密码不能为空");
 		validateRequired("confirm", "msg", "重复密码不能为空");
 		if (password.equals(pString)) {
