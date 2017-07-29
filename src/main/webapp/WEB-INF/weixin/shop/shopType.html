@@ -1,0 +1,57 @@
+<div class="page" id="chooseType">
+  <header class="bar bar-nav">
+    <div class="button button-link button-nav pull-left" onclick="resetType();">
+     	 清空
+    </div>
+    <h1 class='title'>选择店铺类型</h1>
+    <div class="button button-link button-nav pull-right" onclick="javascript:chooseType();$.router.loadPage('#addShop');">
+     	 完成
+    </div>
+  </header>
+  <div class="content">
+   	<div class="list-block">
+	    <ul>
+	      <#list shopTypes as st>
+			<li class="item-content" data="${st.ID}">
+		        <div class="item-media"><img src="${st.ICON}" style="width: 50px;height: 50px;"></div>
+		        <div class="item-inner">
+		          <div class="item-title">${st.NAME}</div>
+		          <div class="item-after"></div>
+		        </div>
+		      </li>
+		</#list>
+		</ul>
+   	</div>
+</div>
+<script>
+	$(".item-content").on("click",function(){
+		var chooseHtml = $("<i class='fa fa-check-circle-o' style='color: #4cd964;font'></i>");
+		var itemAfter = $(this).find(".item-after").html();
+		if(itemAfter==""){
+			$(this).find(".item-after").html(chooseHtml);
+		}else{
+			$(this).find(".item-after").html("");
+		}
+	})
+	function resetType(){
+		$(".item-content").find(".item-after").html("");
+	}
+	function chooseType(){
+		var dArray = new Array();
+		var tArray = new Array();
+		$(".item-content").each(function(){
+			$this = $(this);
+			var ia = $this.find(".item-after").html();
+			if(ia!=undefined && ia!=""){
+				dArray.push($this.attr("data"));
+				tArray.push($this.find(".item-title").text());
+			}
+		})
+		if(dArray.size>0){
+			$("#typeIds").val(dArray);
+		}
+		if(tArray.size>0){
+			$("#typeText").text(tArray.toString().substring(0,11)+"...");
+		}
+	}
+</script>

@@ -35,10 +35,10 @@ $(function(){
 });
 </script>
 </#assign>
-<@mainLayout wxTitle="加入那里"  wxMeta=wxMeta wxCss=wxCss wxJavascript=wxJavascript>
+<@mainLayout wxTitle="商家入驻"  wxMeta=wxMeta wxCss=wxCss wxJavascript=wxJavascript>
 <div class="page page-current" id='addShop'>
 <header class="bar bar-nav">
-  <h1 class='title'>店铺申请表</h1>
+  <h1 class='title'>入驻申请表</h1>
 </header>
 <div class="content">
   <div class="list-block">
@@ -59,9 +59,10 @@ $(function(){
           <div class="item-media"><i class="fa fa-bookmark"></i></div>
           <div class="item-inner" onclick="javascript:$.router.loadPage('#chooseType');">
             <div class="item-title label">类型</div>
-       		<div class="item-media"><font color="#999">选择类型&nbsp;<i class="fa fa-angle-right"></i></font></div>
+       		<div class="item-media"><font color="#999"><span id="typeText">选择类型&nbsp;</span><i class="fa fa-angle-right"></i></font></div>
           </div>
         </div>
+        <input id="typeIds" name="typeIds" type="hidden">
       </li>
        <li>
         <div class="item-content">
@@ -85,12 +86,18 @@ $(function(){
       </li>
       <li>
         <div class="item-content">
-          <div class="item-media"><i class="fa fa-map-marker"></i></div>
-          <div class="item-inner" onclick="javascript:$.router.loadPage('${base}/wx/tools/mapMobile');">
+          <div class="item-media"><i class="fa fa-map-signs"></i></div>
+          <div class="item-inner">
             <div class="item-title label">地址</div>
-            <div class="item-media"><font color="#999">选择位置&nbsp;<i class="fa fa-angle-right"></i></font></div>
+            <div class="item-input">
+            	<input id="address" name="address" type="text" placeholder="选择位置"/>
+            	<i class="fa fa-lg fa-map-marker"  onclick="javascript:$.router.loadPage('#map-mobile');"></i>
             </div>
+           </div>
         </div>
+        <input name="latitude" id="latitude" type="hidden" value="${(shop.LATIDUTE)!}">
+		<input name="longitude" id="longitude" type="hidden" value="${(shop.LONGITUDE)!}">
+		<input name="addressCode" id="addressCode" type="hidden" value="${(shop.PTCODE)!}">
       </li>
       <li>
         <div class="item-content">
@@ -105,7 +112,7 @@ $(function(){
       </li>
       <li>
         <div class="item-content">
-          <div class="item-media"><i class="fa fa-drivers-license-o"></i></div>
+          <div class="item-media"><i class="fa fa-lock"></i></div>
           <div class="item-inner">
             <div class="item-title label">密码</div>
             <div class="item-input">
@@ -138,7 +145,7 @@ $(function(){
       </li>
        <li>
         <div class="item-content">
-          <div class="item-media"><i class="fa fa-qq"></i></div>
+          <div class="item-media"><i class="fa fa-clock-o"></i></div>
           <div class="item-inner">
             <div class="item-title label">营业时间</div>
             <div class="item-input">
@@ -151,7 +158,7 @@ $(function(){
       </li>
       <li>
         <div class="item-content">
-          <div class="item-media"><i class="fa fa-cloud"></i></div>
+          <div class="item-media"><i class="fa fa-history"></i></div>
           <div class="item-inner">
             <div class="item-title label">自动开店/打烊</div>
             <div class="item-input">
@@ -184,47 +191,12 @@ $(function(){
   </div>
 </div>
 </div>
-<div class="page" id="chooseType">
-  <header class="bar bar-nav">
-    <div class="button button-link button-nav pull-left" onclick="resetType();">
-     	 清空
-    </div>
-    <h1 class='title'>选择店铺类型</h1>
-    <div class="button button-link button-nav pull-right" onclick="javascript:$.router.loadPage('#addShop');">
-     	 完成
-    </div>
-  </header>
-  <div class="content">
-   	<div class="list-block">
-	    <ul>
-	      <#list shopTypes as st>
-			<li class="item-content">
-		        <div class="item-media"><img src="${st.ICON}" style="width: 50px;height: 50px;"></div>
-		        <div class="item-inner">
-		          <div class="item-title">${st.NAME}</div>
-		          <div class="item-after"></div>
-		        </div>
-		      </li>
-		</#list>
-		</ul>
-   	</div>
-</div>
+<#include "shopType.html"/>
+<#include "../tools/map-mobile.html"/>
 <script>
-	$(".item-content").on("click",function(){
-		var chooseHtml = $("<i class='fa fa-check-circle-o' style='color: #4cd964;font'></i>");
-		var itemAfter = $(this).find(".item-after").html();
-		if(itemAfter==""){
-			$(this).find(".item-after").html(chooseHtml);
-		}else{
-			$(this).find(".item-after").html("");
-		}
-	})
-	function resetType(){
-		$(".item-content").find(".item-after").html("");
-	}
-	$(".timepicker").timeDropper({
-		format:"HH:mm",
-		autoswitch:true
-	});
+$(".timepicker").timeDropper({
+	format:"HH:mm",
+	autoswitch:true
+});
 </script>
 </@mainLayout>
