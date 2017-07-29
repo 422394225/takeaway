@@ -1,0 +1,156 @@
+<#include "../base/main/_dashboard.html"/>
+<#assign pageMeta>
+</#assign>
+<#assign pageCss>
+<link href="${base}/resources/jQuery/dataTables.bootstrap.min.css" rel="stylesheet" type="text/css" />
+</#assign>
+<#assign pageJavascript>
+<script src="${base}/resources/jQuery/jquery.dataTables.min.js" type="text/javascript"></script>
+<script src="${base}/resources/jQuery/dataTables.bootstrap.min.js" type="text/javascript"></script>
+</#assign>
+<@dashboard pageTitle="商家审核" currentMenu="shop" pageMeta=pageMeta pageCss=pageCss pageJavascript=pageJavascript>
+<@tool map="商家-商家审核">
+   <div class='btn-group'>
+     <button class="add btn btn-light btn-sm radius" title="添加" data-toggle="tooltip" data-placement="bottom">
+     	<i class="fa fa-plus"></i>
+     </button>
+     <button class="reload btn btn-light btn-sm radius" title="刷新" data-toggle="tooltip" data-placement="bottom">
+     	<i class="fa fa-refresh"></i>
+     </button>
+   </div>
+</@tool>
+<div id='content'>
+	 <form id="filterForm" action="javascript:void(0);">
+	   <table class="filterTable">
+	  	<tr>
+	  		<td><label>商家名称</label></td>
+	  		<td><input name="NAME" class="form-control"></td>
+	  		<td><label>状态</label></td>
+	  		<td>
+	  			<select name="STATE" class="form-control">
+	  				<option value="">请选择</option>
+	  				<@_dc field="shop.STATE">
+	  					<#list dc as dc>
+						<option value="${dc.CODE}">${dc.NAME}</option>
+						</#list>
+					</@_dc>
+	  			</select>
+	  		</td>
+	  		<td><button class="btn btn-success dataTableSortBtn">筛选</button></td>
+	  		<td><button class="btn btn-default dataTableResetBtn">重置</button></td>
+	  	</tr>
+	  </table>
+  	</form>
+  <table class='table table-bordered' id="table">
+    <thead>
+      <tr>
+        <th>序号</th>
+        <th>商家LOGO</th>
+        <th>商家名称</th>
+        <th>负责人</th>
+        <th>地址</th>
+        <th>状态</th>
+        <th>创建时间</th>
+        <th class='operation'>
+          	操作
+        </th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</div>
+<script>
+	$(function(){
+		var table = Kit.table("#table",
+		{
+			"ajax": "${base}/shop/getAuditData",
+	        "columns": [
+	            { "data": "IMG" },
+	            { "data": "NAME" },
+	            { "data": "ADMIN_NAME" },
+	            { "data": "ADDRESS" },
+	            { "data": "STATE_NAME"},
+	            { "data": "CREATE_TIME"}
+	        ],
+	        "columnDefs": [{
+	            "targets": -1,
+	            "data": null,
+	            "render": function(data, type, row) {
+	            	if(row["AUDIT_STATE"]==1){
+						return "";	            		
+	            	}else{
+	            		return "<button class='passAudit btn btn-success btn-xs' title='通过'><i class='fa fa-check'></i></button>"+
+					  	"<button class='sendBack btn btn-danger btn-xs' title='退回'><i class='fa fa-close'></i></button>";
+	            	}
+	            }
+	        },{
+	        	"targets": 1,
+	            "render": function(data, type, row) {
+	                return "<img src='"+data+"' style='width:50px;height:50px'/>";
+	            }
+	        }]
+		});
+		$(".add").on("click",function(){
+			BootstrapDialog.show({
+				title: '添加商家',
+				draggable: true,
+				closeByBackdrop: false,
+			    message: $('<div></div>').load('${base}/shop/add')
+	        });
+		})
+		table.on('click', '.passAudit', function(){
+			var d = table.row($(this).parents('tr')).data();
+			layer.confirm("确认通过店铺<font color='red'>"+d['NAME']+"(负责人:"+d['ADMIN_NAME']+")</font>的申请吗?", {
+				icon:{icon: 1},
+				btn: ['确认','取消'],
+				yes: function(index, layero){
+					layer.close(index);
+					layer.load(1, {shade: [0.3,'#000']});
+					Kit.post("${base}/shop/passAudit",{id:d["ID"]},function(msg){
+						layer.closeAll('loading');
+						layer.msg(msg,{time: 1000});
+						table.ajax.reload(null, false);
+					},
+					function(msg){
+						layer.closeAll('loading');
+						layer.alert(msg,{icon:5});
+					});
+		  		}
+			})
+		});
+		table.on('click', '.sendBack', function(){
+			var d = table.row($(this).parents('tr')).data();
+			layer.confirm("确认退回店铺<font color='red'>"+d['NAME']+"(负责人:"+d['ADMIN_NAME']+")</font>的申请吗?", {
+				icon:{icon: 1},
+				btn: ['确认','取消'],
+				yes: function(index, layero){
+					layer.close(index);
+					BootstrapDialog.show({
+						title: '退回申请',
+						draggable: true,
+						closeByBackdrop: false,
+					    message: $('<div></div>').load('${base}/shop/sendBack?id='+d["ID"]),
+					    buttons: [{
+					    	id:'submitBtn',
+					        label: '提交',
+					        cssClass: 'btn btn-primary', 
+					        action: function(dialogRef){    
+					           
+					        }
+					    },{
+					        label: '取消',
+					        cssClass: 'btn btn-link', 
+					        action: function(dialogRef){    
+					            dialogRef.close();
+					        }
+					    }]
+			        });;
+		  		}
+			})
+		});
+		$(".reload").on("click",function(){
+			table.ajax.reload(null, false);// 刷新表格数据，分页信息不会重置
+		})
+	})
+</script>
+</@dashboard>

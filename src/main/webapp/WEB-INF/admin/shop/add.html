@@ -36,6 +36,14 @@
 				</div>
 				<div class="form-group form-group-md">
 				    <label class="col-sm-3 control-label" for="formGroupInputLarge">
+				    	负责人<span style="color:red">(必填)</span>
+				    </label>
+				    <div class="col-sm-6">
+						<input class="form-control" type="text" name="adminName" id="adminName" value="${(shop.ADMIN_NAME)!}">
+				    </div>
+				</div>
+				<div class="form-group form-group-md">
+				    <label class="col-sm-3 control-label" for="formGroupInputLarge">
 				    	商家类型<span style="color:red">(必填)</span><br><span style="font-size: 8px">按住Ctrl或Shift多选</span>
 				    </label>
 				    <div class="col-sm-6">
@@ -222,8 +230,10 @@ $(function(){
     });
 	Kit.form({btnId:"#submitBtn",formId:"#add-form",
 		validate:{
-			shopTypeId: {validators: {notEmpty: {}}},
 			name: {validators: {notEmpty: {}}},
+			adminName: {validators: {notEmpty: {}}},
+			name: {validators: {notEmpty: {}}},
+			shopTypeId: {validators: {notEmpty: {}}},
 			address: {validators: {notEmpty: {}}},
 			username: {validators: {
 				notEmpty: {},

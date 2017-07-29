@@ -38,6 +38,7 @@ public class ShopValidate extends ShortCircuitValidate {
 		}
 		validateRequired("shopTypeId", "msg", "请选择商家分类");
 		validateRequired("name", "msg", "请输入商家名称");
+		validateRequired("adminName", "msg", "请输入负责人名称");
 		validateRequired("address", "msg", "请输入商家地址");
 		validateRequired("latitude", "msg", "请从地图上选择一个坐标,将用于定位");
 		validateRequired("longitude", "msg", "请从地图上选择一个坐标,将用于定位");

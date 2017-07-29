@@ -1,0 +1,43 @@
+<form action="${base}/shop/saveSendBack" class="form-horizontal" id="add-form" enctype="multipart/form-data" method="post">
+	<input class="form-control" type="hidden" name="id" value="${(shop.ID)!}" />
+	<div class="form-group form-group-md">
+	    <label class="col-sm-3 control-label" for="formGroupInputLarge">
+	    	商家
+	    </label>
+	    <div class="col-sm-9">
+			<span class="form-control">${(shop.NAME)!}</span>
+	    </div>
+	</div>
+	<div class="form-group form-group-md">
+	    <label class="col-sm-3 control-label" for="formGroupInputLarge">
+	    	负责人
+	    </label>
+	    <div class="col-sm-9">
+			<span class="form-control">${(shop.ADMIN_NAME)!}</span>
+	    </div>
+	</div>
+	<div class="form-group form-group-md">
+	    <label class="col-sm-3 control-label" for="formGroupInputLarge">
+	    	退回理由<span style="color:red">(必填)</span>
+	    </label>
+	    <div class="col-sm-9">
+			<textarea class="form-control" name="reason" style="height:200px"></textarea>
+	    </div>
+	</div>
+</form>
+<script>
+$(function(){
+	Kit.form({btnId:"#submitBtn",formId:"#add-form",
+		validate:{
+			reason: {validators: {notEmpty: {}}}
+		},
+	    successFunc:function(msg,data){
+	    	$(".reload ").click();
+	 	   BootstrapDialog.closeAll();
+	 	},
+	 	failFunc:function(msg){
+	 		layer.msg(msg);
+	 	}
+	});
+})
+</script>

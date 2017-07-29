@@ -18,6 +18,12 @@
 .list-block{
 	margin-top: 0px
 }
+#address{
+	position: relative;
+    display: inline;
+    left: 0;
+    width: 90%;
+}
 </style>
 </#assign>
 <#assign wxJavascript>
@@ -47,7 +53,7 @@ $(function(){
         <div class="item-content">
           <div class="item-media"><i class="fa fa-home"></i></div>
           <div class="item-inner">
-            <div class="item-title label">名称</div>
+            <div class="item-title label">商家名称</div>
             <div class="item-input">
               <input type="text" placeholder="叫个什么好呢..." name="name">
             </div>
@@ -56,9 +62,20 @@ $(function(){
       </li>
       <li>
         <div class="item-content">
+          <div class="item-media"><i class="fa fa-user"></i></div>
+          <div class="item-inner">
+            <div class="item-title label">负责人</div>
+            <div class="item-input">
+              <input type="text" placeholder="尊姓大名" name="adminName">
+            </div>
+          </div>
+        </div>
+      </li>
+      <li>
+        <div class="item-content">
           <div class="item-media"><i class="fa fa-bookmark"></i></div>
           <div class="item-inner" onclick="javascript:$.router.loadPage('#chooseType');">
-            <div class="item-title label">类型</div>
+            <div class="item-title label">商家类型</div>
        		<div class="item-media"><font color="#999"><span id="typeText">选择类型&nbsp;</span><i class="fa fa-angle-right"></i></font></div>
           </div>
         </div>
