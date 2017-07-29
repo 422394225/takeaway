@@ -138,7 +138,21 @@
 		#@dbCondition_alias(conditions,mainAlias,aliasMap)
 	#end
 #end
-
+#namespace("delivery")
+	#sql("list")
+		#set(mainAlias = "d")
+		#set(aliasMap = {"CITY":"t.`NAME`"})
+		#set(aliasMap = {"STATESTRING":"c.`NAME`"})
+		SELECT
+	d.*, t.NAME AS CITY,c.NAME AS STATESTRING
+	FROM
+	t_delivery AS d
+	LEFT JOIN region_code t ON d.PCCODE = t.CODE
+	LEFT JOIN t_dict_code c ON d.STATE = c.CODE AND c.FIELD='t_delivery.STATE'
+	WHERE 1=1
+		#@dbCondition_alias(conditions,mainAlias,aliasMap)
+	#end
+#end
 #namespace("shop")
 	#sql("list")
 		#set(mainAlias = "s")

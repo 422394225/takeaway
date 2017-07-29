@@ -1,0 +1,6 @@
+--DROP TRIGGER IF EXISTS `trigger_food_delete`;
+--CREATE TRIGGER `trigger_food_delete` 
+--BEFORE DELETE ON `t_food` FOR EACH ROW 
+--begin 
+-- INSERT INTO t_food_histroy (`ID`,`NAME`,`PRICE`,`ORIGN_PRICE`,`STATE`,`TYPE_ID`,`UNIT`,`IMG`,`DESCRIPTION`,`CREATE_TIME`,`USE_STOCK`,`STOCK`,`ORDER_NUM`,`SALE_NUM`,`SALE_LIMIT`,`SHOP_ID`) VALUES(old.`ID`,old.`NAME`,old.`PRICE`,old.`ORIGN_PRICE`,old.`STATE`,old.`TYPE_ID`,old.`UNIT`,old.`IMG`,old.`DESCRIPTION`,old.`CREATE_TIME`,old.`USE_STOCK`,old.`STOCK`,old.`ORDER_NUM`,old.`SALE_NUM`, old.`SALE_LIMIT`,old.`SHOP_ID`);
+--END

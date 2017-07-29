@@ -178,6 +178,8 @@ public class FoodController extends Controller {
 			String TYPE = getPara("TYPE");
 			String ORIGN_PRICE = getPara("ORIGN_PRICE");
 			food.set("ID", foodId);
+			food.delete();
+			food.set("ID", null);
 			food.set("SHOP_ID", shop.get("ID"));
 			food.set("NAME", name);
 			food.set("PRICE", price);
@@ -192,11 +194,11 @@ public class FoodController extends Controller {
 			else
 				food.set("STOCK", 999999);
 			food.set("STATE", 1);
-			food.update();
-			renderJson(new JSONSuccess("添加成功"));
+			food.save();
+			renderJson(new JSONSuccess("修改成功"));
 		} catch (Exception e) {
 			e.printStackTrace();
-			renderJson(new JSONError("1"));
+			renderJson(new JSONError("修改失败"));
 
 		}
 	}
