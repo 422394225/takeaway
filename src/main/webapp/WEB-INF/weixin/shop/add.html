@@ -42,15 +42,29 @@
 <script src="${base}/resources/javascripts/timedropper/timedropper.min.js" type="text/javascript"></script>
 <script>
 $(function(){
-	/* wx.config({
-	    debug: true, 
-	    appId: 'wx7d654593ab6ec6a4', 
-	    timestamp: new Date().getTime(),
-	    nonceStr: '1', 
-	    signature: '',
-	    jsApiList: []
-	}); */
+	 wx.config({
+	    debug: false, 
+	    appId: '${jssdk.appId}', 
+	    timestamp: '${jssdk.timestamp}',
+	    nonceStr: '${jssdk.nonceStr}', 
+	    signature: '${jssdk.signature}',
+	    jsApiList: ['chooseImage','uploadImage']
+	});
+	wx.checkJsApi({
+	    jsApiList: ['chooseImage','uploadImage'], 
+	    success: function(res) {
+	        console.log(res.checkResult)
+	    }
+	});
 });
+function chooseImage(){
+	wx.chooseImage({
+	    count: 1,
+	    success: function (res) {
+	        console.log(res)
+	    }
+	});
+}
 function submit(){
 	$("#add-form").ajaxSubmit({
 		type:'POST',
@@ -137,7 +151,7 @@ function addressChange(){
        <li>
         <div class="item-content">
           <div class="item-media"><i class="fa fa-image"></i></div>
-          <div class="item-inner">
+          <div class="item-inner" onclick="javascript:chooseImage();">
             <div class="item-title label">LOGO</div>
             <div class="item-media"><font color="#999">选择照片&nbsp;<i class="fa fa-angle-right"></i></font></div>
             </div>

@@ -17,6 +17,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import core.admin.service.shop.relation.ShopTypeRelationService;
 import core.admin.service.shop.relation.impl.ShopTypeRelationServiceImpl;
+import core.interceptor.JSSDKInterceptor;
 import core.model.Shop;
 import core.model.ShopType;
 import core.model.ShopTypeRelation;
@@ -36,6 +37,7 @@ public class ShopController extends BaseController {
 	private Log log = Log.getLog(ShopController.class);
 	private ShopTypeRelationService strService = new ShopTypeRelationServiceImpl();
 
+	@Before(JSSDKInterceptor.class)
 	public void add() {
 		Map<String, String> params = new HashMap<>();
 		params.put("not_deleted", "1");
