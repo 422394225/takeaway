@@ -41,21 +41,25 @@ public class DicCodeDirective implements TemplateDirectiveModel {
 		String code = String.valueOf(params.get("code"));
 		if (field != "null") {
 			Map<String, Object> map = new HashMap<>();
-			if (field.contains("t_") || field.contains("T_")) {
+			if (field.startsWith("t_") || field.startsWith("T_")) {
 				map.put("field", field);
 			} else {
 				map.put("field", "t_" + field);
 			}
 			if (code != "null") {
 				String[] codes = code.split(",");
-				map.put("codes", codes);
+				map.put("codes", code);
 				if (codes.length <= 1) {
 					dictCode = DictCode.dao.findFirst(Db.getSqlPara("dictCode.name", map));
 					env.setVariable("dc", DefaultObjectWrapper.DEFAULT_WRAPPER.wrap(dictCode));
+				} else {
+					list = DictCode.dao.find(Db.getSqlPara("dictCode.name", map));
+					env.setVariable("dc", DefaultObjectWrapper.DEFAULT_WRAPPER.wrap(list));
 				}
+			} else {
+				list = DictCode.dao.find(Db.getSqlPara("dictCode.name", map));
+				env.setVariable("dc", DefaultObjectWrapper.DEFAULT_WRAPPER.wrap(list));
 			}
-			list = DictCode.dao.find(Db.getSqlPara("dictCode.name", map));
-			env.setVariable("dc", DefaultObjectWrapper.DEFAULT_WRAPPER.wrap(list));
 		}
 		body.render(env.getOut());
 	}

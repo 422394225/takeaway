@@ -25,11 +25,11 @@
 	  	<tr>
 	  		<td><label>商家名称</label></td>
 	  		<td><input name="NAME" class="form-control"></td>
-	  		<td><label>状态</label></td>
+	  		<td><label>审核状态</label></td>
 	  		<td>
-	  			<select name="STATE" class="form-control">
+	  			<select name="AUDIT_STATE" class="form-control">
 	  				<option value="">请选择</option>
-	  				<@_dc field="shop.STATE">
+	  				<@_dc field="shop.AUDIT_STATE">
 	  					<#list dc as dc>
 						<option value="${dc.CODE}">${dc.NAME}</option>
 						</#list>
@@ -77,9 +77,13 @@
 	            "data": null,
 	            "render": function(data, type, row) {
 	            	if(row["AUDIT_STATE"]==1){
-						return "";	            		
-	            	}else{
+						return "<button class='auditHistory btn btn-info btn-xs' title='审核历史'><i class='fa fa-history'></i></button>";
+	            	}else if(row["AUDIT_STATE"]==0){
 	            		return "<button class='passAudit btn btn-success btn-xs' title='通过'><i class='fa fa-check'></i></button>"+
+					  	"<button class='sendBack btn btn-danger btn-xs' title='退回'><i class='fa fa-close'></i></button>";
+	            	}else if(row["AUDIT_STATE"]==2){
+	            		return "<button class='auditHistory btn btn-info btn-xs' title='审核历史'><i class='fa fa-history'></i></button>"+
+	            		"<button class='passAudit btn btn-success btn-xs' title='通过'><i class='fa fa-check'></i></button>"+
 					  	"<button class='sendBack btn btn-danger btn-xs' title='退回'><i class='fa fa-close'></i></button>";
 	            	}
 	            }
@@ -134,9 +138,6 @@
 					    	id:'submitBtn',
 					        label: '提交',
 					        cssClass: 'btn btn-primary', 
-					        action: function(dialogRef){    
-					           
-					        }
 					    },{
 					        label: '取消',
 					        cssClass: 'btn btn-link', 
@@ -148,6 +149,22 @@
 		  		}
 			})
 		});
+		table.on('click', '.auditHistory', function(){
+			var d = table.row($(this).parents('tr')).data();
+			BootstrapDialog.show({
+				title: "审核历史"+d['NAME']+"(负责人:"+d['ADMIN_NAME']+")",
+				draggable: true,
+				closeByBackdrop: false,
+			    message: $('<div></div>').load('${base}/shop/auditHistory?id='+d["ID"]),
+			    buttons: [{
+			        label: '关闭',
+			        cssClass: 'btn btn-primary btn-lg btn-block', 
+			        action: function(dialogRef){    
+			            dialogRef.close();
+			        }
+			    }]
+	        });
+		})
 		$(".reload").on("click",function(){
 			table.ajax.reload(null, false);// 刷新表格数据，分页信息不会重置
 		})

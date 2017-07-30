@@ -1,4 +1,4 @@
-var Kit={
+	var Kit={
 	post:function(u,d,successFunc,failFunc,option){
 		var defaultOption = {
 			type:'POST',
@@ -20,9 +20,8 @@ var Kit={
 				}
 				console.log("XMLHttpRequest：\t");
 				console.log(XMLHttpRequest);
-				console.log("\ntextStatus：\t");
-				console.log(textStatus);
-				console.log("\nerrorThrown：\t");
+				console.log("textStatus：\t"+textStatus);
+				console.log("errorThrown：\t");
 				console.log(errorThrown);
 			}
 		};
@@ -51,9 +50,8 @@ var Kit={
 				}
 				console.log("XMLHttpRequest：\t");
 				console.log(XMLHttpRequest);
-				console.log("\ntextStatus：\t");
-				console.log(textStatus);
-				console.log("\nerrorThrown：\t");
+				console.log("textStatus：\t"+textStatus);
+				console.log("errorThrown：\t");
 				console.log(errorThrown);
 			}
 		}
@@ -113,9 +111,8 @@ var Kit={
 						}
 						console.log("XMLHttpRequest：\t");
 						console.log(XMLHttpRequest);
-						console.log("\ntextStatus：\t");
-						console.log(textStatus);
-						console.log("\nerrorThrown：\t");
+						console.log("textStatus：\t"+textStatus);
+						console.log("errorThrown：\t");
 						console.log(errorThrown);
 					}
 				});

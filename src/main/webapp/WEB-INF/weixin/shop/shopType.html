@@ -51,7 +51,13 @@
 			$("#typeIds").val(dArray);
 		}
 		if(tArray.length>0){
-			$("#typeText").text(tArray.toString().substring(0,11)+"...");
+			$("#typeText").css("color","#3d4145");
+			var tArrayStr = tArray.toString();
+			if(tArrayStr.length>11){
+				$("#typeText").text(tArrayStr.substring(0,11)+"...");
+			}else{
+				$("#typeText").text(tArrayStr);
+			}
 		}
 	}
 </script>

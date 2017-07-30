@@ -23,6 +23,8 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 
 import core.admin.controller.base.BaseController;
+import core.admin.service.audit.AuditService;
+import core.admin.service.audit.impl.AuditServiceImpl;
 import core.admin.service.shop.ShopService;
 import core.admin.service.shop.impl.ShopServiceImpl;
 import core.admin.service.shop.relation.ShopTypeRelationService;
@@ -50,6 +52,7 @@ public class ShopController extends BaseController {
 	private final Log log = Log.getLog(ShopController.class);
 	private ShopService service = new ShopServiceImpl();
 	private ShopTypeRelationService strService = new ShopTypeRelationServiceImpl();
+	private AuditService auditService = new AuditServiceImpl();
 
 	@Override
 	public void index() {
@@ -116,8 +119,7 @@ public class ShopController extends BaseController {
 		String shopId = getPara("id");
 		Shop shop = Shop.dao.findById(shopId);
 		if (shop != null) {
-			shop.set("AUDIT_STATE", 1);
-			shop.update();
+			service.audit(this, shop, 1);
 			renderJson(new JSONSuccess("审核成功！"));
 		} else {
 			renderJson(new JSONError("商家ID不存在！"));
@@ -133,12 +135,11 @@ public class ShopController extends BaseController {
 		render("sendBack.html");
 	}
 
-	public void saveSenback() {
+	public void sendbackSave() {
 		String shopId = getPara("id");
 		Shop shop = Shop.dao.findById(shopId);
 		if (shop != null) {
-			shop.set("AUDIT_STATE", 2);
-			shop.update();
+			service.audit(this, shop, 2);
 			renderJson(new JSONSuccess("退回成功！"));
 		} else {
 			renderJson(new JSONError("商家ID不存在！"));
@@ -257,5 +258,11 @@ public class ShopController extends BaseController {
 		removeSessionAttr("shop");
 		removeCookie("shop");
 		renderJson(new JSONSuccess());
+	}
+
+	public void auditHistory() {
+		String shopId = getPara("id");
+		setAttr("audits", auditService.getByShopId(shopId));
+		render("audit-history.html");
 	}
 }
