@@ -259,8 +259,7 @@ public class WeixinMsgController extends MsgControllerAdapter {
 			OutNewsMsg outNewsMsg = new OutNewsMsg(inFollowEvent);
 			List<News> articles = new ArrayList<News>();
 			String frontServer = PropKit.get("server.front.address", "http://www.baidu.com");
-			articles.add(new News(welcome, "欢迎语", "http://onzsmr037.bkt.clouddn.com/579f016301086.png",
-					frontServer + "list"));
+			articles.add(new News(welcome, "欢迎语", "http://onzsmr037.bkt.clouddn.com/579f016301086.png", ""));
 			articles.add(new News("更多", "", null, frontServer));
 			outNewsMsg.setArticles(articles);
 			logger.debug("关注：" + openid);

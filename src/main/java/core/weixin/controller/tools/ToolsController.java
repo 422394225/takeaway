@@ -46,4 +46,5 @@ public class ToolsController extends Controller {
 		setAttr("info", info);
 		render("info.html");
 	}
+
 }

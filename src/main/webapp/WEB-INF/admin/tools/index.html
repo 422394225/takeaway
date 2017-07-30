@@ -1,0 +1,28 @@
+<#include "../base/main/_dashboard.html"/>
+<#assign pageMeta>
+</#assign>
+<#assign pageCss>
+</#assign>
+<#assign pageJavascript>
+<script>
+	function weixinApi(api){
+		layer.load(1, {shade: [0.3,'#000']});
+		Kit.post("${base}/api/"+api,{},function(msg){
+			layer.closeAll('loading');
+			layer.alert(msg);
+		},
+		function(msg){
+			layer.closeAll('loading');
+			layer.alert(msg,{icon:5});
+		});
+	}
+</script>
+</#assign>
+<@dashboard pageTitle="开发者工具" currentMenu="settings" pageMeta=pageMeta pageCss=pageCss pageJavascript=pageJavascript>
+<@tool map="系统管理-开发者工具">
+</@tool>
+<div id='content'style="width:100%;height:100%">
+	<button class="btn btn-info" onclick="weixinApi('getMenu')">获取菜单</button>
+	<button class="btn btn-success" onclick="weixinApi('createMenu')">创建菜单</button>
+</div>
+</@dashboard>
