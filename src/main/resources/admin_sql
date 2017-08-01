@@ -118,7 +118,6 @@
 
 #namespace("food")
 	#sql("list")
-		#set(mainAlias = "d")
 		#set(aliasMap = {"SHOP_NAME":"t.`NAME`"})
 		#set(aliasMap = {"TYPE_NAME":"c.`NAME`"})
 		SELECT
@@ -141,36 +140,37 @@
 
 #namespace("order")
 	#sql("listActive")
-		#set(mainAlias = "d")
 		#set(aliasMap = {"SHOP_NAME":"t.`NAME`"})
 		#set(aliasMap = {"DELIVERY_NAME":"c.`NAME`"})
 		SELECT
-	d.*, t. NAME AS SHOP_NAME,c.NAME AS DELIVERY_NAME
+	d.*, t. NAME AS SHOP_NAME,c.NAME AS DELIVERY_NAME,IFNULL(cc1.`NAME`,cc2.`NAME`) as STATESTRING
 	FROM
 	t_order AS d
 	LEFT JOIN t_shop t ON d.SHOP_ID = t.ID
 	LEFT JOIN t_delivery c ON d.DELIVERY_ID=c.ID
+	LEFT JOIN t_dict_code cc1 ON cc1.FIELD='t_order.CANCEL_STATE' and d.CANCEL_STATE=cc1.`CODE` 
+	LEFT JOIN t_dict_code cc2 ON cc2.FIELD='t_order.ORDER_STATE' and d.ORDER_STATE=cc2.`CODE` 
 	WHERE 1=1 AND (d.ORDER_STATE='2' OR d.CANCEL_STATE='0')
 		#@dbCondition_alias(conditions,mainAlias,aliasMap)
 	#end
 	#sql("listAll")
-		#set(mainAlias = "d")
 		#set(aliasMap = {"SHOP_NAME":"t.`NAME`"})
 		#set(aliasMap = {"DELIVERY_NAME":"c.`NAME`"})
 		SELECT
-	d.*, t. NAME AS SHOP_NAME,c.NAME AS DELIVERY_NAME
+	d.*, t. NAME AS SHOP_NAME,c.NAME AS DELIVERY_NAME,IFNULL(cc1.`NAME`,cc2.`NAME`) as STATESTRING
 	FROM
 	t_order AS d
 	LEFT JOIN t_shop t ON d.SHOP_ID = t.ID
 	LEFT JOIN t_delivery c ON d.DELIVERY_ID=c.ID
-	WHERE 1=1 
+	LEFT JOIN t_dict_code cc1 ON cc1.FIELD='t_order.CANCEL_STATE' and d.CANCEL_STATE=cc1.`CODE` 
+	LEFT JOIN t_dict_code cc2 ON cc2.FIELD='t_order.ORDER_STATE' and d.ORDER_STATE=cc2.`CODE` 
+	WHERE 1=1
 		#@dbCondition_alias(conditions,mainAlias,aliasMap)
 	#end
 #end
 
 #namespace("delivery")
 	#sql("list")
-		#set(mainAlias = "d")
 		#set(aliasMap = {"CITY":"t.`NAME`"})
 		#set(aliasMap = {"STATESTRING":"c.`NAME`"})
 		SELECT

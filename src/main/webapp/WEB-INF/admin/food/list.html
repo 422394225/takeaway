@@ -156,6 +156,18 @@
    </div>
 </@tool>
 <div id='content'>
+<form id="filterForm" action="javascript:void(0);">
+	   <table class="filterTable">
+	  	<tr>
+	  		<td><label>商家名称</label></td>
+	  		<td><input name="t.NAME" class="form-control"></td>
+	  		<td><label>商品名称</label></td>
+	  		<td><input name="d.NAME" class="form-control"></td>
+	  		<td><button class="btn btn-success dataTableSortBtn">筛选</button></td>
+	  		<td><button class="btn btn-default dataTableResetBtn">重置</button></td>
+	  	</tr>
+	  </table>
+  	</form>
   <table class='table table-bordered' id="table">
     <thead>
       <tr>

@@ -99,16 +99,6 @@ public class OrderController extends Controller {
 		result.put("draw", params.getDraw());
 		result.put("recordsTotal", orders.getTotalRow());
 		List<Record> list = orders.getList();
-		for (Record record : list) {
-			if (record.getInt("CANCEL_STATE") != null)
-				record.set("STATESTRING",
-						Db.queryStr("select name from t_dict_code where field='t_order.CANCEL_STATE' and code=?",
-								record.getInt("CANCEL_STATE")));
-			else
-				record.set("STATESTRING",
-						Db.queryStr("select name from t_dict_code where field='t_order.ORDER_STATE' and code=?",
-								record.getInt("ORDER_STATE")));
-		}
 		result.put("data", list);
 		result.put("recordsFiltered", orders.getTotalRow());
 		renderJson(result);

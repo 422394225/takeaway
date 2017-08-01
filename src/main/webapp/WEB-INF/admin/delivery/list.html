@@ -150,6 +150,35 @@
    </div>
 </@tool>
 <div id='content'>
+	<form id="filterForm" action="javascript:void(0);">
+	   <table class="filterTable">
+	  	<tr>
+	  		<td><label>状态</label></td>
+	  		<td>
+	  			<select name="c.name" class="form-control">
+	  				<option value="">请选择</option>
+					<option value="离职">离职</option>
+					<option value="休息">休息</option>
+					<option value="就绪">就绪</option>
+					<option value="正在配送">正在配送</option>
+	  			</select>
+	  		</td>
+	  		<td><label>所在地区</label></td>
+	  		<td>
+	  			<select name="STATE" class="form-control">
+	  				<option value="">请选择</option>
+	  				<@_dc field="shop.STATE">
+	  					<#list dc as dc>
+						<option value="${dc.CODE}">${dc.NAME}</option>
+						</#list>
+					</@_dc>
+	  			</select>
+	  		</td>
+	  		<td><button class="btn btn-success dataTableSortBtn">筛选</button></td>
+	  		<td><button class="btn btn-default dataTableResetBtn">重置</button></td>
+	  	</tr>
+	  </table>
+  </form>
   <table class='table table-bordered' id="table">
     <thead>
       <tr>

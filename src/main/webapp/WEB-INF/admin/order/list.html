@@ -17,6 +17,38 @@
    </div>
 </@tool>
 <div id='content'>
+	<form id="filterForm" action="javascript:void(0);">
+	   <table class="filterTable">
+	  	<tr>
+	  		<td><label>商家名称</label></td>
+	  		<td><input name="t.NAME" class="form-control"></td>
+	  		<td><label>正常状态</label></td>
+	  		<td>
+	  			<select name="cc2.name" class="form-control">
+	  				<option value="">请选择</option>
+	  				<option value="未付款">未付款</option>
+					<option value="已付款，未接单">已付款，未接单</option>
+					<option value="正在准备商品">正在准备商品</option>
+					<option value="正在配送">正在配送</option>
+					<option value="买家已收货，未评价">买家已收货，未评价</option>
+					<option value="已评价">已评价</option>
+	  			</select>
+	  		</td>
+	  		<td><label>退款状态</label></td>
+	  		<td>
+	  			<select name="cc1.name" class="form-control">
+	  				<option value="">请选择</option>
+					<option value="发起退款">发起退款</option>
+					<option value="退款失败">退款失败</option>
+					<option value="已退款">已退款</option>
+					<option value="已取消退款">已取消退款</option>
+	  			</select>
+	  		</td>
+	  		<td><button class="btn btn-success dataTableSortBtn">筛选</button></td>
+	  		<td><button class="btn btn-default dataTableResetBtn">重置</button></td>
+	  	</tr>
+	  </table>
+  </form>
   <table class='table table-bordered' id="table">
     <thead>
       <tr>
@@ -36,6 +68,12 @@
 </div>
 </@dashboard>
 <script>
+$("select[name='cc1.name']").change(function () {
+	$("select[name='cc2.name']").val('0');
+})
+$("select[name='cc2.name']").change(function () {
+	$("select[name='cc1.name']").val('0');
+})
 $(function(){
 	var showType="${showType}";
 	var table = Kit.table("#table",
