@@ -1,0 +1,53 @@
+<style>
+	dt,dd{
+		padding-top: 10px;
+	}
+	dt{
+		width: 100px
+	}
+	.dl-success{
+		font-size: 16px;
+		border: 1px solid #3c763d;
+		padding: 10px;
+	}
+	.dl-danger{
+		font-size: 16px;
+		border: 1px solid #a94442;
+		padding: 10px;
+	}
+</style>
+<#list audits as audit>
+	<#if audit.STATE == 1>
+	<dl class="dl-horizontal dl-success">
+		<dt class="text-success">审核状态</dt>
+		<dd class="text-success">
+			<@_dc field="shop.AUDIT_STATE" code=audit.STATE>
+					${dc.NAME}
+			</@_dc>
+		</dd>
+		<dt class="text-success">审核人</dt>
+		<dd class="text-success">${audit.OPERATOR_NAME}</dt>
+		<dt class="text-success">操作时间</dd>
+		<dd class="text-success">${audit.CREATE_TIME}</dd>
+	</dl>
+	<#elseif audit.STATE == 2>
+	<dl class="dl-horizontal dl-danger">
+		<dt class="text-danger">审核状态</dt>
+  		<dd class="text-danger">
+			<@_dc field="shop.AUDIT_STATE" code=audit.STATE>
+ 				${dc.NAME}
+			</@_dc>
+		</dd>
+		<dt class="text-danger">退回理由</dt>
+  		<dd class="text-danger">${audit.REASON}</dd>
+		<dt class="text-danger">审核人</dt>
+		<dd class="text-danger">${audit.OPERATOR_NAME}</dt>
+		<dt class="text-danger">操作时间</dt>
+  		<dd class="text-danger">${audit.CREATE_TIME}</dd>
+  	</dl>
+	</#if>
+</#list>
+<script>
+$(function(){
+})
+</script>

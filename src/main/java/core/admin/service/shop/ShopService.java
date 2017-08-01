@@ -5,7 +5,10 @@
 
 package core.admin.service.shop;
 
+import com.jfinal.core.Controller;
+
 import core.admin.service.base.DataTableService;
+import core.model.Shop;
 
 /**
  * Description:
@@ -20,4 +23,6 @@ public interface ShopService extends DataTableService {
 	boolean registerd(String username);
 
 	boolean hasFood(String shopId);
+
+	void audit(Controller controller, Shop shop, int state);
 }

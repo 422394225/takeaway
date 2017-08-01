@@ -5,8 +5,12 @@
 
 package core.admin.service.shop.impl;
 
+import com.jfinal.core.Controller;
+
 import core.admin.service.base.impl.DataTableServiceImpl;
 import core.admin.service.shop.ShopService;
+import core.model.Admin;
+import core.model.Audit;
 import core.model.Food;
 import core.model.Order;
 import core.model.Shop;
@@ -44,5 +48,18 @@ public class ShopServiceImpl extends DataTableServiceImpl implements ShopService
 			return false;
 		}
 		return true;
+	}
+
+	public void audit(Controller controller, Shop shop, int state) {
+		Audit audit = new Audit();
+		audit.set("SHOP_ID", shop.get("ID"));
+		audit.set("REASON", controller.getPara("reason"));
+		Admin admin = controller.getSessionAttr("administrator");
+		audit.set("OPERATOR_ID", admin.getStr("ID"));
+		audit.set("OPERATOR_NAME", admin.getStr("NAME"));
+		audit.set("STATE", state);
+		audit.save();
+		shop.set("AUDIT_STATE", state);
+		shop.update();
 	}
 }

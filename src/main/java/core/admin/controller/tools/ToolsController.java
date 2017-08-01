@@ -7,7 +7,6 @@ package core.admin.controller.tools;
 
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Before;
-import com.jfinal.aop.Clear;
 import com.jfinal.core.Controller;
 import com.jfinal.kit.PropKit;
 
@@ -22,8 +21,11 @@ import core.vo.JSONSuccess;
  * @author weifaguo
  * @date 2017年4月9日下午1:55:53
  */
-@Clear
 public class ToolsController extends Controller {
+
+	public void index() {
+		render("index.html");
+	}
 
 	public void cutter() {
 		setAttr("ratio", getPara("ratio"));

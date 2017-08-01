@@ -1,16 +1,20 @@
-package core.weixin.controller;
-
-import java.util.UUID;
+package core.interceptor;
 
 import com.alibaba.fastjson.JSONObject;
+import com.jfinal.aop.Interceptor;
+import com.jfinal.aop.Invocation;
 import com.jfinal.core.Controller;
 import com.jfinal.kit.HashKit;
 import com.jfinal.kit.PropKit;
+import com.jfinal.plugin.ehcache.CacheKit;
+import com.jfinal.plugin.ehcache.IDataLoader;
 import com.jfinal.weixin.sdk.api.ApiConfig;
 import com.jfinal.weixin.sdk.api.ApiConfigKit;
 import com.jfinal.weixin.sdk.api.JsTicket;
 import com.jfinal.weixin.sdk.api.JsTicketApi;
 import com.jfinal.weixin.sdk.api.JsTicketApi.JsApiType;
+
+import java.util.UUID;
 
 /**
  * @author Javen
@@ -20,7 +24,7 @@ import com.jfinal.weixin.sdk.api.JsTicketApi.JsApiType;
  * 对整个Controller或者其中的方法添加JSSDK签名验证拦截器
  */
 
-public class JSSDKController extends Controller {
+public class JSSDKInterceptor implements Interceptor {
 	/**
 	 * 如果要支持多公众账号，只需要在此返回各个公众号对应的 ApiConfig 对象即可 可以通过在请求 url 中挂参数来动态从数据库中获取
 	 * ApiConfig 属性值
@@ -42,36 +46,35 @@ public class JSSDKController extends Controller {
 		return ac;
 	}
 
-	public void index() {
+	public void intercept(Invocation ai) {
+		Controller c = ai.getController();
 		ApiConfigKit.setThreadLocalApiConfig(getApiConfig());
-		JsTicket jsApiTicket = JsTicketApi.getTicket(JsApiType.jsapi);
-		String jsapi_ticket = jsApiTicket.getTicket();
+		String jsapi_ticket = CacheKit.get("jssdk", "ticket", new IDataLoader() {
+			@Override
+			public Object load() {
+				JsTicket jsApiTicket = JsTicketApi.getTicket(JsApiType.jsapi);
+				String jsapi_ticket = jsApiTicket.getTicket();
+				return jsapi_ticket;
+
+			}
+		});
 		String nonce_str = create_nonce_str();
 		// 注意 URL 一定要动态获取，不能 hardcode.
-		String url = "http://" + getRequest().getServerName() // 服务器地址
+		String url = "http://" + c.getRequest().getServerName() // 服务器地址
 		// + ":"
 		// + getRequest().getServerPort() //端口号
-				+ getRequest().getContextPath() // 项目名称
-				+ getRequest().getServletPath();// 请求页面或其他地址
-		String qs = getRequest().getQueryString(); // 参数
+				+ c.getRequest().getContextPath() // 项目名称
+				+ c.getRequest().getServletPath();// 请求页面或其他地址
+		String qs = c.getRequest().getQueryString(); // 参数
 		if (qs != null) {
-			url = url + "?" + (getRequest().getQueryString());
+			url = url + "?" + (c.getRequest().getQueryString());
 		}
-		System.out.println("url>>>>" + url);
 		String timestamp = create_timestamp();
 		// 这里参数的顺序要按照 key 值 ASCII 码升序排序
 		//注意这里参数名必须全部小写，且必须有序
 		String str = "jsapi_ticket=" + jsapi_ticket + "&noncestr=" + nonce_str + "&timestamp=" + timestamp + "&url="
 				+ url;
-
 		String signature = HashKit.sha1(str);
-
-		System.out.println("appId " + ApiConfigKit.getApiConfig().getAppId() + "  nonceStr " + nonce_str + " timestamp "
-				+ timestamp);
-		System.out.println("url " + url + " signature " + signature);
-		System.out.println("nonceStr " + nonce_str + " timestamp " + timestamp);
-		System.out.println(" jsapi_ticket " + jsapi_ticket);
-		System.out.println("nonce_str  " + nonce_str);
 
 		JSONObject jssdk = new JSONObject();
 		jssdk.put("appId", ApiConfigKit.getApiConfig().getAppId());
@@ -80,7 +83,8 @@ public class JSSDKController extends Controller {
 		jssdk.put("url", url);
 		jssdk.put("signature", signature);
 		jssdk.put("jsapi_ticket", jsapi_ticket);
-		renderJson(jssdk);
+		c.setAttr("jssdk", jssdk);
+		ai.invoke();
 	}
 
 	private static String create_timestamp() {

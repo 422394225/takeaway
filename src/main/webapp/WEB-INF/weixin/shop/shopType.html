@@ -47,11 +47,17 @@
 				tArray.push($this.find(".item-title").text());
 			}
 		})
-		if(dArray.size>0){
+		if(dArray.length>0){
 			$("#typeIds").val(dArray);
 		}
-		if(tArray.size>0){
-			$("#typeText").text(tArray.toString().substring(0,11)+"...");
+		if(tArray.length>0){
+			$("#typeText").css("color","#3d4145");
+			var tArrayStr = tArray.toString();
+			if(tArrayStr.length>11){
+				$("#typeText").text(tArrayStr.substring(0,11)+"...");
+			}else{
+				$("#typeText").text(tArrayStr);
+			}
 		}
 	}
 </script>

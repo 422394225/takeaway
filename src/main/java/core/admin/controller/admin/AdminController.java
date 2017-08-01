@@ -103,7 +103,9 @@ public class AdminController extends Controller {
 	@Clear({ AdminLoginInterceptor.class, PowerInterceptor.class })
 	public void logout() {
 		Admin admin = getSessionAttr("administrator");
-		CacheKit.remove("menuCache", admin.get("ID") + "menus");
+		if (admin != null) {
+			CacheKit.remove("menuCache", admin.get("ID") + "menus");
+		}
 		removeSessionAttr("administrator");
 		WebUtils.removeCookie(getResponse(), "administrator");
 		redirect("/login");

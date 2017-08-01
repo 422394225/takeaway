@@ -1,0 +1,53 @@
+<#include "../base/main/_main.html"/>
+<#assign wxMeta>
+</#assign>
+<#assign wxCss>
+<style>
+.page{
+	position: relative;
+}
+img{
+	width:50%;
+	max-height:50%;
+	margin: auto;  
+  	position: absolute;  
+  	top: 0; left: 0; bottom: 20%; right: 0;  	
+}
+.info{
+	width:50%;
+	height:25%;
+	margin: auto;
+  	position: absolute;  
+  	top: 40%; left: 0; bottom: 0; right: 0;
+  	text-align: center;
+}
+</style>
+</#assign>
+<#assign wxJavascript>
+<script>
+$(function(){
+	var countDown = parseInt($("#countDown").text());
+	var cd = setInterval(function(){
+		if(countDown<=0){
+			clearInterval(cd);
+			return;
+		}
+		countDown--;
+		$("#countDown").text(countDown);
+	},1000)
+	setTimeout(function(){
+		closeWxWin();
+	},5000)
+});
+</script>
+</#assign>
+<@mainLayout wxTitle="提示"  wxMeta=wxMeta wxCss=wxCss wxJavascript=wxJavascript>
+<div class="page">
+	<img src="${base}/resources/images/qrcode.jpg">
+	<div class="info">
+		<p class="color-primary">${(info)!}</p>
+		<p class="color-warning" style="font-size: .5rem;"><span id="countDown">5</span>秒后关闭窗口</p>
+		<p class="color-primary"><button class="button button-danger" onclick="closeWxWin();" style="margin: auto">手动关闭</button></p>
+	</div>
+</div>
+</@mainLayout>

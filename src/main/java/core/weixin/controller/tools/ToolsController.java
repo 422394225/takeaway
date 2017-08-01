@@ -41,4 +41,10 @@ public class ToolsController extends Controller {
 		render("map-mobile.html");
 	}
 
+	public void info() {
+		String info = getPara("info");
+		setAttr("info", info);
+		render("info.html");
+	}
+
 }

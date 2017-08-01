@@ -23,6 +23,8 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 
 import core.admin.controller.base.BaseController;
+import core.admin.service.audit.AuditService;
+import core.admin.service.audit.impl.AuditServiceImpl;
 import core.admin.service.shop.ShopService;
 import core.admin.service.shop.impl.ShopServiceImpl;
 import core.admin.service.shop.relation.ShopTypeRelationService;
@@ -50,6 +52,7 @@ public class ShopController extends BaseController {
 	private final Log log = Log.getLog(ShopController.class);
 	private ShopService service = new ShopServiceImpl();
 	private ShopTypeRelationService strService = new ShopTypeRelationServiceImpl();
+	private AuditService auditService = new AuditServiceImpl();
 
 	@Override
 	public void index() {
@@ -59,13 +62,28 @@ public class ShopController extends BaseController {
 		render("list.html");
 	}
 
-	public void getData() {
-		getData(null);
+	public void audit() {
+		render("audit.html");
 	}
 
-	private void getData(Map<String, Map<String, Object>> map) {
+	public void getData() {
+		getData(null, null);
+	}
+
+	public void getAuditData() {
+		Map<String, Map<String, Object>> map = new HashMap<>();
+		Map<String, Object> order = new HashMap<>();
+		order.put("AUDIT_STATE", "ASC");
+		map.put("orderbyCond", order);
+		getData(map, "shop.audit");
+	}
+
+	private void getData(Map<String, Map<String, Object>> map, String sqlkey) {
 		DTParams params = new DTParams(getParaMap());
-		Page<Record> shopType = service.getDTPage(params, "shop.list", map);
+		if (StringUtils.isEmpty(sqlkey)) {
+			sqlkey = "shop.list";
+		}
+		Page<Record> shopType = service.getDTPage(params, sqlkey, map);
 		JSONObject result = new JSONObject();
 		result.put("draw", params.getDraw());
 		result.put("recordsTotal", shopType.getTotalRow());
@@ -97,6 +115,37 @@ public class ShopController extends BaseController {
 		render("add.html");
 	}
 
+	public void passAudit() {
+		String shopId = getPara("id");
+		Shop shop = Shop.dao.findById(shopId);
+		if (shop != null) {
+			service.audit(this, shop, 1);
+			renderJson(new JSONSuccess("审核成功！"));
+		} else {
+			renderJson(new JSONError("商家ID不存在！"));
+		}
+	}
+
+	public void sendBack() {
+		String shopId = getPara("id");
+		Shop shop = Shop.dao.findById(shopId);
+		if (shop != null) {
+			setAttr("shop", shop);
+		}
+		render("sendBack.html");
+	}
+
+	public void sendbackSave() {
+		String shopId = getPara("id");
+		Shop shop = Shop.dao.findById(shopId);
+		if (shop != null) {
+			service.audit(this, shop, 2);
+			renderJson(new JSONSuccess("退回成功！"));
+		} else {
+			renderJson(new JSONError("商家ID不存在！"));
+		}
+	}
+
 	@Before(ShopValidate.class)
 	public void save() {
 		String id = getPara("id");
@@ -106,6 +155,7 @@ public class ShopController extends BaseController {
 			shop = new Shop();
 		}
 		shop.set("NAME", getPara("name"));
+		shop.set("ADMIN_NAME", getPara("adminName"));
 		shop.set("DESCRIPTION", getPara("description"));
 		shop.set("ADDRESS", getPara("address"));
 		shop.set("LATIDUTE", getPara("latitude"));
@@ -131,11 +181,9 @@ public class ShopController extends BaseController {
 		shop.set("REDUCTION", getParaToDouble("redution"));
 		shop.set("GIFT_THRESHOLD", getParaToDouble("giftThreshold"));
 		shop.set("GIFT", getPara("gift"));
-		shop.set("AUDIT_STATE", 0);
 		//先设置默认图片防止没上传的
 		String defaultImg = getPara("defaultImg");
 		if (StringUtils.isNotEmpty(defaultImg)) {
-			shop.set("STATE", -1);
 			shop.set("IMG", defaultImg);
 		} else {
 			shop.set("IMG", PropKit.get("default.noimage"));
@@ -156,6 +204,8 @@ public class ShopController extends BaseController {
 			strService.deleteAll(id);
 		} else {
 			shop.set("USERNAME", getPara("username"));
+			shop.set("AUDIT_STATE", 0);
+			shop.set("STATE", -1);
 			shop.save();
 		}
 		Integer[] shopTypeId = getParaValuesToInt("shopTypeId");
@@ -208,5 +258,11 @@ public class ShopController extends BaseController {
 		removeSessionAttr("shop");
 		removeCookie("shop");
 		renderJson(new JSONSuccess());
+	}
+
+	public void auditHistory() {
+		String shopId = getPara("id");
+		setAttr("audits", auditService.getByShopId(shopId));
+		render("audit-history.html");
 	}
 }

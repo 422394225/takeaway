@@ -3304,3 +3304,10 @@ table.dataTable tbody td {
 	background-color: #1abc9c;
 	border: 0px !important;
 }
+.no-border{
+	border:0px;
+}
+.no-shadow{
+	-webkit-box-shadow: 0px;
+	box-shadow: 0px;
+}

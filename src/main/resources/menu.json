@@ -1,1 +1,8 @@
-{}
+{
+	"button":[
+     {
+          "type":"view",
+          "name":"店铺入驻",
+          "url":"http://takeaway.ngrok.cc/wx/shop/add"
+      }]
+}

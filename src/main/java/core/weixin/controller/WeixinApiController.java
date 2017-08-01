@@ -9,11 +9,13 @@ import com.jfinal.weixin.sdk.api.MenuApi;
 import com.jfinal.weixin.sdk.api.QrcodeApi;
 import com.jfinal.weixin.sdk.api.ShorturlApi;
 import com.jfinal.weixin.sdk.api.TemplateMsgApi;
-import com.jfinal.weixin.sdk.api.UserApi;
 import com.jfinal.weixin.sdk.jfinal.ApiController;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+
+import core.vo.JSONError;
+import core.vo.JSONSuccess;
 
 public class WeixinApiController extends ApiController {
 
@@ -45,9 +47,9 @@ public class WeixinApiController extends ApiController {
 	public void getMenu() {
 		ApiResult apiResult = MenuApi.getMenu();
 		if (apiResult.isSucceed())
-			renderText(apiResult.getJson());
+			renderJson(new JSONSuccess(apiResult.getJson()));
 		else
-			renderText(apiResult.getErrorMsg());
+			renderJson(new JSONError(apiResult.getErrorMsg()));
 	}
 
 	/**
@@ -65,30 +67,14 @@ public class WeixinApiController extends ApiController {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			renderText("菜单JSON文件读取失败");
+			renderJson(new JSONSuccess("菜单JSON文件读取失败"));
 			return;
 		}
 		ApiResult apiResult = MenuApi.createMenu(sb.toString());
 		if (apiResult.isSucceed())
-			renderText("菜单生成成功!" + sb.toString() + "\n" + apiResult.getJson());
+			renderJson(new JSONSuccess("菜单生成成功!"));
 		else
-			renderText("菜单生成失败!" + sb.toString() + "\n" + apiResult.getErrorMsg());
-	}
-
-	/**
-	 * 获取公众号关注用户
-	 */
-	public void getFollowers() {
-		ApiResult apiResult = UserApi.getFollows();
-		renderText(apiResult.getJson());
-	}
-
-	/**
-	 * 获取用户信息
-	 */
-	public void getUserInfo() {
-		ApiResult apiResult = UserApi.getUserInfo("ohbweuNYB_heu_buiBWZtwgi4xzU");
-		renderText(apiResult.getJson());
+			renderJson(new JSONError("菜单生成失败!" + sb.toString() + "\n" + apiResult.getErrorMsg()));
 	}
 
 	/**

@@ -7,7 +7,6 @@ package core.validate;
 
 import com.jfinal.core.Controller;
 import com.jfinal.render.JsonRender;
-import com.jfinal.upload.UploadFile;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -22,12 +21,12 @@ import core.validate.base.ShortCircuitValidate;
  * @date 2017年7月20日下午9:27:21
  */
 
-public class ShopValidate extends ShortCircuitValidate {
+public class ShopWXValidate extends ShortCircuitValidate {
 	private ShopService service = new ShopServiceImpl();
 
 	@Override
 	protected void validate(Controller c) {
-		UploadFile file = null;
+		/*UploadFile file = null;
 		try {
 			file = c.getFile("img", "shop");
 		} catch (Exception e) {
@@ -35,10 +34,10 @@ public class ShopValidate extends ShortCircuitValidate {
 		}
 		if (file == null && (StringUtils.isEmpty(c.getPara("id")) || StringUtils.isEmpty(c.getPara("defaultImg")))) {
 			addError("msg", "请上传商家LOGO");
-		}
-		validateRequired("shopTypeId", "msg", "请选择商家分类");
+		}*/
 		validateRequired("name", "msg", "请输入商家名称");
 		validateRequired("adminName", "msg", "请输入负责人名称");
+		validateRequired("shopTypeId", "msg", "请选择商家分类");
 		validateRequired("address", "msg", "请输入商家地址");
 		validateRequired("latitude", "msg", "请从地图上选择一个坐标,将用于定位");
 		validateRequired("longitude", "msg", "请从地图上选择一个坐标,将用于定位");
