@@ -5,12 +5,21 @@
 			"ajax": "${base}/food/getHistroyData?SHOP_ID=${SHOP_ID}&GOOD_NAME=${GOOD_NAME}",
 	        "columns": [
 	            { "data": "PRICE" },
+	            { "data": "IMG" },
 	            { "data": "DESCRIPTION"},
 	            { "data": "SALE_NUM"},
 	            { "data": "CREATE_TIME"}
 	        ],
-	        "order": [[ 4, "desc" ]],
-	        "columnDefs":[],
+	        "columnDefs":[{
+	        	"targets": 2,
+	            "render": function(data, type, row) {
+	            	if(data==null)
+	              	  return "没有图片";
+	            	else
+	              	  return "<img src='"+data+"' style='width:50px;height:50px'/>";
+	            }
+	        }],
+	        "order": [[ 5, "desc" ]],
 	        "lColumnNull":false
 		})		
 	});
@@ -20,6 +29,7 @@
       <tr>
      	<th>序号</th>
         <th>价格</th>
+     	<th>图片</th>
         <th>简介</th>
         <th>销量</th>
         <th>创建时间</th>

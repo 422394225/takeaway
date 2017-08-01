@@ -1,0 +1,135 @@
+<#include "../base/main/_dashboard.html"/>
+<#assign pageMeta>
+</#assign>
+<#assign pageCss>
+<link href="${base}/resources/jQuery/dataTables.bootstrap.min.css" rel="stylesheet" type="text/css" />
+</#assign>
+<#assign pageJavascript>
+<script src="${base}/resources/jQuery/jquery.dataTables.min.js" type="text/javascript"></script>
+<script src="${base}/resources/jQuery/dataTables.bootstrap.min.js" type="text/javascript"></script>
+</#assign>
+<@dashboard pageTitle="订单" currentMenu="order" pageMeta=pageMeta pageCss=pageCss pageJavascript=pageJavascript>
+<@tool map="订单">
+   <div class='btn-group'>
+     <button class="reload btn btn-light btn-sm radius" title="刷新" data-toggle="tooltip" data-placement="bottom">
+     	<i class="fa fa-refresh"></i>
+     </button>
+   </div>
+</@tool>
+<div id='content'>
+  <table class='table table-bordered' id="table">
+    <thead>
+      <tr>
+        <th>序号</th>
+        <th>订单号</th>
+        <th>买家</th>
+        <th>卖家</th>
+        <th>配送员</th>
+        <th>状态</th>
+        <th class='operation'>
+          	操作
+        </th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</div>
+</@dashboard>
+<script>
+$(function(){
+	var showType="${showType}";
+	var table = Kit.table("#table",
+	{
+		"ajax": "${base}/order/getData?showType="+showType,
+			"columns": [
+				{ "data": "ID" },
+				{ "data": "USER_NAME" },
+				{ "data": "SHOP_NAME" },
+				{ "data": "DELIVERY_NAME" },
+				{ "data": "STATESTRING" }
+			],
+			"order": [[ 2, "desc" ]],
+			"columnDefs": [{
+				"targets": -1,
+				"data": null,  
+				"render": function(data,type,row){
+	            	if(row["ORDER_STATE"]==2){
+	            		return "<button class='accept btn btn-info btn-xs' title='接单'><i class='fa fa-check-square'></i></button>"+
+	            		"<button class='reject btn btn-info btn-xs' title='退款'><i class='fa fa-window-close'></i></button>"+
+	            		"<button class='view btn btn-info btn-xs' title='查看'><i class='fa fa-search-plus'></i></button>";
+	            	}
+	            	else{
+	            		return "<button class='view btn btn-info btn-xs' title='查看'><i class='fa fa-search-plus'></i></button>";
+	            	}
+	            }
+		     },{
+		        	"targets": 4,
+		            "render": function(data, type, row) {
+		            	if(data==null)
+		              	  return "";
+		            	else
+		              	  return data+"<button class='place btn btn-info btn-xs' title='查看位置'><i class='fa fa-globe'></i>";
+		            }
+		        }]
+	});
+
+	table.on('click', '.view', function(){
+	    var data = table.row($(this).parents('tr')).data();
+	    BootstrapDialog.show({
+			title: '查看订单',
+			draggable: true,
+			closeByBackdrop: false,
+		    message: $('<div id="viewDiv"></div>').load('${base}/order/view?id='+data["ID"]),
+		    buttons: []
+        });
+	});
+	table.on('click', '.accept', function(){
+	    var data = table.row($(this).parents('tr')).data();
+	    BootstrapDialog.show({
+			title: '操作结果',
+			draggable: true,
+			closeByBackdrop: false,
+		    message: $('<div></div>').load('${base}/order/accept?id='+data["ID"]),
+		    buttons: [{
+		        label: '关闭',
+		        cssClass: 'btn btn-link', 
+		        action: function(dialogRef){    
+		            dialogRef.close();
+		        }
+		    }]
+        });
+	});
+	table.on("click",'.place',function(){
+        var data = table.row($(this).parents('tr')).data();
+		var deliveryId=data['DELIVERY_ID'];
+		BootstrapDialog.show({
+			title: '查看位置',
+			draggable: true,
+		    message: $('<div></div>').load('${base}/delivery/placeSingle?deliveryId='+deliveryId),
+		    buttons:[{
+		        label: '关闭',
+		        cssClass: 'btn btn-link', 
+		        action: function(dialogRef){    
+		            dialogRef.close();
+		        }
+		    }]
+        });
+	});
+	table.on('click', '.reject', function(){
+	    var data = table.row($(this).parents('tr')).data();
+	    BootstrapDialog.show({
+			title: '操作结果',
+			draggable: true,
+			closeByBackdrop: false,
+		    message: $('<div></div>').load('${base}/order/reject?id='+data["ID"]),
+		    buttons: [{
+		        label: '关闭',
+		        cssClass: 'btn btn-link', 
+		        action: function(dialogRef){    
+		            dialogRef.close();
+		        }
+		    }]
+        });
+	});
+});
+</script>

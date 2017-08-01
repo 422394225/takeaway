@@ -138,6 +138,36 @@
 		#@dbCondition_alias(conditions,mainAlias,aliasMap)
 	#end
 #end
+
+#namespace("order")
+	#sql("listActive")
+		#set(mainAlias = "d")
+		#set(aliasMap = {"SHOP_NAME":"t.`NAME`"})
+		#set(aliasMap = {"DELIVERY_NAME":"c.`NAME`"})
+		SELECT
+	d.*, t. NAME AS SHOP_NAME,c.NAME AS DELIVERY_NAME
+	FROM
+	t_order AS d
+	LEFT JOIN t_shop t ON d.SHOP_ID = t.ID
+	LEFT JOIN t_delivery c ON d.DELIVERY_ID=c.ID
+	WHERE 1=1 AND (d.ORDER_STATE='2' OR d.CANCEL_STATE='0')
+		#@dbCondition_alias(conditions,mainAlias,aliasMap)
+	#end
+	#sql("listAll")
+		#set(mainAlias = "d")
+		#set(aliasMap = {"SHOP_NAME":"t.`NAME`"})
+		#set(aliasMap = {"DELIVERY_NAME":"c.`NAME`"})
+		SELECT
+	d.*, t. NAME AS SHOP_NAME,c.NAME AS DELIVERY_NAME
+	FROM
+	t_order AS d
+	LEFT JOIN t_shop t ON d.SHOP_ID = t.ID
+	LEFT JOIN t_delivery c ON d.DELIVERY_ID=c.ID
+	WHERE 1=1 
+		#@dbCondition_alias(conditions,mainAlias,aliasMap)
+	#end
+#end
+
 #namespace("delivery")
 	#sql("list")
 		#set(mainAlias = "d")
@@ -162,6 +192,16 @@
 		LEFT JOIN t_dict_code AS d
 		ON s.STATE = d.`CODE` 
 		WHERE d.FIELD = 't_shop.STATE' 
+		#@dbCondition_alias(conditions,mainAlias,aliasMap)
+	#end
+	#sql("audit")
+		#set(mainAlias = "s")
+		#set(aliasMap = {"STATE_NAME":"d.`NAME`"})
+		SELECT s.*,d.`NAME` AS STATE_NAME 
+		FROM t_shop AS s
+		LEFT JOIN t_dict_code AS d
+		ON s.AUDIT_STATE = d.`CODE` 
+		WHERE d.FIELD = 't_shop.AUDIT_STATE' 
 		#@dbCondition_alias(conditions,mainAlias,aliasMap)
 	#end
 #end

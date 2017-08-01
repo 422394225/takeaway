@@ -14,6 +14,7 @@
 			"ajax": "${base}/food/getData",
 	        "columns": [
 	            { "data": "NAME" },
+	            { "data": "IMG"},
 	            { "data": "PRICE"},
 	            { "data": "ORIGN_PRICE"},
 	            { "data": "TYPE_NAME"},
@@ -28,8 +29,16 @@
 	            "defaultContent": "<button class='histroy btn btn-info btn-xs' title='查看历史记录'><i class='fa fa-history'></i>"+
 	            				  "</button><button class='edit btn btn-success btn-xs' title='修改'><i class='fa fa-edit'></i></button>"+
 	        					  "<button class='xiajia btn btn-danger btn-xs' title='下架'><i class='fa fa-caret-down fa-lg'></i></button>"
+	        },{
+	        	"targets": 2,
+	            "render": function(data, type, row) {
+	            	if(data==null)
+	              	  return "没有图片";
+	            	else
+	              	  return "<img src='"+data+"' style='width:50px;height:50px'/>";
+	            }
 	        }],
-	        "order": [[ 7, "desc" ]]
+	        "order": [[ 8, "desc" ]]
 		});
 		table.on('click', '.histroy', function(){
 	        var data = table.row($(this).parents('tr')).data();
@@ -152,6 +161,7 @@
       <tr>
      	<th>序号</th>
         <th>名称</th>
+        <th>图片</th>
         <th>价格</th>
         <th>原价</th>
         <th>分类</th>
