@@ -53,9 +53,7 @@ $(function(){
 	wx.checkJsApi({
 	    jsApiList: ['chooseImage','uploadImage'], 
 	    success: function(res) {
-	    	if("config:ok"!=res.checkResult){
-	    		layer.msg("为了保证您的正常使用，请更新至最新版微信")
-	    	}
+	        console.log(res.checkResult)
 	    }
 	});
 });
@@ -63,7 +61,22 @@ function chooseImage(){
 	wx.chooseImage({
 	    count: 1,
 	    success: function (res) {
-	        console.log(res)
+	        if(res.errMsg=="chooseImage:ok"){
+	        	$("#preview").attr("src",res.localIds[0])
+	        	$("#preview").css("display","block");
+	        	$.showPreloader();
+	        	wx.uploadImage({
+				    localId: res.localIds[0], // 需要上传的图片的本地ID，由chooseImage接口获得
+				    isShowProgressTips: 1, // 默认为1，显示进度提示
+				    success: function (res) {
+				        var serverId = res.serverId; // 返回图片的服务器端ID
+				        $("#logo").val(serverId);
+				        $.hidePreloader();
+				    }
+				});
+	        }else{
+	        	$.toast("拉起图片选择接口失败！");
+	        }
 	    }
 	});
 }
@@ -112,7 +125,7 @@ function addressChange(){
 <@mainLayout wxTitle="商家入驻"  wxMeta=wxMeta wxCss=wxCss wxJavascript=wxJavascript>
 <div class="page page-current" id='addShop'>
 <header class="bar bar-nav">
-  <h1 class='title'>加入那里</h1>
+  <h1 class='title'>入驻申请表</h1>
 </header>
 <div class="content">
   <div class="list-block">
@@ -156,8 +169,12 @@ function addressChange(){
           <div class="item-inner" onclick="javascript:chooseImage();">
             <div class="item-title label">LOGO</div>
             <div class="item-media"><font color="#999">选择照片&nbsp;<i class="fa fa-angle-right"></i></font></div>
+            	<input type="hidden" name="logo" id="logo"/>
             </div>
         </div>
+      </li>
+      <li>
+      		<img id="preview" style="display: none;width:100%;padding: 2rem"/>
       </li>
       <li class="align-top">
         <div class="item-content">

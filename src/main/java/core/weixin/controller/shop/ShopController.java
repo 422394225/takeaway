@@ -9,6 +9,8 @@ import com.jfinal.aop.Before;
 import com.jfinal.kit.PropKit;
 import com.jfinal.log.Log;
 import com.jfinal.plugin.activerecord.Db;
+import com.jfinal.weixin.sdk.api.ApiConfig;
+import com.jfinal.weixin.sdk.api.ApiConfigKit;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -17,6 +19,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import core.admin.service.shop.relation.ShopTypeRelationService;
 import core.admin.service.shop.relation.impl.ShopTypeRelationServiceImpl;
+import core.common.utils.QiniuUtils;
 import core.interceptor.JSSDKInterceptor;
 import core.model.Shop;
 import core.model.ShopType;
@@ -24,6 +27,7 @@ import core.model.ShopTypeRelation;
 import core.utils.MD5Util;
 import core.validate.ShopWXValidate;
 import core.vo.JSONSuccess;
+import core.weixin.api.MediaApi;
 import core.weixin.base.BaseController;
 
 /**
@@ -36,6 +40,27 @@ import core.weixin.base.BaseController;
 public class ShopController extends BaseController {
 	private Log log = Log.getLog(ShopController.class);
 	private ShopTypeRelationService strService = new ShopTypeRelationServiceImpl();
+
+	/**
+	 * 如果要支持多公众账号，只需要在此返回各个公众号对应的 ApiConfig 对象即可 可以通过在请求 url 中挂参数来动态从数据库中获取
+	 * ApiConfig 属性值
+	 */
+	public ApiConfig getApiConfig() {
+		ApiConfig ac = new ApiConfig();
+
+		// 配置微信 API 相关常量
+		ac.setToken(PropKit.get("token"));
+		ac.setAppId(PropKit.get("appId"));
+		ac.setAppSecret(PropKit.get("appSecret"));
+
+		/**
+		 * 是否对消息进行加密，对应于微信平台的消息加解密方式： 1：true进行加密且必须配置 encodingAesKey
+		 * 2：false采用明文模式，同时也支持混合模式
+		 */
+		ac.setEncryptMessage(PropKit.getBoolean("encryptMessage", false));
+		ac.setEncodingAesKey(PropKit.get("encodingAesKey", "setting it in config file"));
+		return ac;
+	}
 
 	@Before(JSSDKInterceptor.class)
 	public void add() {
@@ -73,6 +98,11 @@ public class ShopController extends BaseController {
 		if ("on".equals(onStr)) {
 			on = 1;
 		}
+		//上传素材
+		ApiConfigKit.setThreadLocalApiConfig(getApiConfig());
+
+		String logoUrl = QiniuUtils.upload(MediaApi.mediaGet(getPara("logo")));
+		shop.set("IMG", logoUrl + "?imageView2/1/w/200/h/200");
 		shop.set("AUTO_OPEN", on);
 		if (StringUtils.isNotEmpty(id)) {
 			shop.update();

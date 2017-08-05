@@ -80,8 +80,8 @@ public class WeixinApiController extends ApiController {
 	/**
 	 * 发送模板消息
 	 */
-	public void sendMsg(String msg) {
-		msg = " {\n" + "           \"touser\":\"ohbweuNYB_heu_buiBWZtwgi4xzU\",\n"
+	public void sendMsg() {
+		String str = " {\n" + "           \"touser\":\"ohbweuNYB_heu_buiBWZtwgi4xzU\",\n"
 				+ "           \"template_id\":\"9SIa8ph1403NEM3qk3z9-go-p4kBMeh-HGepQZVdA7w\",\n"
 				+ "           \"url\":\"http://www.sina.com\",\n" + "           \"topcolor\":\"#FF0000\",\n"
 				+ "           \"data\":{\n" + "                   \"first\": {\n"
@@ -94,7 +94,7 @@ public class WeixinApiController extends ApiController {
 				+ "                   \"remark\":{\n" + "                       \"value\":\"欢迎再次购买！\",\n"
 				+ "                       \"color\":\"#173177\"\n" + "                   }\n" + "           }\n"
 				+ "       }";
-		ApiResult apiResult = TemplateMsgApi.send(msg);
+		ApiResult apiResult = TemplateMsgApi.send(str);
 		renderText(apiResult.getJson());
 	}
 
