@@ -3,6 +3,6 @@
      {
           "type":"view",
           "name":"店铺入驻",
-          "url":"http://takeaway.ngrok.cc/wx/shop/add"
+          "url":"https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxa78f4c350a06e3c4&redirect_uri=http%3A%2F%2Ftakeaway.ngrok.cc%2Fwx%2Fshop%2Fadd&response_type=code&scope=snsapi_base&state=shopAdd#wechat_redirect"
       }]
 }

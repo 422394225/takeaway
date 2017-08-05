@@ -22,6 +22,10 @@ $(function(){
 			},400);
 		});
 })
+function openWin(url,state){
+	var APPID = 'wxa78f4c350a06e3c4';
+	var target = "https://open.weixin.qq.com/connect/oauth2/authorize?appid="+APPID+"&redirect_uri="+encodeURI(url)+"&response_type=code&scope=snsapi_base&state="+state+"#wechat_redirect";
+}
 </script>
 <script src="${base}/resources/light7/js/light7.min.js" type="text/javascript"></script>
 <script src="${base}/resources/javascripts/jweixin-1.2.0.js" type="text/javascript"></script>

@@ -53,7 +53,9 @@ $(function(){
 	wx.checkJsApi({
 	    jsApiList: ['chooseImage','uploadImage'], 
 	    success: function(res) {
-	        console.log(res.checkResult)
+	    	if("config:ok"!=res.checkResult){
+	    		layer.msg("为了保证您的正常使用，请更新至最新版微信")
+	    	}
 	    }
 	});
 });
@@ -110,7 +112,7 @@ function addressChange(){
 <@mainLayout wxTitle="商家入驻"  wxMeta=wxMeta wxCss=wxCss wxJavascript=wxJavascript>
 <div class="page page-current" id='addShop'>
 <header class="bar bar-nav">
-  <h1 class='title'>入驻申请表</h1>
+  <h1 class='title'>加入那里</h1>
 </header>
 <div class="content">
   <div class="list-block">
