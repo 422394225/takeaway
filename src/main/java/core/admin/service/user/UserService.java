@@ -15,5 +15,4 @@ import core.admin.service.base.DataTableService;
  */
 
 public interface UserService extends DataTableService {
-
 }
