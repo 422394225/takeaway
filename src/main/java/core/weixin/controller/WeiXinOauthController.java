@@ -62,7 +62,7 @@ public class WeiXinOauthController extends ApiController {
 				renderJson(new JSONError());
 			} else {
 				getRequest().setAttribute("openid", openId);
-				forwardAction("/wx/order");
+				forwardAction(state);
 			}
 			/*
 			 * //拉取用户信息(需scope为 snsapi_userinfo) ApiResult apiResult =
