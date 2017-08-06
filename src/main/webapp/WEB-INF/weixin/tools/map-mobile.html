@@ -165,14 +165,6 @@ $(window).resize(function(){
         });		 
     });
 	 
-	 $("#submitLocalBtn").on("click",function() {
-		 $("#latitude").val(currentPoi.lat)
-		 $("#longitude").val(currentPoi.lng)
-		 $("#addressCode").val(currentPoi.adcode)
-		 $("#address").val(currentPoi.address).change();
-		 $.router.loadPage('#addShop');
-    });
-	 
 	 function setCurrentPoi(adcode,lat,lng,address){
 		currentPoi.adcode = adcode;
      	currentPoi.lat = lat;

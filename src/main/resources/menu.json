@@ -2,12 +2,12 @@
 	"button":[
      {
           "type":"view",
-          "name":"点单",
-          "url":"https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxabc1c52c7de5bbd4&redirect_uri=http%3a%2f%2f177l3a5827.51mypc.cn%2foauth&response_type=code&scope=snsapi_base&state=%2fwx%2forder#wechat_redirect"
+          "name":"吃吃吃!",
+          "url":"https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxa78f4c350a06e3c4&redirect_uri=http%3A%2F%2Ftakeaway.ngrok.cc%2Foauth&response_type=code&scope=snsapi_base&state=%2fwx#wechat_redirect"
       },
      {
           "type":"view",
           "name":"店铺入驻",
-          "url":"http://177l3a5827.51mypc.cn/wx/shop/add"
+          "url":"https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxa78f4c350a06e3c4&redirect_uri=http%3A%2F%2Ftakeaway.ngrok.cc%2Foauth&response_type=code&scope=snsapi_base&state=%2fwx%2fshop%2fadd#wechat_redirect"
       }]
 }

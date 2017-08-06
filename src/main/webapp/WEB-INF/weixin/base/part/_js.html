@@ -1,5 +1,6 @@
 <!-- Javascripts -->
 <script src="${base}/resources/jQuery/jquery-1.9.1.min.js" type="text/javascript"></script>
+<script src="${base}/resources/javascripts/Kit_Wx.js" type="text/javascript"></script>
 <script>
 $.config = {
 	autoInit: true 
@@ -8,7 +9,7 @@ function closeWxWin(){
 	try{
 		WeixinJSBridge.call('closeWindow');
 	}catch(e){
-		console.error("WeixinJSBridge.call('closeWindow');执行失败！当前可能为非微信浏览器。")
+		$.alert("WeixinJSBridge.call('closeWindow');执行失败！当前可能为非微信浏览器。")
 	}
 }
 function newWinInfo(info){

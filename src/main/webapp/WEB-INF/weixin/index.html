@@ -1,0 +1,141 @@
+<#include "base/main/_main.html"/>
+<#assign wxMeta>
+</#assign>
+<#assign wxCss>
+<style>
+.location{
+	position:relative;
+	left:0;
+	height:100%;
+	text-align: left;
+}
+.searchbar{
+	box-sizing: border-box;
+	background-color: #0894ec !important;
+}
+.bar{
+	height: auto;
+	position:initial;
+	color: white;
+}
+.bar .searchbar .searchbar-cancel{
+	color: white;
+}
+.page-content{
+	position:relative;
+	top:0px;
+	bottom: 0px;
+	margin-bottom: 1em;
+}
+#typeTable{
+	width: 100%;
+}
+#typeTable dl,#typeTable dd{
+	text-align: center;
+}
+#typeTable dd{
+	margin: 0px;
+}
+.card{
+	margin: 0px;
+}
+</style>
+</#assign>
+<#assign wxJavascript>
+<script src="${base}/resources/jQuery/jquery.marquee.min.js" type="text/javascript"></script>
+<script src="${base}/resources/javascripts/lay/laytpl.js" type="text/javascript"></script>
+<script id="shop-tpl" type="text/html">
+{{# for(var i = 0, len = d.length; i < len; i++){ }}
+	<div class="card">
+	    <div class="card-header">{{d[i].NAME}}</div>
+	    <div class="card-content">
+	      <div class="list-block media-list">
+	        <ul>
+	          <li class="item-content">
+	            <div class="item-media">
+	              <img src="{{d[i].IMG}}" width="44">
+	            </div>
+	            <div class="item-inner">
+	              <div class="item-title-row">
+	                <div class="item-title">标题</div>
+	              </div>
+	              <div class="item-subtitle">子标题</div>
+	            </div>
+	          </li>
+	        </ul>
+	      </div>
+	    </div>
+	    <div class="card-footer">
+	      <span>2015/01/15</span>
+	      <span>5 评论</span>
+	    </div>
+	  </div>
+{{# } }}
+</script>
+<script>
+$(function(){
+	$("#submitLocalBtn").on("click",function() {
+		 /* $("#latitude").val(currentPoi.lat)
+		 $("#longitude").val(currentPoi.lng)
+		 $("#addressCode").val(currentPoi.adcode) */
+		 var address = currentPoi.address;
+		 $("#address").text(currentPoi.address);
+		 $.router.loadPage('#mainPage');
+	});
+	
+})
+//商家分类
+Kit.post("${base}/wx/ajaxShopTypes",{},
+function(msg,data){
+	var html = "";
+	for(var i=0;i<data.length;i++){
+		if(i%4==0){
+			html+="<tr>";
+		}
+		html+="<td><dl><dt><img src='"+data[i].ICON+"' style='width: 2rem'/></dt><dd>"+data[i].NAME+"</dd></dl></td>";
+		if(i%4==3){
+			html+="</tr>";
+		}
+	}
+	$("#typeTable").html(html);
+},function(msg){
+	$.alert(msg)
+})
+//商家
+Kit.post("${base}/wx/ajaxShops",{},
+function(msg,data){
+	var tpl = $('#shop-tpl').html();
+	laytpl(tpl).render(data, function(html){
+		$("#shopContainer").html(html);
+	});
+},function(msg){
+	$.alert(msg)
+})
+</script>
+</#assign>
+<@mainLayout wxTitle="那里外卖"  wxMeta=wxMeta wxCss=wxCss wxJavascript=wxJavascript>
+<div class="page page-current" id="mainPage">
+	<header class="bar bar-nav bg-primary">
+		<div class="title color-default location text-over" onclick="javascript:$.router.loadPage('#map-mobile');">
+			&nbsp;<i class="fa fa-map-marker"></i>
+			&nbsp;<span id="address">选择地址</span>
+		</div>
+		<div class="searchbar">
+		<a class="searchbar-cancel">取消</a>
+		<div class="search-input col-75">
+		  <label class="icon icon-search" for="search"></label>
+		  <input type="search" id="searchAll" placeholder='客官吃点什么吧...'/>
+		</div>
+		</div>
+	</header>
+	<div class="page-content bg-default">
+	<table id="typeTable">
+	</table>
+	</div>
+	<div class="page-content bg-default">
+		<div id="shopContainer">
+		</div>
+	</div>
+</div>
+<#include "tools/map-mobile.html"/>
+</@mainLayout>
