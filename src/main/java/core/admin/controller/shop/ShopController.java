@@ -229,6 +229,7 @@ public class ShopController extends BaseController {
 				renderJson(new JSONError("该商家下有关联商品不能删除！"));
 			} else {
 				Shop.dao.deleteById(shopId);
+				strService.deleteAll(shopId);
 				renderJson(new JSONSuccess("删除商家成功！"));
 			}
 		} else {

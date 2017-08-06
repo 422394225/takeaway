@@ -8,6 +8,7 @@ package core.common.utils;
 import com.google.gson.Gson;
 import com.jfinal.kit.PropKit;
 import com.jfinal.log.Log;
+import com.mchange.v1.io.InputStreamUtils;
 import com.qiniu.common.QiniuException;
 import com.qiniu.common.Zone;
 import com.qiniu.http.Response;
@@ -17,6 +18,9 @@ import com.qiniu.storage.UploadManager;
 import com.qiniu.storage.model.DefaultPutRet;
 import com.qiniu.storage.model.FetchRet;
 import com.qiniu.util.Auth;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Description:
@@ -78,6 +82,82 @@ public class QiniuUtils {
 				}
 			}
 		}
+		return null;
+	}
+
+	public static String upload(InputStream in) {
+		//构造一个带指定Zone对象的配置类
+		Configuration cfg = new Configuration(Zone.zone2());
+		//...其他参数参考类注释
+
+		UploadManager uploadManager = new UploadManager(cfg);
+
+		//默认不指定key的情况下，以文件内容的hash值作为文件名
+		String key = null;
+
+		Auth auth = Auth.create(ACCESS_KEY, SECRET_KEY);
+		String upToken = auth.uploadToken(BUCKET_NAME);
+
+		try {
+			Response response = null;
+			try {
+				response = uploadManager.put(InputStreamUtils.getBytes(in), key, upToken);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			//解析上传成功的结果
+			DefaultPutRet putRet = new Gson().fromJson(response.bodyString(), DefaultPutRet.class);
+			String filePath = PropKit.get("qiniu.url") + putRet.key;
+			log.info("文件上传成功！" + "\tMd5:\t" + putRet.hash + "\tKey:\t" + putRet.key);
+			return filePath;
+		} catch (QiniuException ex) {
+			Response r = ex.response;
+			System.err.println(r.toString());
+			try {
+				System.err.println(r.bodyString());
+			} catch (QiniuException ex2) {
+				//ignore
+			}
+		}
+
+		return null;
+	}
+
+	public static String upload(byte[] bytes) {
+		//构造一个带指定Zone对象的配置类
+		Configuration cfg = new Configuration(Zone.zone2());
+		//...其他参数参考类注释
+
+		UploadManager uploadManager = new UploadManager(cfg);
+
+		//默认不指定key的情况下，以文件内容的hash值作为文件名
+		String key = null;
+
+		Auth auth = Auth.create(ACCESS_KEY, SECRET_KEY);
+		String upToken = auth.uploadToken(BUCKET_NAME);
+
+		try {
+			Response response = null;
+			try {
+				response = uploadManager.put(bytes, key, upToken);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			//解析上传成功的结果
+			DefaultPutRet putRet = new Gson().fromJson(response.bodyString(), DefaultPutRet.class);
+			String filePath = PropKit.get("qiniu.url") + putRet.key;
+			log.info("文件上传成功！" + "\tMd5:\t" + putRet.hash + "\tKey:\t" + putRet.key);
+			return filePath;
+		} catch (QiniuException ex) {
+			Response r = ex.response;
+			System.err.println(r.toString());
+			try {
+				System.err.println(r.bodyString());
+			} catch (QiniuException ex2) {
+				//ignore
+			}
+		}
+
 		return null;
 	}
 
