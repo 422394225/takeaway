@@ -19,3 +19,15 @@
 	translateX(-50%);
 	translateY(-50%)
 }
+.no-padding{
+	padding: 0px;
+}
+.no-margin{
+	margin: 0px !important;
+}
+badge{
+	min-width:1.5em;
+	text-align:center;
+    -moz-border-radius: 15px;
+    border-radius: 15px;
+}

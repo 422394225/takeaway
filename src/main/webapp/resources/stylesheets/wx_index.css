@@ -1,0 +1,69 @@
+.bar-nav~.content{top: 4.4rem;}
+.location{
+	position:relative;
+	left:0;
+	right:10px;
+	height:100%;
+	width:90%;
+	text-align: left;
+}
+.searchbar{
+	box-sizing: border-box;
+	background-color: #0894ec !important;
+}
+.bar{
+	height: auto;
+	position:initial;
+	color: white;
+}
+.bar .searchbar .searchbar-cancel{
+	color: white;
+}
+.page-content{
+	position:relative;
+	top:0px;
+	bottom: 0px;
+	margin-bottom: 1em;
+}
+#typeTable{
+	width: 90%;
+	margin-left: 5%;
+	margin-right: 5%;
+}
+#typeTable dl,#typeTable dd{
+	text-align: center;
+}
+#typeTable dd{
+	margin: 0px;
+}
+.card{
+	margin: 0px;
+}
+.swiper-slide img {
+      width: 100%;
+}
+.hotShop.active{
+	color:#ef3204 !important;
+	border-color:#ef3204 !important;
+}
+.neighbor.active{
+	color: #0894ec !important;
+	border-color:#0894ec !important;
+}
+.collections.active{
+	color:#f59b08 !important;
+	border-color:#f59b08 !important;
+}
+.item-title{
+	color:#000;
+	font-weight: bold;
+}
+.card-footer{
+	min-height: 1.8rem;
+	position:relative;
+	right:0;
+	margin-left:4.5rem;
+	width:12.75rem;
+	-webkit-justify-content: initial;
+    justify-content: initial
+}
