@@ -1,5 +1,6 @@
 package core.weixin.controller.index;
 
+import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
 import com.jfinal.plugin.activerecord.Db;
 
@@ -7,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import core.interceptor.JSSDKInterceptor;
 import core.model.Shop;
 import core.model.ShopType;
 import core.vo.JSONSuccess;
@@ -20,6 +22,7 @@ import core.vo.JSONSuccess;
  */
 public class IndexController extends Controller {
 
+	@Before(JSSDKInterceptor.class)
 	public void index() {
 		render("index.html");
 	}

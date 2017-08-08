@@ -39,7 +39,7 @@ $(window).resize(function(){
 	<div id="container">
 	</div>
 	<input class="" id="pickerInput" placeholder="&nbsp;搜索..." onfocus="this.value='';$('.sure,.cancel').hide();" onblur="$('.sure,.cancel').show();"/>
-	<div class="cancel"><button onclick="$.router.loadPage('#addShop');" class="button button-big button-fill button-danger">取消</button></div>
+	<div class="cancel"><button onclick="$.router.loadPage('#mainPage');" class="button button-big button-fill button-danger">取消</button></div>
 	<div class="sure"><button id="submitLocalBtn" class="button button-big button-fill button-success">就是这里</button></div>
 </div>
 <script src="http://webapi.amap.com/maps?v=1.3&key=04c33f8c52343253167be2dd826f5be8&plugin=AMap.Autocomplete,AMap.Geocoder&callback=mapInit" type="text/javascript"></script>
@@ -53,11 +53,7 @@ $(window).resize(function(){
 		var latitude = $("#latitude").val();
 		var longitude = $("#longitude").val();
 		var option = {
-	        resizeEnable: true,
-	        zoom: 13
-		}
-	 	if(latitude!=undefined&&longitude!=undefined &&latitude!=""&&longitude!=""){
-			$.extend(option,{center:[parseFloat(longitude),parseFloat(latitude)]});
+	        resizeEnable: true
 		}
 		map = new AMap.Map("container", option);//初始化地图
 		
@@ -67,6 +63,7 @@ $(window).resize(function(){
             map.addControl(new AMap.CitySearch());
             map.addControl(new AMap.ToolBar());
         });
+		
 		//输入提示
 	    var autoOptions = {
 	        input: "mapSearch"
@@ -83,7 +80,7 @@ $(window).resize(function(){
 	    //初始化标记
 	    var marker = new AMap.Marker({
     		icon:"${base}/resources/images/mark_r.png",
-    		title: "店铺位置",
+    		title: "商家位置",
     		zIndex:1000,
     		animation:"AMAP_ANIMATION_DROP",
     		map: map
@@ -96,14 +93,36 @@ $(window).resize(function(){
 	    var geocoder = new AMap.Geocoder({
             radius: 1000,
             extensions: "all"
-        });  
-	    getAddressInfo(map.getCenter());//显示当前位置信息窗体
-
+        });
+	    
+	    map.plugin('AMap.Geolocation', function() {
+	        geolocation = new AMap.Geolocation({
+	            enableHighAccuracy: true,//是否使用高精度定位，默认:true
+	            timeout: 10000,          //超过10秒后停止定位，默认：无穷大
+	            buttonOffset: new AMap.Pixel(10, 20),//定位按钮与设置的停靠位置的偏移量，默认：Pixel(10, 20)
+	            zoomToAccuracy: true,      //定位成功后调整地图视野范围使定位位置及精度范围视野内可见，默认：false
+	            buttonPosition:'LB'
+	        });
+	        map.addControl(geolocation);
+	        AMap.event.addListener(geolocation, 'complete', function(data){
+	        	createMarker(data.position)
+		    });//返回定位信息
+	        AMap.event.addListener(geolocation, 'error', function(data) {
+	  	      $.alert('定位失败！<br>'+data.message)
+		    });
+		    
+	        if(latitude!=undefined && longitude!=undefined
+	        		&& latitude!="" && longitude!=""){
+		    	var lnglat = [parseFloat(longitude),parseFloat(latitude)];
+				map.setCenter(lnglat);
+				createMarker(lnglat)
+			}else{
+				geolocation.getCurrentPosition();
+			}
+	    });
+	    
 	    map.on('click', function(e) {
-	    	infoWindow.close();
-	    	marker.setPosition(e.lnglat);
-	    	map.setCenter(e.lnglat);
-	    	getAddressInfo(e.lnglat)
+	    	createMarker(e.lnglat)
 	    });
 	    
 	    function poiPickerReady(poiPicker) {
@@ -129,6 +148,13 @@ $(window).resize(function(){
 	        });
 
 	    }
+	    
+	    function createMarker(lnglat){
+	    	infoWindow.close();
+	    	marker.setPosition(lnglat);
+	    	map.setCenter(lnglat);
+	    	getAddressInfo(lnglat)
+	    }
 		
 	    function getAddressInfo(lnglat){
 			geocoder.getAddress(lnglat, function(status, result) {
@@ -148,35 +174,10 @@ $(window).resize(function(){
 		return map;
 	}
 	
-	
-	 $("#localBtn").on("click",function() {
-		 //实例化城市查询类
-        var citysearch = new AMap.CitySearch();
-        //自动获取用户IP，返回当前城市
-        citysearch.getLocalCity(function(status, result) {
-            if (status === 'complete' && result.info === 'OK') {
-                if (result && result.city && result.bounds) {
-                    var cityinfo = result.city;
-                    var citybounds = result.bounds;
-                    //地图显示当前城市
-                    map.setBounds(citybounds);
-                }
-            }
-        });		 
-    });
-	 
 	 function setCurrentPoi(adcode,lat,lng,address){
 		currentPoi.adcode = adcode;
      	currentPoi.lat = lat;
         currentPoi.lng = lng;
         currentPoi.address = address;
 	 }
-	 
-	 function closeWxWin(){
-			try{
-				WeixinJSBridge.call('closeWindow');
-			}catch(e){
-				console.error("WeixinJSBridge.call('closeWindow');执行失败！当前可能为非微信浏览器。")
-			}
-		}
 </script>

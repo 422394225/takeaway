@@ -68,9 +68,6 @@
 <script>
 $(function(){
 	$("#submitLocalBtn").on("click",function() {
-		 /* $("#latitude").val(currentPoi.lat)
-		 $("#longitude").val(currentPoi.lng)
-		 $("#addressCode").val(currentPoi.adcode) */
 		 var address = currentPoi.address;
 		 $("#address").text(currentPoi.address);
 		 $.router.loadPage('#mainPage');
