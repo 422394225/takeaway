@@ -105,7 +105,7 @@ $(window).resize(function(){
 	        });
 	        map.addControl(geolocation);
 	        AMap.event.addListener(geolocation, 'complete', function(data){
-	        	createMarker(data.position)
+	        	createMarker(data.position,true)
 		    });//返回定位信息
 	        AMap.event.addListener(geolocation, 'error', function(data) {
 	  	      $.alert('定位失败！<br>'+data.message)
@@ -124,6 +124,19 @@ $(window).resize(function(){
 	    map.on('click', function(e) {
 	    	createMarker(e.lnglat)
 	    });
+	    
+	    $("#submitLocalBtn").on("click",function() {
+	     setLocalInfo();
+	   	 $.router.loadPage('#mainPage');
+	   });
+	    
+	    function setLocalInfo(){
+	    	 $("#latitude").val(currentPoi.lat)
+		   	 $("#longitude").val(currentPoi.lng)
+		   	 $("#addressCode").val(currentPoi.adcode)
+		   	 $("#address").val(currentPoi.address).change();
+		   	 $("#addressText").text(currentPoi.address); 
+	    }
 	    
 	    function poiPickerReady(poiPicker) {
 	        window.poiPicker = poiPicker;
@@ -149,14 +162,14 @@ $(window).resize(function(){
 
 	    }
 	    
-	    function createMarker(lnglat){
+	    function createMarker(lnglat,setInfo){
 	    	infoWindow.close();
 	    	marker.setPosition(lnglat);
 	    	map.setCenter(lnglat);
-	    	getAddressInfo(lnglat)
+	    	getAddressInfo(lnglat,setInfo)
 	    }
 		
-	    function getAddressInfo(lnglat){
+	    function getAddressInfo(lnglat,setInfo){
 			geocoder.getAddress(lnglat, function(status, result) {
 	            if (status === 'complete' && result.info === 'OK') {
 	            	var regeocode = result.regeocode;
@@ -168,6 +181,9 @@ $(window).resize(function(){
 	            	infoWindow.setPosition(lnglat);
 		            infoWindow.setContent("地址："+address);
 		            infoWindow.open(map, lnglat);
+		            if(setInfo){
+			    		setLocalInfo()
+			    	}
 	            }
 	        });
 		}

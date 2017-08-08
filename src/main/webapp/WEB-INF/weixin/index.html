@@ -67,21 +67,24 @@
 </script>
 <script>
 $(function(){
-	$("#submitLocalBtn").on("click",function() {
-		 var address = currentPoi.address;
-		 $("#address").text(currentPoi.address);
-		 $.router.loadPage('#mainPage');
-	});
 })
 //商家分类
 Kit.post("${base}/wx/ajaxShopTypes",{},
 function(msg,data){
 	var html = "";
-	for(var i=0;i<data.length;i++){
+	var len = 8;
+	if(data.length<len){
+		len = data.length;
+	}
+	for(var i=0;i<len;i++){
 		if(i%4==0){
 			html+="<tr>";
 		}
-		html+="<td><dl><dt><img src='"+data[i].ICON+"' style='width: 2rem'/></dt><dd>"+data[i].NAME+"</dd></dl></td>";
+		if(i==len-1){
+			html+="<td><dl><dt><img src='${base}/resources/images/more.png' style='width: 2rem'/></dt><dd>更多</dd></dl></td>";
+		}else{
+			html+="<td><dl><dt><img src='"+data[i].ICON+"' style='width: 2rem'/></dt><dd>"+data[i].NAME+"</dd></dl></td>";
+		}
 		if(i%4==3){
 			html+="</tr>";
 		}
@@ -124,7 +127,7 @@ $(function(){
 		<img src="${base}/resources/images/logo-text.png" style="width: 2rem;position: absolute;right:10px;">
 		<div class="title color-default location text-over" onclick="javascript:$.router.loadPage('#map-mobile');">
 			&nbsp;<i class="fa fa-map-marker"></i>
-			&nbsp;<span id="address">选择地址</span>
+			&nbsp;<span id="addressText">选择地址</span>
 		</div>
 		<div class="searchbar">
 			<a class="searchbar-cancel">取消</a>
@@ -135,7 +138,7 @@ $(function(){
 		</div>
 	</header>
 	<div class="content">
-		<div class="swiper-container" style="height: 25%;background-color: white;">
+		<div class="swiper-container" style="height: 30%;background-color: white;">
 		  <div class="swiper-wrapper">
 	    	<div class="swiper-slide"> <img src="http://lorempixel.com/1200/1200/nature/1"></div>
 	        <div class="swiper-slide"> <img src="http://lorempixel.com/1200/1200/nature/2"></div>

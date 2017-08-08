@@ -294,12 +294,5 @@ $(".timepicker").timeDropper({
 	format:"HH:mm",
 	autoswitch:true
 });
-$("#submitLocalBtn").on("click",function() {
-	 $("#latitude").val(currentPoi.lat)
-	 $("#longitude").val(currentPoi.lng)
-	 $("#addressCode").val(currentPoi.adcode)
-	 $("#address").val(currentPoi.address).change();
-	 $.router.loadPage('#mainPage');
-});
 </script>
 </@mainLayout>
