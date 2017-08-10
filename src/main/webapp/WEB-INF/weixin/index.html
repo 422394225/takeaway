@@ -129,15 +129,22 @@ $(function(){
 			&nbsp;<i class="fa fa-map-marker"></i>
 			&nbsp;<span id="addressText">选择地址</span>
 		</div>
+	</header>
+	<div class="content">
 		<div class="searchbar">
-			<a class="searchbar-cancel">取消</a>
+			 <div class="row">
 			<div class="search-input col-75">
 			  <label class="icon icon-search" for="search"></label>
 			  <input type="search" id="searchAll" placeholder='客官吃点什么吧...'/>
 			</div>
+			<div class="search-way col-25">
+				<select name="searchWay">
+				  	<option value="shop">搜美食</option>
+				  	<option value="food">搜店铺</option>
+			  	</select>
+			</div>
+			</div>
 		</div>
-	</header>
-	<div class="content">
 		<div class="swiper-container" style="height: 30%;background-color: white;">
 		  <div class="swiper-wrapper">
 	    	<div class="swiper-slide"> <img src="http://lorempixel.com/1200/1200/nature/1"></div>

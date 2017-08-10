@@ -40,4 +40,8 @@ public class IndexController extends Controller {
 		List<Shop> shops = Shop.dao.find(Db.getSqlPara("shop.list"));
 		renderJson(new JSONSuccess(shops));
 	}
+
+	public void search() {
+		render("search.html");
+	}
 }

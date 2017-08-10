@@ -1,4 +1,6 @@
-.bar-nav~.content{top: 4.4rem;}
+/* .bar-nav~.content{
+	top: 4.4rem;
+} */
 .location{
 	position:relative;
 	left:0;
@@ -10,6 +12,16 @@
 .searchbar{
 	box-sizing: border-box;
 	background-color: #0894ec !important;
+	padding: 8px !important;
+}
+.search-input input{
+    display: inline-block;
+    font-size: initial;
+}
+.search-way select{
+	height: 1.4rem;
+	border: 1px solid #b4b4b4;
+    border-radius: .25rem;
 }
 .bar{
 	height: auto;
