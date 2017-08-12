@@ -20,9 +20,7 @@ $(function(){
 	$("#searchWay").on("change",function(){
 		var type= $("#searchWay").val();
 		var keyword = $("#searchAll").val();
-		if(keyword!=''){
-			ajaxSearchShops(type,keyword);
-		}
+		ajaxSearchShops(type,keyword);
 	})
 	
 	$('#searchAll').bind('search', function () {
