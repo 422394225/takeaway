@@ -1,4 +1,5 @@
 <#include "base/main/_main.html"/>
+<#assign current-title>1</#assign>
 <#assign wxMeta>
 </#assign>
 <#assign wxCss>
@@ -126,13 +127,13 @@ $(function(){
 })
 </script>
 </#assign>
-<@mainLayout wxTitle="那里外卖"  wxMeta=wxMeta wxCss=wxCss wxJavascript=wxJavascript>
+<@mainLayout wxTitle=current-title  wxMeta=wxMeta wxCss=wxCss wxJavascript=wxJavascript>
 <div class="page page-current" id="mainPage">
 	<header class="bar bar-nav bg-primary">
 		<img src="${base}/resources/images/logo-text.png" style="width: 2rem;position: absolute;right:10px;">
-		<div class="title color-default location text-over" onclick="javascript:$.router.loadPage('#map-mobile');">
+		<div class="title color-default leftmenu text-over" onclick="javascript:location.href='${base}/wx'">
 			&nbsp;<i class="fa fa-map-marker"></i>
-			&nbsp;<span id="addressText">选择地址</span>
+			&nbsp;<span>首页</span>
 		</div>
 	</header>
 	<div class="content">
@@ -199,5 +200,4 @@ $(function(){
 		</div>
 	</div>
 </div>
-<#include "tools/map-mobile.html"/>
 </@mainLayout>

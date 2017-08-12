@@ -3,7 +3,7 @@
 </#assign>
 <#assign wxCss>
 <link href="${base}/resources/light7/css/light7-swiper.min.css" rel="stylesheet" type="text/css" />
-<link href="${base}/resources/stylesheets/wx_index.css" rel="stylesheet" type="text/css" />
+<link href="${base}/resources/stylesheets/wx_search.css" rel="stylesheet" type="text/css" />
 </#assign>
 <#assign wxJavascript>
 <script src="${base}/resources/light7/js/light7-swiper.min.js" type="text/javascript"></script>
@@ -12,26 +12,195 @@
 <script src="${base}/resources/jQuery/raty/jquery.raty.min.js" type="text/javascript"></script>
 <script>
 $(function(){
+	$("option[value='"+type+"']").attr("selected",true);
+	
+	var type= $("#searchWay").val();
+	var keyword = $("#searchAll").val();
+	ajaxSearchShops(type,keyword);
+	
+	$("#searchWay").on("change",function(){
+		var type= $("#searchWay").val();
+		var keyword = $("#searchAll").val();
+		if(keyword!=''){
+			ajaxSearchShops(type,keyword);
+		}
+	})
+	
+	$('#searchAll').bind('search', function () {
+		 var type = $("select[name='searchWay'] option:selected").val();
+		 var keyword = $(this).val();
+		 ajaxSearchShops(type,keyword);
+	});
 })
+function ajaxSearchShops(type,keyword){
+	Kit.post("${base}/wx/shop/ajaxSearchShops",{type:type,keyword:keyword},
+	function(msg,data){
+		var tpl;
+		if('shop'==type){
+			tpl = $('#shop-tpl').html();
+		}else if('food'==type){
+			tpl = $('#food-tpl').html();
+		}
+		if(data.length>0){
+			renderTpl(tpl,data);
+		}else{
+			$("#searchContainer").html("对不起,没有搜索到关于<font class='color-danger'>"+keyword+"</font>的内容");
+		}
+	},function(msg){
+		$.alert(msg)
+	})
+}
+function renderTpl(tpl,data){
+	laytpl(tpl).render(data, function(html){
+		$("#searchContainer").html(html);
+		$('div[data-score]').raty({
+			readOnly: true,
+			score: function() {
+					return $(this).attr('data-score');
+			}
+		});
+	});
+}
 </script>
 </#assign>
-<@mainLayout wxTitle="那里外卖"  wxMeta=wxMeta wxCss=wxCss wxJavascript=wxJavascript>
+<@mainLayout wxTitle="搜索"  wxMeta=wxMeta wxCss=wxCss wxJavascript=wxJavascript>
 <div class="page page-current" id="mainPage">
 	<header class="bar bar-nav bg-primary">
 		<img src="${base}/resources/images/logo-text.png" style="width: 2rem;position: absolute;right:10px;">
-		<div class="title color-default location text-over" onclick="javascript:$.router.loadPage('#map-mobile');">
+		<div class="title color-default leftmenu text-over" onclick="javascript:location.href='${base}/wx'">
 			&nbsp;<i class="fa fa-map-marker"></i>
-			&nbsp;<span id="addressText">选择地址</span>
-		</div>
-		<div class="searchbar">
-			<a class="searchbar-cancel">取消</a>
-			<div class="search-input col-75">
-			  <label class="icon icon-search" for="search"></label>
-			  <input type="search" id="searchAll" placeholder='客官吃点什么吧...'/>
-			</div>
+			&nbsp;<span>首页</span>
 		</div>
 	</header>
 	<div class="content">
+		<div class="searchbar">
+			 <div class="row">
+			<div class="search-input col-75">
+			  <label class="icon icon-search" for="search"></label>
+			  <input type="search" id="searchAll" placeholder='客官吃点什么吧...' value="${keyword}"/>
+			</div>
+			<div class="search-way col-25">
+				<select name="searchWay" id="searchWay">
+				  	<option value="food" >搜美食</option>
+				  	<option value="shop" >搜店铺</option>
+			  	</select>
+			</div>
+			</div>
+		</div>
+		<div id="searchContainer">
+		</div>
 	</div>
 </div>
+<script id="shop-tpl" type="text/html">
+{{# for(var i = 0, len = d.length; i < len; i++){ }}
+	<div class="card">
+	    <div class="card-content">
+	      <div class="list-block media-list">
+	        <ul>
+	          <li class="item-content">
+	            <div class="item-media">
+	              <img src="{{d[i].IMG}}" width="70">
+	            </div>
+	            <div class="item-inner">
+	              <div class="item-title-row">
+	                <div class="item-title">{{d[i].NAME}}</div>
+	              </div>
+	              <div class="item-subtitle">
+					<div class="row">
+						<div class="col-40" data-score="{{d[i].RATE_AVG}}"></div>
+						<div class="col-10">
+							<font color="#ff6000">{{d[i].RATE_AVG}}</font>
+						</div>
+						<div class="col-10">
+							已售{{d[i].SALE_NUM}}单
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-50">
+							￥{{d[i].DELIVERY_THRESHOLD}}起送,配送费{{d[i].DELIVERY_PRICE}}元
+						</div>
+						<div class="col-50">
+							约1.5km&nbsp;/&nbsp;<font class="color-success">{{d[i].DELIVERYED_TIME}}分钟</font>
+						</div>
+					</div>
+	            </div>
+	          </li>
+	        </ul>
+	      </div>
+	    </div>
+		{{# if(d[i].REDUCTION>0){ }}
+		<div class="card-footer">
+      		<badge class="bg-primary">满</badge>&nbsp;满{{d[i].REDUCTION_THRESHOLD}}元,优惠<font class="color-primary">{{d[i].REDUCTION}}</font>元
+    	</div>
+		{{# } }}
+		{{# if(d[i].DELIVERY_OFF>0){ }}
+		<div class="card-footer">
+      		<badge class="bg-warning">配</badge>&nbsp;满{{d[i].DELIVERY_OFF_THRESHOLD}}元,减配送费<font class="color-warning">{{d[i].DELIVERY_OFF}}</font>元
+    	</div>
+		{{# } }}
+		{{# if(d[i].GIFT !=undefined && d[i].GIFT.length>0){ }}
+		<div class="card-footer">
+      		<badge class="bg-danger">赠</badge>&nbsp;满{{d[i].GIFT_THRESHOLD}}元,送<font class="color-danger">{{d[i].GIFT}}</font>
+    	</div>
+		{{# } }}
+	  </div>
+{{# } }}
+</script>
+<script id="food-tpl" type="text/html">
+{{# for(var i = 0, len = d.length; i < len; i++){ }}
+	<div class="card">
+	    <div class="card-content">
+	      <div class="list-block media-list">
+	        <ul>
+	          <li class="item-content">
+	            <div class="item-media">
+	              <img src="{{d[i].IMG}}" width="70">
+	            </div>
+	            <div class="item-inner">
+	              <div class="item-title-row">
+	                <div class="item-title">
+						{{d[i].NAME}}
+						{{# if(d[i].SALE_LIMIT>0){ }}
+							&nbsp;<badge class="bg-danger">仅售{{d[i].SALE_LIMIT}}{{d[i].UNIT}}</badge>
+						{{# } }}
+					</div>
+	              </div>
+	              <div class="item-subtitle">
+					<div class="row no-gutter">
+						<div class="col-30">
+							现价：<font color="gray" style="text-decoration:line-through">￥{{d[i].ORIGN_PRICE}}</font><font color="#ef3204">￥{{d[i].PRICE}}</font>
+						</div>
+						<div class="col-30">
+							&nbsp;已售{{d[i].SALE_NUM}}单
+						</div>
+					</div>
+					<div class="row no-gutter">
+						<div class="col-50">
+							<font color="#0894ec"><i class="fa fa-home"></i>{{d[i].SHOP_NAME}}</font>
+						</div>
+						<div class="col-50" data-score="{{d[i].RATE_AVG}}"></div>
+					</div>
+	            </div>
+	          </li>
+	        </ul>
+	      </div>
+	    </div>
+		{{# if(d[i].REDUCTION>0){ }}
+		<div class="card-footer">
+      		<badge class="bg-primary">满</badge>&nbsp;满{{d[i].REDUCTION_THRESHOLD}}元,优惠<font class="color-primary">{{d[i].REDUCTION}}</font>元
+    	</div>
+		{{# } }}
+		{{# if(d[i].DELIVERY_OFF>0){ }}
+		<div class="card-footer">
+      		<badge class="bg-warning">配</badge>&nbsp;满{{d[i].DELIVERY_OFF_THRESHOLD}}元,减配送费<font class="color-warning">{{d[i].DELIVERY_OFF}}</font>元
+    	</div>
+		{{# } }}
+		{{# if(d[i].GIFT !=undefined && d[i].GIFT.length>0){ }}
+		<div class="card-footer">
+      		<badge class="bg-danger">赠</badge>&nbsp;满{{d[i].GIFT_THRESHOLD}}元,送<font class="color-danger">{{d[i].GIFT}}</font>
+    	</div>
+		{{# } }}
+	  </div>
+{{# } }}
+</script>
 </@mainLayout>

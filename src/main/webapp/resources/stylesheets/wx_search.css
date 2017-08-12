@@ -1,7 +1,4 @@
-/* .bar-nav~.content{
-	top: 4.4rem;
-} */
-.location{
+.leftmenu{
 	position:relative;
 	left:0;
 	right:10px;
@@ -36,39 +33,6 @@
 	top:0px;
 	bottom: 0px;
 	margin-bottom: 1em;
-}
-#typeTable{
-	width: 90%;
-	margin-left: 5%;
-	margin-right: 5%;
-}
-#typeTable dl,#typeTable dd{
-	text-align: center;
-}
-#typeTable dd{
-	margin: 0px;
-}
-.swiper-slide img {
-      width: 100%;
-}
-.hotShop.active{
-	color:#ef3204 !important;
-	border-color:#ef3204 !important;
-}
-.neighbor.active{
-	color: #0894ec !important;
-	border-color:#0894ec !important;
-}
-.collections.active{
-	color:#f59b08 !important;
-	border-color:#f59b08 !important;
-}
-.item-title{
-	color:#000;
-	font-weight: bold;
-}
-.item-subtitle .row{
-	margin-top:0.5em;
 }
 .card{
 	margin: 0px;

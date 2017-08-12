@@ -9,10 +9,12 @@ import com.jfinal.aop.Before;
 import com.jfinal.kit.PropKit;
 import com.jfinal.log.Log;
 import com.jfinal.plugin.activerecord.Db;
+import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.weixin.sdk.api.ApiConfig;
 import com.jfinal.weixin.sdk.api.ApiConfigKit;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
@@ -127,5 +129,33 @@ public class ShopController extends BaseController {
 			}
 		}
 		renderJson(new JSONSuccess());
+	}
+
+	public void ajaxShopTypes() {
+		Map<String, Map<String, Object>> map = new HashMap<>();
+		Map<String, Object> where = new HashMap<>();
+		where.put("DELETED", " == 1");
+		map.put("limitCond", where);
+		List<ShopType> shopTypes = ShopType.dao.find(Db.getSqlPara("shopType.list", map));
+		renderJson(new JSONSuccess(shopTypes));
+	}
+
+	public void ajaxShops() {
+		List<Shop> shops = Shop.dao.find(Db.getSqlPara("shop.list"));
+		renderJson(new JSONSuccess(shops));
+	}
+
+	public void ajaxSearchShops() {
+		String keyword = getPara("keyword");
+		String type = getPara("type");
+		List<Record> records = null;
+		Map<String, String> map = new HashMap<>();
+		map.put("keyword", keyword);
+		if ("food".equals(type)) {
+			records = Db.find(Db.getSqlPara("food.search", map));
+		} else if ("shop".equals(type)) {
+			records = Db.find(Db.getSqlPara("shop.search", map));
+		}
+		renderJson(new JSONSuccess(records));
 	}
 }

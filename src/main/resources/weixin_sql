@@ -1,0 +1,14 @@
+#namespace("shop")
+	#sql("search")
+		SELECT * FROM t_shop AS s
+		WHERE s.`NAME` LIKE '%#(keyword)%'
+	#end
+#end
+
+#namespace("food")
+	#sql("search")
+		SELECT f.*,s.`NAME` AS SHOP_NAME,s.`RATE_AVG` FROM t_food AS f
+		LEFT JOIN t_shop AS s ON f.SHOP_ID = s.ID
+		WHERE f.`STATE` = '1' AND f.`NAME` LIKE '%#(keyword)%'
+	#end
+#end

@@ -30,4 +30,11 @@ badge{
 	text-align:center;
     -moz-border-radius: 15px;
     border-radius: 15px;
+    padding:1px;
+}
+.item-subtitle .row{
+	margin-left:0;
+}
+div[data-score] img{
+	vertical-align:middle;	
 }
