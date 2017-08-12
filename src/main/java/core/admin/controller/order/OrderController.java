@@ -58,17 +58,16 @@ public class OrderController extends Controller {
 		defaultFood.put("IMG", "");
 
 		for (Object tObject : foods) {
-			JSONArray object = (JSONArray) tObject;
-			Record foodRecord = orderService.getSimpleFoodHistroy(object.getIntValue(0));
+			JSONObject object = (JSONObject) tObject;
+			Record foodRecord = orderService.getSimpleFoodHistroy(object.getIntValue("id"));
 			if (foodRecord == null) {
-				defaultFood.put("COUNT", object.get(1));
+				defaultFood.put("COUNT", object.get("num"));
 				foodsResult.add(defaultFood.clone());
 			} else {
-				foodRecord.set("COUNT", object.get(1));
+				foodRecord.set("COUNT", object.get("num"));
 				foodsResult.add(JSONObject.parse(foodRecord.toJson()));
 			}
 		}
-		System.out.println(foodsResult);
 		setAttr("foodArray", foodsResult);
 		// JSONObject result = new JSONObject();
 		// result.put("draw", params.getDraw());

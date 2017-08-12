@@ -73,12 +73,16 @@ public class APPConfig extends JFinalConfig {
 		ActiveRecordPlugin arp = new ActiveRecordPlugin(druidPlugin);
 		arp.setBaseSqlTemplatePath(PathKit.getRootClassPath());
 		arp.addSqlTemplate("admin_sql");
+		arp.addSqlTemplate("weixin_sql");
 
 		_MappingKit.mapping(arp);
 		arp.setShowSql(true);
 		me.add(arp);
 		me.add(new EhCachePlugin());
-
+		// 定时任务
+		QuartzPlugin quartz = new QuartzPlugin();
+		quartz.setJobs("job_calc.properties");
+		me.add(quartz);
 	}
 
 	/**

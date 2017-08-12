@@ -36,6 +36,33 @@ public class DeliveryController extends Controller {
 		render("list.html");
 	}
 
+	public void recievePosition() {
+		String id = getPara("id");
+		String longtitude = getPara("longtitude");
+		String latidute = getPara("latidude");
+		Db.update("UPDATE T_DELIVERY SET NOW_LONGITUDE=?,NOW_LATIDUTE=? WHERE ID=?", longtitude, latidute, id);
+		renderJson(new JSONSuccess());
+	}
+
+	public void login() {
+		String username = getPara("username");
+		String password = getPara("password");
+		String passwordMD5 = MD5Util.encrypt(password + ENCRIPT_KEY);
+		Integer deliveryId = Db.queryInt("SELECT ID FROM T_DELIVERY WHERE USERNAME=? AND PASSWORD=?", username,
+				passwordMD5);
+		if (deliveryId == null) {
+			deliveryId = Db.queryInt("SELECT ID FROM T_DELIVERY WHERE USERNAME=? ", username);
+			if (deliveryId == null) {
+				renderJson(new JSONError("查无此人"));
+				return;
+			} else {
+				renderJson(new JSONError("密码不对啦"));
+				return;
+			}
+		}
+		renderJson(new JSONSuccess(deliveryId));
+	}
+
 	public void getData() {
 		DTParams params = new DTParams(getParaMap());
 		Page<Record> foods = deliveryService.getDTPage(params, "delivery.list");
