@@ -7,7 +7,6 @@
 </#assign>
 <#assign wxJavascript>
 <script src="${base}/resources/light7/js/light7-swiper.min.js" type="text/javascript"></script>
-<script src="${base}/resources/jQuery/jquery.marquee.min.js" type="text/javascript"></script>
 <script src="${base}/resources/javascripts/lay/laytpl.js" type="text/javascript"></script>
 <script src="${base}/resources/jQuery/raty/jquery.raty.min.js" type="text/javascript"></script>
 <script id="shop-tpl" type="text/html">
@@ -80,10 +79,9 @@ function(msg,data){
 		if(i%4==0){
 			html+="<tr>";
 		}
-		if(i==len-1){
-			html+="<td><dl><dt><img src='${base}/resources/images/more.png' style='width: 2rem'/></dt><dd>更多</dd></dl></td>";
-		}else{
-			html+="<td><dl><dt><img src='"+data[i].ICON+"' style='width: 2rem'/></dt><dd>"+data[i].NAME+"</dd></dl></td>";
+		html+="<td onclick=\"typeDetail('"+data[i].ID+"');\"><dl><dt><img src='"+data[i].ICON+"' style='width: 2rem'/></dt><dd>"+data[i].NAME+"</dd></dl></td>";
+		if(len>=7 && i==len-1){
+			html+="<td onclick=\"typeMore();\"><dl><dt><img src='${base}/resources/images/more.png' style='width: 2rem'/></dt><dd>更多</dd></dl></td>";
 		}
 		if(i%4==3){
 			html+="</tr>";
@@ -93,6 +91,12 @@ function(msg,data){
 },function(msg){
 	$.alert(msg)
 })
+function typeDetail(id){
+	location.href="${base}/wx/shop/typeDetail?id="+id;
+}
+function typeMore(){
+	location.href="${base}/wx/shop/typeMore";
+}
 //商家
 Kit.post("${base}/wx/shop/ajaxShops",{},
 function(msg,data){

@@ -55,6 +55,9 @@
 			#end
 		#end
 	#end
+	#if( only )
+		limit #(only)
+	#end
 #end
 
 #namespace("admin")

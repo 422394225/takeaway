@@ -28,6 +28,7 @@ import core.model.ShopType;
 import core.model.ShopTypeRelation;
 import core.utils.MD5Util;
 import core.validate.ShopWXValidate;
+import core.vo.JSONError;
 import core.vo.JSONSuccess;
 import core.weixin.api.MediaApi;
 import core.weixin.base.BaseController;
@@ -132,10 +133,13 @@ public class ShopController extends BaseController {
 	}
 
 	public void ajaxShopTypes() {
-		Map<String, Map<String, Object>> map = new HashMap<>();
+		Map<String, Object> map = new HashMap<>();
 		Map<String, Object> where = new HashMap<>();
 		where.put("DELETED", " == 1");
 		map.put("limitCond", where);
+		if (getPara("type") == null) {
+			map.put("only", 7);
+		}
 		List<ShopType> shopTypes = ShopType.dao.find(Db.getSqlPara("shopType.list", map));
 		renderJson(new JSONSuccess(shopTypes));
 	}
@@ -157,5 +161,18 @@ public class ShopController extends BaseController {
 			records = Db.find(Db.getSqlPara("shop.search", map));
 		}
 		renderJson(new JSONSuccess(records));
+	}
+
+	public void typeDetail() {
+		String id = getPara("id");
+		if (StringUtils.isNotEmpty(id)) {
+			render("typeDetail.html");
+		} else {
+			renderJson(new JSONError("该店铺分类不存在！"));
+		}
+	}
+
+	public void typeMore() {
+		render("typeMore.html");
 	}
 }

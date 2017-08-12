@@ -1,11 +1,3 @@
-.leftmenu{
-	position:relative;
-	left:0;
-	right:10px;
-	height:100%;
-	width:90%;
-	text-align: left;
-}
 .searchbar{
 	box-sizing: border-box;
 	background-color: #0894ec !important;

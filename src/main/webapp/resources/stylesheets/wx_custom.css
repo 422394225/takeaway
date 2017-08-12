@@ -38,3 +38,11 @@ badge{
 div[data-score] img{
 	vertical-align:middle;	
 }
+.leftmenu{
+	position:relative;
+	left:0;
+	right:10px;
+	height:100%;
+	width:90%;
+	text-align: left;
+}
