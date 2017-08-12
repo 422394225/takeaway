@@ -1,6 +1,7 @@
 package core.job;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -17,6 +18,7 @@ import com.jfinal.plugin.activerecord.Record;
 public class CalcJob implements Job {
 
 	private Log log = Log.getLog(CalcJob.class);
+	private static final DecimalFormat df = new DecimalFormat("#.00");
 
 	@Override
 	public void execute(JobExecutionContext arg0) throws JobExecutionException {
@@ -60,8 +62,8 @@ public class CalcJob implements Job {
 		for (Record record : records) {
 			try {
 				Db.update("UPDATE T_DELIVERY SET ORDER_NUM=?,DELIVERY_TIME=? WHERE ID=?",
-						record.getLong("RECORD_COUNT").intValue(),
-						record.getBigDecimal("SUM_TIME").intValue() / record.getLong("RECORD_COUNT").intValue(),
+						record.getLong("RECORD_COUNT").intValue(), df.format(record.getBigDecimal("SUM_TIME").intValue()
+								/ record.getLong("RECORD_COUNT").intValue()),
 						record.getInt("DELIVERY_ID"));
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -93,8 +95,8 @@ public class CalcJob implements Job {
 			}
 			Db.update(
 					"UPDATE T_SHOP SET RATE_COUNT=?,RATE_1=?,RATE_2=?,RATE_3=?,RATE_4=?,RATE_5=?,RATE_AVG=? WHERE ID=?",
-					(int) count, rateCount[1], rateCount[2], rateCount[3], rateCount[4], rateCount[5], rate_avg,
-					shopId);
+					(int) count, rateCount[1], rateCount[2], rateCount[3], rateCount[4], rateCount[5],
+					df.format(rate_avg), shopId);
 		}
 	}
 

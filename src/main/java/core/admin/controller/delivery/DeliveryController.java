@@ -36,6 +36,10 @@ public class DeliveryController extends Controller {
 		render("list.html");
 	}
 
+	public void getAppAddr() {
+		renderQrCode("http://177l3a5827.51mypc.cn/api/v1/delivery/download", 300, 300);
+	}
+
 	public void recievePosition() {
 		String id = getPara("id");
 		String longtitude = getPara("longtitude");
