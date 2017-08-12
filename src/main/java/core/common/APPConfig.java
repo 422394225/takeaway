@@ -1,5 +1,7 @@
 package core.common;
 
+import java.io.File;
+
 import com.jfinal.config.Constants;
 import com.jfinal.config.Handlers;
 import com.jfinal.config.Interceptors;
@@ -18,8 +20,7 @@ import com.jfinal.render.ViewType;
 import com.jfinal.template.Engine;
 import com.jfinal.weixin.sdk.api.ApiConfigKit;
 
-import java.io.File;
-
+import cn.dreampie.quartz.QuartzPlugin;
 import core.common.mapping._MappingKit;
 import core.common.routes.AdminRoutes;
 import core.common.routes.WeixinRoutes;
@@ -43,7 +44,7 @@ public class APPConfig extends JFinalConfig {
 		me.setDevMode(PropKit.getBoolean("devMode", false));
 		me.setEncoding("utf-8");
 		me.setViewType(ViewType.FREE_MARKER);
-		//设置上传文件保存的路径
+		// 设置上传文件保存的路径
 		me.setBaseUploadPath(File.separator + "myupload");
 		me.setError404View("/WEB-INF/admin/404.html");
 		me.setError500View("/WEB-INF/admin/error.html");
@@ -79,7 +80,10 @@ public class APPConfig extends JFinalConfig {
 		arp.setShowSql(true);
 		me.add(arp);
 		me.add(new EhCachePlugin());
-
+		// 定时任务
+		QuartzPlugin quartz = new QuartzPlugin();
+		quartz.setJobs("job_calc.properties");
+		me.add(quartz);
 	}
 
 	/**
@@ -101,17 +105,17 @@ public class APPConfig extends JFinalConfig {
 	}
 
 	/**
-	 * 建议使用 JFinal 手册推荐的方式启动项目
-	 * 运行此 main 方法可以启动项目，此main方法可以放置在任意的Class类定义中，不一定要放于此
+	 * 建议使用 JFinal 手册推荐的方式启动项目 运行此 main
+	 * 方法可以启动项目，此main方法可以放置在任意的Class类定义中，不一定要放于此
 	 */
 	public static void main(String[] args) {
 
-		//sql升级
+		// sql升级
 		ConfigUtil.loadProp("config_pro.properties", "config.properties");
 		FlywayMigration fm = new FlywayMigration();
 		fm.migrate(PropKit.get("jdbcUrl"), PropKit.get("user"), PropKit.get("password"));
 
-		JFinal.start("src/main/webapp", 80, "/", 5);//启动配置项
+		JFinal.start("src/main/webapp", 80, "/", 5);// 启动配置项
 	}
 
 }

@@ -1,0 +1,85 @@
+<#include "../base/main/_main.html"/>
+<#assign wxMeta>
+</#assign>
+<#assign wxCss>
+</#assign>
+<#assign wxJavascript>
+</#assign>
+<@mainLayout wxTitle="配送员登录"  wxMeta=wxMeta wxCss=wxCss wxJavascript=wxJavascript>
+ <div class="content">
+    <div class="page-login">
+      <div class="list-block inset text-center">
+        <h3>那里外卖配送员入口</h3>
+        <ul>
+          <!-- Text inputs -->
+          <li>
+            <div class="item-content">
+              <div class="item-media"><i class="icon icon-form-name"></i></div>
+              <div class="item-inner">
+                <div class="item-input">
+                  <input type="text" id="username" placeholder="用户名">
+                </div>
+              </div>
+            </div>
+          </li>
+          <li>
+            <div class="item-content">
+              <div class="item-media"><i class="icon icon-form-email"></i></div>
+              <div class="item-inner">
+                <div class="item-input">
+                  <input type="password" id="password" placeholder="密码">
+                </div>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+      <div class="content-block">
+        <p><a class="button button-big button-fill external" onclick="login()" data-transition='fade'>Login</a></p>
+      </div>
+    </div>
+    <style>
+      .content {
+        color: #999;
+      }
+      .button.button-fill.button-big {
+        line-height: 2.0rem;
+        height: 2.0rem;
+      }
+      .list-block {
+        margin: .75rem;
+      }
+      .content-block {
+        margin: .75rem 0;
+      }
+      .signup a {
+        color: #999;
+      }
+    </style>
+  </div>
+</div>
+</@mainLayout>
+<script>
+function login(){
+	var username=$('#username').val();
+	var password=$('#password').val();
+	 $.ajax({
+	        url: '/api/v1/delivery/login?from=wx&username='+username+'&password='+password, // /api/leds/1
+	        async: true,
+	        type: 'GET',
+	        success: function(data , textStatus){
+	          if(data.error){
+	        	  $.alert(data.msg, null);
+	      	  }
+	          else{
+	        	  window.location.href="/wx/delivery?accessKey="+data.msg; 
+	          }
+	        },
+	       
+	        error: function(jqXHR , textStatus , errorThrown){
+	          console.log("error");
+	        }
+	       
+	      });
+}
+</script>

@@ -70,6 +70,7 @@ public class FoodController extends Controller {
 		setAttr("DESCRIPTION", record.get("DESCRIPTION"));
 		setAttr("USE_STOCK", record.get("USE_STOCK"));
 		setAttr("STOCK", record.get("STOCK"));
+		setAttr("SALE_LIMIT", record.get("SALE_LIMIT"));
 		// List<Record> records = Db.find("select * from t_food_type where
 		// SHOP_ID=? and deleted='0'",
 		// record.get("SHOP_ID") + "");
@@ -124,12 +125,14 @@ public class FoodController extends Controller {
 			String STOCK = getPara("STOCK");
 			String TYPE = getPara("TYPE");
 			String ORIGN_PRICE = getPara("ORIGN_PRICE");
+			String SALE_LIMIT = getPara("SALE_LIMIT");
 			food.set("SHOP_ID", shop.get("ID"));
 			food.set("NAME", name);
 			food.set("PRICE", price);
 			food.set("TYPE_ID", TYPE);
 			food.set("ORIGN_PRICE", ORIGN_PRICE == null || ORIGN_PRICE.equals("") ? 0 : Double.valueOf(ORIGN_PRICE));
 			food.set("UNIT", UNIT);
+			food.set("SALE_LIMIT", SALE_LIMIT == null ? 0 : Integer.valueOf(SALE_LIMIT));
 			food.set("DESCRIPTION", DESCRIPTION);
 			USE_STOCK = USE_STOCK == null ? false : USE_STOCK;
 			food.set("USE_STOCK", USE_STOCK ? 1 : 0);
@@ -176,6 +179,7 @@ public class FoodController extends Controller {
 			Boolean USE_STOCK = getParaToBoolean("USE_STOCK");
 			String STOCK = getPara("STOCK");
 			String TYPE = getPara("TYPE");
+			String SALE_LIMIT = getPara("SALE_LIMIT");
 			String ORIGN_PRICE = getPara("ORIGN_PRICE");
 			food.set("ID", foodId);
 			food.delete();
@@ -184,6 +188,7 @@ public class FoodController extends Controller {
 			food.set("NAME", name);
 			food.set("PRICE", price);
 			food.set("TYPE_ID", TYPE);
+			food.set("SALE_LIMIT", SALE_LIMIT == null ? 0 : Integer.valueOf(SALE_LIMIT));
 			food.set("ORIGN_PRICE", ORIGN_PRICE == null || ORIGN_PRICE.equals("") ? 0 : Double.valueOf(ORIGN_PRICE));
 			food.set("UNIT", UNIT);
 			food.set("DESCRIPTION", DESCRIPTION);

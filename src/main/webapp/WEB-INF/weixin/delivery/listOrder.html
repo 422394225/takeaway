@@ -1,0 +1,66 @@
+
+<#include "../base/main/_main.html"/>
+<#assign wxMeta>
+</#assign>
+<#assign wxCss>
+</#assign>
+<#assign wxJavascript>
+</#assign>
+<@mainLayout wxTitle="当前订单"  wxMeta=wxMeta wxCss=wxCss wxJavascript=wxJavascript>
+<div id="page-goods" class="page page-goods" >
+  <div class="content infinite-scroll">
+    <div class="swiper-container swiper-container-horizontal" data-space-between="10">
+    <header class="bar bar-nav">
+    <a class="button button-link button-nav pull-right open-popup" onclick="location.reload()">
+    	  刷新
+      <span class="icon icon-refresh"></span>
+    </a>
+    <h1 class="title">查看订单</h1>
+  </header>
+    <div class="list-block media-list">
+      <ul id="orderIdUl">
+      </ul>
+    </div>
+    </div>
+  </div>
+</div>
+<nav class="bar bar-tab">
+
+    <a class="title" onclick="location.reload()">刷新
+      <span class="icon icon-refresh"></span></a>
+</nav>
+</@mainLayout>
+<script >
+$(function(){
+	 $.ajax({
+	        url: '/wx/delivery/getListOrder?deliveryId=${deliveryId}', 
+	        async: true,
+	        type: 'GET',
+	        success: function(data , textStatus){
+	          if(data.error){
+	        	  $.alert(data.msg, null);
+	      	  }
+	          else{
+	        	  var orderIdUl=$("#orderIdUl");
+	        	  for(var i=0;i<data.data.length;i++){
+	        			orderIdUl.append("<li><a class='item-link item-content' >"+
+	        		      "<div class='item-media'><img src='"+data.data[i].IMG+"' width='40'></div>"+
+	        		      "<div class='item-inner'>"+
+	        		          "<div class='item-title'>"+data.data[i].SHOP_NAME+"<br>电话："+data.data[i].SHOP_TEL+"</div>"+
+	        		       "	<div class='item-text'>商家地址："+data.data[i].SHOP_ADDRESS+"</div>"+
+	        		       " 	<div class='item-text'>顾客姓名："+data.data[i].USER_NAME+"<br>电话："+data.data[i].USER_TEL+"</div>"+
+	        		       "	<div class='item-text'>顾客地址："+data.data[i].USER_ADDRESS+"</div>"+
+	        		     " </div>"+
+	        		    "</a>"+
+	        		  "</li>");
+	        		}
+	          }
+	        },
+	       
+	        error: function(jqXHR , textStatus , errorThrown){
+	          console.log("error");
+	        }
+	       
+	      });
+})
+</script>

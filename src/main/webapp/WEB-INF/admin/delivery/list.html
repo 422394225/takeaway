@@ -87,6 +87,11 @@
 				draggable: true,
 			    message: $('<div></div>').load('${base}/delivery/edit?deliveryId='+deliveryId),
 			    buttons:[{
+			    	id:'submitBtn',
+			        label: '提交',
+			        cssClass: 'btn btn-primary'
+			        
+			    },{
 			        label: '关闭',
 			        cssClass: 'btn btn-link', 
 			        action: function(dialogRef){    
