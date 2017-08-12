@@ -1,0 +1,33 @@
+*{
+	box-sizing: content-box;
+}
+.color-default{
+	color: white;
+}
+.bg-default{
+	background-color: white;
+}
+.text-over{
+	overflow: hidden; /*自动隐藏文字*/
+    text-overflow: ellipsis;/*文字隐藏后添加省略号*/
+    white-space: nowrap;/*强制不换行*/
+}
+.vcenter{
+	position:relative;
+	left:0px;
+	top:0px;
+	translateX(-50%);
+	translateY(-50%)
+}
+.no-padding{
+	padding: 0px;
+}
+.no-margin{
+	margin: 0px !important;
+}
+badge{
+	min-width:1.5em;
+	text-align:center;
+    -moz-border-radius: 15px;
+    border-radius: 15px;
+}

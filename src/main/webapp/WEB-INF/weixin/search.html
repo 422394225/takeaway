@@ -1,0 +1,37 @@
+<#include "base/main/_main.html"/>
+<#assign wxMeta>
+</#assign>
+<#assign wxCss>
+<link href="${base}/resources/light7/css/light7-swiper.min.css" rel="stylesheet" type="text/css" />
+<link href="${base}/resources/stylesheets/wx_index.css" rel="stylesheet" type="text/css" />
+</#assign>
+<#assign wxJavascript>
+<script src="${base}/resources/light7/js/light7-swiper.min.js" type="text/javascript"></script>
+<script src="${base}/resources/jQuery/jquery.marquee.min.js" type="text/javascript"></script>
+<script src="${base}/resources/javascripts/lay/laytpl.js" type="text/javascript"></script>
+<script src="${base}/resources/jQuery/raty/jquery.raty.min.js" type="text/javascript"></script>
+<script>
+$(function(){
+})
+</script>
+</#assign>
+<@mainLayout wxTitle="那里外卖"  wxMeta=wxMeta wxCss=wxCss wxJavascript=wxJavascript>
+<div class="page page-current" id="mainPage">
+	<header class="bar bar-nav bg-primary">
+		<img src="${base}/resources/images/logo-text.png" style="width: 2rem;position: absolute;right:10px;">
+		<div class="title color-default location text-over" onclick="javascript:$.router.loadPage('#map-mobile');">
+			&nbsp;<i class="fa fa-map-marker"></i>
+			&nbsp;<span id="addressText">选择地址</span>
+		</div>
+		<div class="searchbar">
+			<a class="searchbar-cancel">取消</a>
+			<div class="search-input col-75">
+			  <label class="icon icon-search" for="search"></label>
+			  <input type="search" id="searchAll" placeholder='客官吃点什么吧...'/>
+			</div>
+		</div>
+	</header>
+	<div class="content">
+	</div>
+</div>
+</@mainLayout>

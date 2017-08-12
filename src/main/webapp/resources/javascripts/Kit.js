@@ -295,11 +295,6 @@ $.fn.getLocation = function(option){
 			draggable: true,
 		    message: $('<div></div>').load(getProjectName()+'/tools/getLocation'),
 		    buttons: [{
-		    	id:'localBtn',
-		    	cssClass: 'btn btn-default',
-		        label: '移动到当前城市',
-		        icon: 'fa fa-location-arrow'
-		    },{
 		    	id:'submitLocalBtn',
 		    	cssClass: 'btn btn-info',
 		        label: '确定',
