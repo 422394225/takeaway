@@ -87,6 +87,14 @@
 	</div>
 	<div class="form-group form-group-md">
 	    <label class="col-sm-3 control-label" for="formGroupInputLarge">
+	    	单订单限制
+	    </label>
+	    <div class="col-sm-6">
+			<input class="form-control" type="text" name="SALE_LIMIT" id="formGroupInputLarge" value="${SALE_LIMIT}">
+	    </div>
+	</div>
+	<div class="form-group form-group-md">
+	    <label class="col-sm-3 control-label" for="formGroupInputLarge">
 	    	使用库存
 	    </label>
 	    <div class="col-sm-6">
@@ -151,7 +159,8 @@ Kit.form({btnId:"#submitBtn",formId:"#add-form",
 		UNIT: {validators: {notEmpty: {}}},
 		DECSRIPTION: {validators: {notEmpty: {}}},
 		USE_STOCK: {validators: {}},
-		STOCK: {validators: {}}
+		STOCK: {validators: {}},
+		SALE_MINIT: {validators: {}}
 	},
     successFunc:function(msg,data){
     	$(".reload ").click();

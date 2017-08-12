@@ -1,0 +1,145 @@
+<#include "../base/main/_main.html"/>
+<#assign wxMeta>
+</#assign>
+<#assign wxCss>
+</#assign>
+<#assign wxJavascript>
+</#assign>
+<@mainLayout wxTitle="配送抢单"  wxMeta=wxMeta wxCss=wxCss wxJavascript=wxJavascript>
+<div id="page-goods" class="page page-goods">
+  <div class="content infinite-scroll">
+    <div class="swiper-container swiper-container-horizontal" data-space-between="10">
+    <header class="bar bar-nav">
+    <a class="icon icon-menu pull-left open-panel" href="/wx/delivery/listOrder?deliveryId=${deliveryId}">当前配送</a>
+    <a class="button button-link button-nav pull-right open-popup" onclick="location.reload()">
+    	  刷新
+      <span class="icon icon-refresh"></span>
+    </a>
+    <h1 class="title">请选择订单</h1>
+  </header>
+    <div class="list-block media-list">
+      <ul>
+        <li>
+          <a href="/wx/delivery/takeOrder?orderId=${orderInfo[0].ID}&deliveryId=${deliveryId}" class="item-link item-content" style="${orderInfo[0].STYLE}">
+            <div class="item-media"><img src="${orderInfo[0].IMG}" width="40"></div>
+            <div class="item-inner">
+                <div class="item-title">${orderInfo[0].SHOP_NAME}<br>电话：${orderInfo[0].SHOP_TEL}</div>
+             	<div class="item-text">商家地址：${orderInfo[0].SHOP_ADDRESS}</div>
+              	<div class="item-text">顾客姓名：${orderInfo[0].USER_NAME}<br>电话：${orderInfo[0].USER_TEL}</div>
+             	<div class="item-text">顾客地址：${orderInfo[0].USER_ADDRESS}</div>
+            </div>
+          </a>
+        </li>
+        <li>
+          <a href="/wx/delivery/takeOrder?orderId=${orderInfo[1].ID}&deliveryId=${deliveryId}" class="item-link item-content" style="${orderInfo[1].STYLE}">
+            <div class="item-media"><img src="${orderInfo[1].IMG}" width="40"></div>
+            <div class="item-inner">
+                <div class="item-title">${orderInfo[1].SHOP_NAME}<br>电话：${orderInfo[1].SHOP_TEL}</div>
+             	<div class="item-text">商家地址：${orderInfo[1].SHOP_ADDRESS}</div>
+              	<div class="item-text">顾客姓名：${orderInfo[1].USER_NAME}<br>电话：${orderInfo[1].USER_TEL}</div>
+             	<div class="item-text">顾客地址：${orderInfo[1].USER_ADDRESS}</div>
+            </div>
+          </a>
+        </li>
+        <li>
+          <a href="/wx/delivery/takeOrder?orderId=${orderInfo[2].ID}&deliveryId=${deliveryId}" class="item-link item-content" style="${orderInfo[2].STYLE}">
+            <div class="item-media"><img src="${orderInfo[2].IMG}" width="40"></div>
+            <div class="item-inner">
+                <div class="item-title">${orderInfo[2].SHOP_NAME}<br>电话：${orderInfo[2].SHOP_TEL}</div>
+             	<div class="item-text">商家地址：${orderInfo[2].SHOP_ADDRESS}</div>
+              	<div class="item-text">顾客姓名：${orderInfo[2].USER_NAME}<br>电话：${orderInfo[2].USER_TEL}</div>
+             	<div class="item-text">顾客地址：${orderInfo[2].USER_ADDRESS}</div>
+            </div>
+          </a>
+        </li>
+        <li>
+          <a href="/wx/delivery/takeOrder?orderId=${orderInfo[3].ID}&deliveryId=${deliveryId}" class="item-link item-content" style="${orderInfo[3].STYLE}">
+            <div class="item-media"><img src="${orderInfo[3].IMG}" width="40"></div>
+            <div class="item-inner">
+                <div class="item-title">${orderInfo[3].SHOP_NAME}<br>电话：${orderInfo[3].SHOP_TEL}</div>
+             	<div class="item-text">商家地址：${orderInfo[3].SHOP_ADDRESS}</div>
+              	<div class="item-text">顾客姓名：${orderInfo[3].USER_NAME}<br>电话：${orderInfo[3].USER_TEL}</div>
+             	<div class="item-text">顾客地址：${orderInfo[3].USER_ADDRESS}</div>
+            </div>
+          </a>
+        </li>
+        <li>
+          <a href="/wx/delivery/takeOrder?orderId=${orderInfo[4].ID}&deliveryId=${deliveryId}" class="item-link item-content" style="${orderInfo[4].STYLE}">
+            <div class="item-media"><img src="${orderInfo[4].IMG}" width="40"></div>
+            <div class="item-inner">
+                <div class="item-title">${orderInfo[4].SHOP_NAME}<br>电话：${orderInfo[4].SHOP_TEL}</div>
+             	<div class="item-text">商家地址：${orderInfo[4].SHOP_ADDRESS}</div>
+              	<div class="item-text">顾客姓名：${orderInfo[4].USER_NAME}<br>电话：${orderInfo[4].USER_TEL}</div>
+             	<div class="item-text">顾客地址：${orderInfo[4].USER_ADDRESS}</div>
+            </div>
+          </a>
+        </li>
+        <li>
+          <a href="/wx/delivery/takeOrder?orderId=${orderInfo[5].ID}&deliveryId=${deliveryId}" class="item-link item-content" style="${orderInfo[5].STYLE}">
+            <div class="item-media"><img src="${orderInfo[5].IMG}" width="40"></div>
+            <div class="item-inner">
+                <div class="item-title">${orderInfo[5].SHOP_NAME}<br>电话：${orderInfo[5].SHOP_TEL}</div>
+             	<div class="item-text">商家地址：${orderInfo[5].SHOP_ADDRESS}</div>
+              	<div class="item-text">顾客姓名：${orderInfo[5].USER_NAME}<br>电话：${orderInfo[5].USER_TEL}</div>
+             	<div class="item-text">顾客地址：${orderInfo[5].USER_ADDRESS}</div>
+            </div>
+          </a>
+        </li>
+        <li>
+          <a href="/wx/delivery/takeOrder?orderId=${orderInfo[6].ID}&deliveryId=${deliveryId}" class="item-link item-content" style="${orderInfo[6].STYLE}">
+            <div class="item-media"><img src="${orderInfo[6].IMG}" width="40"></div>
+            <div class="item-inner">
+                <div class="item-title">${orderInfo[6].SHOP_NAME}<br>电话：${orderInfo[6].SHOP_TEL}</div>
+             	<div class="item-text">商家地址：${orderInfo[6].SHOP_ADDRESS}</div>
+              	<div class="item-text">顾客姓名：${orderInfo[6].USER_NAME}<br>电话：${orderInfo[6].USER_TEL}</div>
+             	<div class="item-text">顾客地址：${orderInfo[6].USER_ADDRESS}</div>
+            </div>
+          </a>
+        </li>
+        <li>
+          <a href="/wx/delivery/takeOrder?orderId=${orderInfo[7].ID}&deliveryId=${deliveryId}" class="item-link item-content" style="${orderInfo[7].STYLE}">
+            <div class="item-media"><img src="${orderInfo[7].IMG}" width="40"></div>
+            <div class="item-inner">
+                <div class="item-title">${orderInfo[7].SHOP_NAME}<br>电话：${orderInfo[7].SHOP_TEL}</div>
+             	<div class="item-text">商家地址：${orderInfo[7].SHOP_ADDRESS}</div>
+              	<div class="item-text">顾客姓名：${orderInfo[7].USER_NAME}<br>电话：${orderInfo[7].USER_TEL}</div>
+             	<div class="item-text">顾客地址：${orderInfo[7].USER_ADDRESS}</div>
+            </div>
+          </a>
+        </li>
+        <li>
+          <a href="/wx/delivery/takeOrder?orderId=${orderInfo[8].ID}&deliveryId=${deliveryId}" class="item-link item-content" style="${orderInfo[8].STYLE}">
+            <div class="item-media"><img src="${orderInfo[8].IMG}" width="40"></div>
+            <div class="item-inner">
+                <div class="item-title">${orderInfo[8].SHOP_NAME}<br>电话：${orderInfo[8].SHOP_TEL}</div>
+             	<div class="item-text">商家地址：${orderInfo[8].SHOP_ADDRESS}</div>
+              	<div class="item-text">顾客姓名：${orderInfo[8].USER_NAME}<br>电话：${orderInfo[8].USER_TEL}</div>
+             	<div class="item-text">顾客地址：${orderInfo[8].USER_ADDRESS}</div>
+            </div>
+          </a>
+        </li>
+        <li>
+          <a href="/wx/delivery/takeOrder?orderId=${orderInfo[9].ID}&deliveryId=${deliveryId}" class="item-link item-content" style="${orderInfo[9].STYLE}">
+            <div class="item-media"><img src="${orderInfo[9].IMG}" width="40"></div>
+            <div class="item-inner">
+                <div class="item-title">${orderInfo[9].SHOP_NAME}<br>电话：${orderInfo[9].SHOP_TEL}</div>
+             	<div class="item-text">${orderInfo[9].SHOP_ADDRESS}</div>
+              	<div class="item-text">顾客姓名：${orderInfo[9].USER_NAME}<br>电话：${orderInfo[9].USER_TEL}</div>
+             	<div class="item-text">顾客地址：${orderInfo[9].USER_ADDRESS}</div>
+            </div>
+          </a>
+        </li>
+      </ul>
+    </div>
+    </div>
+  </div>
+</div>
+<nav class="bar bar-tab">
+
+    <a class="title" onclick="location.reload()">刷新
+      <span class="icon icon-refresh"></span></a>
+</nav>
+</@mainLayout>
+<script>
+
+</script>
