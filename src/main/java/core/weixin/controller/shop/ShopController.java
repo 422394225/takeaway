@@ -14,6 +14,7 @@ import com.jfinal.weixin.sdk.api.ApiConfig;
 import com.jfinal.weixin.sdk.api.ApiConfigKit;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -28,6 +29,7 @@ import core.model.ShopType;
 import core.model.ShopTypeRelation;
 import core.utils.MD5Util;
 import core.validate.ShopWXValidate;
+import core.vo.ConditionsVO;
 import core.vo.JSONError;
 import core.vo.JSONSuccess;
 import core.weixin.api.MediaApi;
@@ -145,7 +147,22 @@ public class ShopController extends BaseController {
 	}
 
 	public void ajaxShops() {
-		List<Shop> shops = Shop.dao.find(Db.getSqlPara("shop.list"));
+		ConditionsVO conditionsVO = new ConditionsVO();
+		Map<String, Object> condi = new LinkedHashMap<>();
+		String flag = getPara("flag");
+		if (StringUtils.isNotEmpty(flag)) {
+			switch (flag) {
+			case "hot": {
+				condi.put("RATE_AVG", "DESC");
+				condi.put("SALE_NUM", "DESC");
+				conditionsVO.getOrderbyCond().putAll(condi);
+				break;
+			}
+			default:
+				break;
+			}
+		}
+		List<Shop> shops = Shop.dao.find(Db.getSqlPara("shop.list", conditionsVO.getConditions()));
 		renderJson(new JSONSuccess(shops));
 	}
 
@@ -166,6 +183,9 @@ public class ShopController extends BaseController {
 	public void typeDetail() {
 		String id = getPara("id");
 		if (StringUtils.isNotEmpty(id)) {
+			setAttr("typeName", ShopType.dao.findById(id).getStr("NAME"));
+			List<Shop> shops = Shop.dao.find(Db.getSql("shop.getByType"), id);
+			setAttr("shops", shops);
 			render("typeDetail.html");
 		} else {
 			renderJson(new JSONError("该店铺分类不存在！"));

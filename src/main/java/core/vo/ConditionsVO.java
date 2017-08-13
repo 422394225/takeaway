@@ -6,6 +6,7 @@
 package core.vo;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -19,7 +20,7 @@ public class ConditionsVO {
 	private Map<String, Object> conditions = new HashMap<>();
 	//	private Map<String, Object> whereCond = new HashMap<>();
 	private Map<String, Object> limitCond = new HashMap<>();
-	private Map<String, Object> orderbyCond = new HashMap<>();
+	private Map<String, Object> orderbyCond = new LinkedHashMap<>();
 
 	public ConditionsVO() {
 		Map<String, Object> map = new HashMap<>();

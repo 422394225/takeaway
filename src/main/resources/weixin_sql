@@ -3,6 +3,12 @@
 		SELECT * FROM t_shop AS s
 		WHERE s.`NAME` LIKE '%#(keyword)%'
 	#end
+	#sql("getByType")
+		SELECT s.* FROM 
+		t_shop_type_relation AS str
+		JOIN t_shop AS s ON str.SHOPID = s.ID
+		WHERE str.TYPEID = ?
+	#end
 #end
 
 #namespace("food")
