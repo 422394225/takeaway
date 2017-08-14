@@ -9,6 +9,7 @@ import com.jfinal.aop.Before;
 import com.jfinal.kit.PropKit;
 import com.jfinal.log.Log;
 import com.jfinal.plugin.activerecord.Db;
+import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.weixin.sdk.api.ApiConfig;
 import com.jfinal.weixin.sdk.api.ApiConfigKit;
@@ -162,8 +163,19 @@ public class ShopController extends BaseController {
 				break;
 			}
 		}
-		List<Shop> shops = Shop.dao.find(Db.getSqlPara("shop.list", conditionsVO.getConditions()));
-		renderJson(new JSONSuccess(shops));
+		Integer pageNumber = getParaToInt("pageNumber");
+		Integer pageSize = getParaToInt("pageSize");
+		if (pageNumber != null) {
+			if (pageSize == null) {
+				pageSize = 10;
+			}
+			Page<Shop> shops = Shop.dao.paginate(pageNumber, pageSize,
+					Db.getSqlPara("shop.list", conditionsVO.getConditions()));
+			renderJson(new JSONSuccess(shops));
+		} else {
+			List<Shop> shops = Shop.dao.find(Db.getSqlPara("shop.list", conditionsVO.getConditions()));
+			renderJson(new JSONSuccess(shops));
+		}
 	}
 
 	public void ajaxSearchShops() {

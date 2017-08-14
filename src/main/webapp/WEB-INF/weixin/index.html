@@ -40,26 +40,42 @@ function typeDetail(id){
 function typeMore(){
 	location.href="${base}/wx/shop/typeMore";
 }
+
+var pageSize = 5;
+var pageNumber = 1;
+var totalRow;
 //商家
-function loadShop(){
-	Kit.post("${base}/wx/shop/ajaxShops?flag=hot",{},
+function loadShop(pageNumber,pageSize){
+	var pageInfo = {};
+	if(pageNumber!=undefined && pageSize!=undefined){
+		pageInfo = {pageNumber:pageNumber,pageSize:pageSize};
+	}
+	Kit.post("${base}/wx/shop/ajaxShops?flag=hot",pageInfo,
 	function(msg,data){
-		var tpl = $('#shop-tpl').html();
-		laytpl(tpl).render(data, function(html){
-			$("#hotShopContainer").html(html);
-			$('div[data-score]').raty({
-				readOnly: true,
-				score: function() {
-						return $(this).attr('data-score');
-				}
+		totalRow = data.totalRow;
+		if(totalRow<=0){
+			$("#hotShopContainer").append("暂无相应商家");
+		}else{
+			var tpl = $('#shop-tpl').html();
+			laytpl(tpl).render(data.list, function(html){
+				$("#hotShopContainer").append(html);
+				$('div[data-score]').raty({
+					readOnly: true,
+					score: function() {
+							return $(this).attr('data-score');
+					}
+				});
 			});
-		});
+			this.pageNumber++;
+		}
 	},function(msg){
 		$.alert(msg)
 	})
 }
+
 $(function(){
-	loadShop();	
+	loadShop(pageNumber,pageSize);	
+	
 	$(".swiper-container").swiper({
 		pagination: '.swiper-pagination',
         slidesPerView: 'auto',
@@ -68,13 +84,8 @@ $(function(){
         autoplay: 2500,
         autoplayDisableOnInteraction: false
 	})
-	 $('#searchAll').bind('search', function () {
-		 var type = $("select[name='searchWay'] option:selected").val();
-		 var keyword = $(this).val();
-		 location.href="${base}/wx/search?type="+type+"&keyword="+keyword;
-	});
+	
 	var loading = false;
-    var itemsPerLoad = 5;//每次加载几条
 	$(document).on('infinite', '.infinite-scroll',function() {
         // 如果正在加载，则退出
         if (loading) return;
@@ -84,17 +95,22 @@ $(function(){
         setTimeout(function() {
             loading = false;
 
-            if (lastIndex >= maxItems) {
-                $.detachInfiniteScroll($('.infinite-scroll'));
+            var len = $("#hotShopContainer .card").length;
+    		if(totalRow==undefined || len>=totalRow){
+    			$.detachInfiniteScroll($('.infinite-scroll'));
                 $('.infinite-scroll-preloader').remove();
                 return;
-            }
+    		}
 			
-            loadShop()
-            addItems(itemsPerLoad, lastIndex);
-            lastIndex = $('#hotShopContainer card').length;
+            loadShop(pageNumber,pageSize);
         }, 1000);
     });
+	
+	 $('#searchAll').bind('search', function () {
+		 var type = $("select[name='searchWay'] option:selected").val();
+		 var keyword = $(this).val();
+		 location.href="${base}/wx/search?type="+type+"&keyword="+keyword;
+	});
 })
 </script>
 </#assign>
@@ -107,7 +123,7 @@ $(function(){
 			&nbsp;<span id="addressText">选择地址</span>
 		</div>
 	</header>
-	<div class="content">
+	<div class="content page-content infinite-scroll" data-distance="100">
 		<div class="searchbar">
 			 <div class="row">
 			<div class="search-input col-75">
@@ -149,15 +165,10 @@ $(function(){
 		    	<i class="fa fa-star">&nbsp;我的收藏</i>
 		    </a>
 		  </div>
-		  <div class="content-block no-padding no-margin infinite-scroll"  data-distance="100">
+		  <div class="content-block no-padding no-margin">
 		    <div class="tabs">
 		      <div id="tab1" class="tab active">
-		          <div id="hotShopContainer">
-		          		暂无相应商家
-				  </div>
-				  <div class="infinite-scroll-preloader">
-				       <div class="preloader"></div>
-				  </div>
+		          <div id="hotShopContainer"></div>
 		      </div>
 		      <div id="tab2" class="tab">
 		        <div class="content-block">
@@ -170,6 +181,9 @@ $(function(){
 		        </div>
 		      </div>
 		    </div>
+		  </div>
+		  <div class="infinite-scroll-preloader">
+		       <div class="preloader"></div>
 		  </div>
 		</div>
 	</div>

@@ -61,7 +61,7 @@ public class WeiXinOauthController extends ApiController {
 			if (openId == null) {
 				renderJson(new JSONError());
 			} else {
-				getRequest().setAttribute("openid", openId);
+				getRequest().setAttribute("openId", openId);
 				forwardAction(state);
 			}
 			/*

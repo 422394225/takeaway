@@ -28,6 +28,21 @@ function openWin(url){
 	var oauth = 'http://takeaway.ngrok.cc/oauth';
 	var target = "https://open.weixin.qq.com/connect/oauth2/authorize?appid="+APPID+"&redirect_uri="+encodeURI(oauth)+"&response_type=code&scope=snsapi_base&state="+encodeURI(url)+"#wechat_redirect";
 }
+initUser();
+//初始化用户信息
+function initUser(){
+	var user = {};
+	var openId = '${(openId)!}';
+	if(openId!='' && openId!=undefined){//如果能取到刷新user
+		user.openId = openId;
+	}else{
+		var storeUser = JSON.parse(localStorage.getItem("user"));
+		if(storeUser!=undefined){
+			user.openId = storeUser.openId;
+		}
+	}
+	localStorage.setItem("user",JSON.stringify(user));
+}
 </script>
 <script src="${base}/resources/light7/js/light7.min.js" type="text/javascript"></script>
 <script src="${base}/resources/javascripts/jweixin-1.2.0.js" type="text/javascript"></script>
