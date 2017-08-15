@@ -5,7 +5,10 @@
 
 package core.weixin.controller.shop;
 
+import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Before;
+import com.jfinal.kit.HttpKit;
+import com.jfinal.kit.Kv;
 import com.jfinal.kit.PropKit;
 import com.jfinal.log.Log;
 import com.jfinal.plugin.activerecord.Db;
@@ -148,23 +151,32 @@ public class ShopController extends BaseController {
 	}
 
 	public void ajaxShops() {
+		JSONObject params = JSONObject.parseObject(HttpKit.readData(getRequest()));
 		ConditionsVO conditionsVO = new ConditionsVO();
-		Map<String, Object> condi = new LinkedHashMap<>();
-		String flag = getPara("flag");
+		String flag = params.getString("flag");
 		if (StringUtils.isNotEmpty(flag)) {
 			switch (flag) {
-			case "hot": {
+			case "hotShop": {
+				Map<String, Object> condi = new LinkedHashMap<>();
 				condi.put("RATE_AVG", "DESC");
 				condi.put("SALE_NUM", "DESC");
 				conditionsVO.getOrderbyCond().putAll(condi);
+				break;
+			}
+			case "neighbor": {
+				conditionsVO.getLimitCond().putAll(Kv.by("RATE_AVG", "DESC"));
+				conditionsVO.getOrderbyCond().putAll(Kv.by("RATE_AVG", "DESC"));
+				break;
+			}
+			case "collections": {
 				break;
 			}
 			default:
 				break;
 			}
 		}
-		Integer pageNumber = getParaToInt("pageNumber");
-		Integer pageSize = getParaToInt("pageSize");
+		Integer pageNumber = params.getInteger("pageNumber");
+		Integer pageSize = params.getInteger("pageSize");
 		if (pageNumber != null) {
 			if (pageSize == null) {
 				pageSize = 10;

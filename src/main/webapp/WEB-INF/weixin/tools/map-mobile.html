@@ -113,7 +113,7 @@ $(window).resize(function(){
 		    
 	        if(latitude!=undefined && longitude!=undefined
 	        		&& latitude!="" && longitude!=""){
-		    	var lnglat = [parseFloat(longitude),parseFloat(latitude)];
+		    	var lnglat = new AMap.LngLat(parseFloat(longitude),parseFloat(latitude));
 				map.setCenter(lnglat);
 				createMarker(lnglat)
 			}else{
@@ -195,5 +195,6 @@ $(window).resize(function(){
      	currentPoi.lat = lat;
         currentPoi.lng = lng;
         currentPoi.address = address;
+        WxStore.setParams("loc",currentPoi);
 	 }
 </script>

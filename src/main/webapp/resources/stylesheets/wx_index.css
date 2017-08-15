@@ -51,15 +51,15 @@
 .swiper-slide img {
       width: 100%;
 }
-.hotShop.active{
+#hotShop.active{
 	color:#ef3204 !important;
 	border-color:#ef3204 !important;
 }
-.neighbor.active{
+#neighbor.active{
 	color: #0894ec !important;
 	border-color:#0894ec !important;
 }
-.collections.active{
+#collections.active{
 	color:#f59b08 !important;
 	border-color:#f59b08 !important;
 }

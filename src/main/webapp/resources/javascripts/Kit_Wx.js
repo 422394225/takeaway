@@ -61,6 +61,32 @@ var Kit={
 		$.ajax(defaultOption);
 	}
 }
+var WxStore = {
+	getUser:function(){
+		try{
+			return JSON.parse(localStorage.getItem("user"));
+		}catch(e){
+			console.log(e);
+			return new Object();
+		}
+	},
+	setUser:function(user){
+		try{
+			localStorage.setItem("user",JSON.stringify(user));
+		}catch(e){
+			console.log(e);
+		}
+	},
+	setParams:function(key,value){
+		var user = this.getUser();
+		user[key] = value;
+		this.setUser(user);
+	},
+	getParams:function(key){
+		var user = this.getUser();
+		return user.key;
+	}
+}
 function getProjectName(){
     var curWwwPath=window.document.location.href;
     var pathName=window.document.location.pathname;

@@ -41,24 +41,41 @@ function typeMore(){
 	location.href="${base}/wx/shop/typeMore";
 }
 
-var pageSize = 5;
-var pageNumber = 1;
-var totalRow;
+var pageInfo = {
+		hotShop:{pageNumber:1,pageSize:5,totalRow:0},
+		neighbor:{pageNumber:1,pageSize:5,totalRow:0},
+		collections:{pageNumber:1,pageSize:5,totalRow:0}
+}
+var currentTabId;
 //商家
-function loadShop(pageNumber,pageSize){
-	var pageInfo = {};
-	if(pageNumber!=undefined && pageSize!=undefined){
-		pageInfo = {pageNumber:pageNumber,pageSize:pageSize};
+function loadShop(currentTabId){
+	//分页参数设置
+	var pageData = {};
+	if(pageInfo[currentTabId].pageNumber!=undefined && pageInfo[currentTabId].pageSize!=undefined){
+		pageData = {pageNumber:pageInfo[currentTabId].pageNumber,pageSize:pageInfo[currentTabId].pageSize};
 	}
-	Kit.post("${base}/wx/shop/ajaxShops?flag=hot",pageInfo,
+	
+	//查询类型设置
+	pageData.flag = currentTabId;
+	
+	//地理参数设置
+	if(currentTabId=="neighbor"){
+		pageData.loc = WxStore.getUser().loc;
+	}
+	
+	if(currentTabId=="collections"){
+		pageData.openId = WxStore.getUser().openId;
+	}
+	
+	Kit.post("${base}/wx/shop/ajaxShops",JSON.stringify(pageData),
 	function(msg,data){
-		totalRow = data.totalRow;
-		if(totalRow<=0){
-			$("#hotShopContainer").append("暂无相应商家");
+		pageInfo[currentTabId].totalRow = data.totalRow;
+		if(pageInfo[currentTabId].totalRow<=0){
+			$("#"+currentTabId+"Container").append("暂无相应商家");
 		}else{
 			var tpl = $('#shop-tpl').html();
 			laytpl(tpl).render(data.list, function(html){
-				$("#hotShopContainer").append(html);
+				$("#"+currentTabId+"Container").append(html);
 				$('div[data-score]').raty({
 					readOnly: true,
 					score: function() {
@@ -66,7 +83,7 @@ function loadShop(pageNumber,pageSize){
 					}
 				});
 			});
-			this.pageNumber++;
+			pageInfo[currentTabId].pageNumber++;
 		}
 	},function(msg){
 		$.alert(msg)
@@ -74,7 +91,7 @@ function loadShop(pageNumber,pageSize){
 }
 
 $(function(){
-	loadShop(pageNumber,pageSize);	
+	loadShop(currentTabId=$(".shopTab.active").attr("id"));	
 	
 	$(".swiper-container").swiper({
 		pagination: '.swiper-pagination',
@@ -91,18 +108,18 @@ $(function(){
         if (loading) return;
         // 设置flag
         loading = true;
-
+        
         setTimeout(function() {
             loading = false;
 
-            var len = $("#hotShopContainer .card").length;
-    		if(totalRow==undefined || len>=totalRow){
-    			$.detachInfiniteScroll($('.infinite-scroll'));
-                $('.infinite-scroll-preloader').remove();
+            loadShop(currentTabId);
+            
+            var len = $("#"+currentTabId+"Container .card").length;
+	    		if(pageInfo[currentTabId].totalRow==undefined || len>=pageInfo[currentTabId].totalRow){
+                $("#"+currentTabId+"InfiniteScroll").html("已加载全部");
                 return;
     		}
 			
-            loadShop(pageNumber,pageSize);
         }, 1000);
     });
 	
@@ -111,6 +128,10 @@ $(function(){
 		 var keyword = $(this).val();
 		 location.href="${base}/wx/search?type="+type+"&keyword="+keyword;
 	});
+	 
+	 $(".shopTab").on("click",function(){
+		currentTabId = $(this).attr("id");
+	})
 })
 </script>
 </#assign>
@@ -155,13 +176,13 @@ $(function(){
 		</div>
 		<div class="pageContent bg-default">
 		 <div class="buttons-tab">
-		    <a href="#tab1" class="tab-link active button hotShop">
+		    <a href="#tab1" class="tab-link active button shopTab" id="hotShop">
 		    	<i class="fa fa-fire">&nbsp;热门店铺</i>
 		    </a>
-		    <a href="#tab2" class="tab-link button neighbor">
+		    <a href="#tab2" class="tab-link button shopTab" id="neighbor">
 		    	<i class="fa fa-home">&nbsp;附近店铺</i>
 		    </a>
-		    <a href="#tab3" class="tab-link button collections">
+		    <a href="#tab3" class="tab-link button shopTab" id="collections">
 		    	<i class="fa fa-star">&nbsp;我的收藏</i>
 		    </a>
 		  </div>
@@ -169,21 +190,23 @@ $(function(){
 		    <div class="tabs">
 		      <div id="tab1" class="tab active">
 		          <div id="hotShopContainer"></div>
+		          <div class="infinite-scroll-preloader"  id="hotShopInfiniteScroll">
+				       <div class="preloader"></div>
+				  </div>
 		      </div>
 		      <div id="tab2" class="tab">
-		        <div class="content-block">
-		          <p>This is tab 2 content</p>
-		        </div>
+		          <div id="neighborContainer"></div>
+		          <div class="infinite-scroll-preloader"  id="neighborInfiniteScroll">
+				       <div class="preloader"></div>
+				  </div>
 		      </div>
 		      <div id="tab3" class="tab">
-		        <div class="content-block">
-		          <p>This is tab 3 content</p>
-		        </div>
+		          <div id="collectionsContainer"></div>
+		          <div class="infinite-scroll-preloader"  id="collectionsInfiniteScroll">
+				       <div class="preloader"></div>
+				  </div>
 		      </div>
 		    </div>
-		  </div>
-		  <div class="infinite-scroll-preloader">
-		       <div class="preloader"></div>
 		  </div>
 		</div>
 	</div>

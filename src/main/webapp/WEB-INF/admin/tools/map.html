@@ -84,14 +84,14 @@
 	        map.addControl(geolocation);
 	        AMap.event.addListener(geolocation, 'complete', function(data){
 	        	createMarker(data.position)
-		        console.log(data)
 		    });//返回定位信息
 	        AMap.event.addListener(geolocation, 'error', function(data) {
 	  	      $.alert('定位失败！<br>'+data.message)
 		    });
-		    
+		    debugger
 	        if(latitude!=""&&longitude!=""){
-		    	var lnglat = [parseFloat(longitude),parseFloat(latitude)];
+		    	var lnglat =  new AMap.LngLat(parseFloat(longitude),parseFloat(latitude));
+		    	debugger
 				map.setCenter(lnglat);
 				createMarker(lnglat)
 			}else{
@@ -122,6 +122,7 @@
             	var lat = poi.location.lat;
 	            var lng = poi.location.lng;
 	            var address = poi.address;
+	            debugger
 	            setCurrentPoi(adcode,lat,lng,address);
 	        });
 
@@ -142,6 +143,7 @@
 	            	var lat = lnglat.lat;
 		            var lng = lnglat.lng;
 		            var address = regeocode.formattedAddress.toString();
+		            debugger
 		            setCurrentPoi(adcode,lat,lng,address);
 	            	infoWindow.setPosition(lnglat);
 		            infoWindow.setContent("地址："+address);
