@@ -38,14 +38,16 @@
 			<groupId>com.jfinal</groupId>
 			<artifactId>jetty-server</artifactId>
 			<version>8.1.8</version>
-			<scope>provided</scope>
+			<!--IDEA要去掉-->
+			<!--<scope>provided</scope>-->
 		</dependency>
 		<!-- jsp -->
 		<dependency>
 			<groupId>org.eclipse.jetty</groupId>
 			<artifactId>jetty-jsp</artifactId>
 			<version>8.1.8.v20121106</version>
-			<scope>provided</scope>
+			<!--IDEA要去掉-->
+			<!--<scope>provided</scope>-->
 		</dependency>
 		<!-- jsp -->
 		<dependency>
@@ -81,11 +83,6 @@
 		  <version>[7.2.0, 7.2.99]</version>
 		</dependency>
 
-		<!-- <dependency>
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
-			<version>1.4</version>
-		</dependency> -->
 		<!-- 导入Mysql数据库链接jar包 -->
 		<dependency>
 			<groupId>mysql</groupId>
@@ -114,11 +111,6 @@
 			<artifactId>ehcache-core</artifactId>
 			<version>2.6.6</version>
 		</dependency>
-		<!-- <dependency>
-			<groupId>commons-codec</groupId>
-			<artifactId>commons-codec</artifactId>
-			<version>1.10</version>
-		</dependency> -->
 		<!-- email -->
 		<dependency>
 			<groupId>com.sun.mail</groupId>
@@ -149,7 +141,6 @@
 			<artifactId>jxl</artifactId>
 			<version>2.6.12</version>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.freemarker/freemarker -->
 		<dependency>
 		    <groupId>org.freemarker</groupId>
 		    <artifactId>freemarker</artifactId>
@@ -217,7 +208,7 @@
 				</configuration>
 			</plugin>
 			<!-- Idea 添加此插件以便启动jetty -->
-			<!-- <plugin>
+			 <plugin>
 				<groupId>org.eclipse.jetty</groupId>
 				<artifactId>jetty-maven-plugin</artifactId>
 				<version>9.3.11.v20160721</version>
@@ -239,7 +230,7 @@
 						</systemProperty>
 					</systemProperties>
 				</configuration>
-			</plugin> -->
+			</plugin>
 		</plugins>
 
 	</build>

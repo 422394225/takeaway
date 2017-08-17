@@ -115,7 +115,7 @@ public class APPConfig extends JFinalConfig {
 		FlywayMigration fm = new FlywayMigration();
 		fm.migrate(PropKit.get("jdbcUrl"), PropKit.get("user"), PropKit.get("password"));
 
-		JFinal.start("src/main/webapp", 80, "/", 5);// 启动配置项
+		JFinal.start("src/main/webapp", 80, "/");// 启动配置项
 	}
 
 }
