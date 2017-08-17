@@ -222,7 +222,7 @@
 					<webApp>
 						<contextPath>/</contextPath>
 					</webApp>
-					适应测试阶段的jetty，日志写入目录，tomcat写入tomcat/logs下
+					<!-- 适应测试阶段的jetty，日志写入目录，tomcat写入tomcat/logs下 -->
 					<systemProperties>
 						<systemProperty>
 							<name>catalina.base</name>
