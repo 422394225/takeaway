@@ -5,19 +5,18 @@
 
 package core.weixin.controller.delivery;
 
-import java.io.File;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.UUID;
-
 import com.jfinal.kit.PropKit;
 import com.jfinal.log.Log;
 import com.jfinal.plugin.activerecord.Db;
-
 import core.utils.MD5Util;
 import core.vo.JSONError;
 import core.vo.JSONSuccess;
 import core.weixin.controller.WeixinMsgController;
+
+import java.io.File;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.UUID;
 
 /**
  * Description:
@@ -80,7 +79,7 @@ public class DeliveryApiController extends WeixinMsgController {
 		String id = getPara("id");
 		String longtitude = getPara("longtitude");
 		String latidute = getPara("latidude");
-		Db.update("UPDATE T_DELIVERY SET NOW_LONGITUDE=?,NOW_LATIDUTE=? WHERE ID=?", longtitude, latidute, id);
+		Db.update("UPDATE T_DELIVERY SET NOW_LONGITUDE=?,NOW_LATITUDE=? WHERE ID=?", longtitude, latidute, id);
 		renderJson(new JSONSuccess());
 	}
 

@@ -83,3 +83,6 @@
     justify-content: initial;
     padding:0;
 }
+.infinite-scroll-preloader{
+	text-align: center;
+}

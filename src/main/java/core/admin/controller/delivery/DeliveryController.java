@@ -1,7 +1,5 @@
 package core.admin.controller.delivery;
 
-import java.util.List;
-
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.core.Controller;
@@ -10,7 +8,6 @@ import com.jfinal.log.Log;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
-
 import core.admin.service.delivery.DeliveryService;
 import core.admin.service.delivery.impl.DeliveryServiceImpl;
 import core.model.Delivery;
@@ -18,6 +15,8 @@ import core.utils.MD5Util;
 import core.vo.DTParams;
 import core.vo.JSONError;
 import core.vo.JSONSuccess;
+
+import java.util.List;
 
 /**
  * 
@@ -44,7 +43,7 @@ public class DeliveryController extends Controller {
 		String id = getPara("id");
 		String longtitude = getPara("longtitude");
 		String latidute = getPara("latidude");
-		Db.update("UPDATE T_DELIVERY SET NOW_LONGITUDE=?,NOW_LATIDUTE=? WHERE ID=?", longtitude, latidute, id);
+		Db.update("UPDATE T_DELIVERY SET NOW_LONGITUDE=?,NOW_LATITUDE=? WHERE ID=?", longtitude, latidute, id);
 		renderJson(new JSONSuccess());
 	}
 
@@ -82,7 +81,7 @@ public class DeliveryController extends Controller {
 	public void placeSingle() {
 		Delivery delivery = Delivery.dao.findById(getPara("deliveryId"));
 		setAttr("LONGITUDE", delivery.get("NOW_LONGITUDE"));
-		setAttr("LATIDUTE", delivery.get("NOW_LATIDUTE"));
+		setAttr("LATITUDE", delivery.get("NOW_LATITUDE"));
 		setAttr("deliveryId", getPara("deliveryId"));
 		setAttr("amapKey", PropKit.get("amap.key"));
 		render("placeSingle.html");
@@ -101,7 +100,7 @@ public class DeliveryController extends Controller {
 					jsonObject.put("NAME", delivery.get("NAME"));
 					JSONArray place = new JSONArray();
 					place.add(delivery.get("NOW_LONGITUDE"));
-					place.add(delivery.get("NOW_LATIDUTE"));
+					place.add(delivery.get("NOW_LATITUDE"));
 					jsonObject.put("PLACE", place);
 					result.add(jsonObject);
 				}
@@ -115,7 +114,7 @@ public class DeliveryController extends Controller {
 				jsonObject.put("NAME", delivery.get("NAME"));
 				JSONArray place = new JSONArray();
 				place.add(delivery.get("NOW_LONGITUDE"));
-				place.add(delivery.get("NOW_LATIDUTE"));
+				place.add(delivery.get("NOW_LATITUDE"));
 				jsonObject.put("PLACE", place);
 				result.add(jsonObject);
 			}
@@ -127,15 +126,15 @@ public class DeliveryController extends Controller {
 		setAttr("amapKey", PropKit.get("amap.key"));
 		List<Delivery> deliverys = Delivery.dao.find("select * from t_delivery where state='1'");
 		double LONGITUDE = 0;
-		double LATIDUTE = 0;
+		double LATITUDE = 0;
 		for (Delivery delivery : deliverys) {
 			LONGITUDE += delivery.getDouble("NOW_LONGITUDE");
-			LATIDUTE += delivery.getDouble("NOW_LATIDUTE");
+			LATITUDE += delivery.getDouble("NOW_LATITUDE");
 		}
 		LONGITUDE /= deliverys.size();
-		LATIDUTE /= deliverys.size();
+		LATITUDE /= deliverys.size();
 		setAttr("LONGITUDE", LONGITUDE);
-		setAttr("LATIDUTE", LATIDUTE);
+		setAttr("LATITUDE", LATITUDE);
 		render("allDeliveryPlace.html");
 	}
 

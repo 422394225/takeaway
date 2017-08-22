@@ -42,9 +42,9 @@ function typeMore(){
 }
 
 var pageInfo = {
-		hotShop:{pageNumber:1,pageSize:5,totalRow:0},
-		neighbor:{pageNumber:1,pageSize:5,totalRow:0},
-		collections:{pageNumber:1,pageSize:5,totalRow:0}
+		hotShop:{pageNumber:1,pageSize:5,totalRow:-1},
+		neighbor:{pageNumber:1,pageSize:5,totalRow:-1},
+		collections:{pageNumber:1,pageSize:5,totalRow:-1}
 }
 var currentTabId;
 //商家
@@ -57,10 +57,16 @@ function loadShop(currentTabId){
 	
 	//查询类型设置
 	pageData.flag = currentTabId;
-	
+
 	//地理参数设置
 	if(currentTabId=="neighbor"){
 		pageData.loc = WxStore.getUser().loc;
+		if(pageData.loc==undefined){
+            var msg = "未获取到位置信息请<font color='#0894ec' onclick='chooseAddr();'>选择地址</font>"+
+				"或<font color='#0894ec' onclick='loadShop(\""+currentTabId+"\");'>重试</font>";
+            $("#"+currentTabId+"Container").html(msg);
+		    return;
+		}
 	}
 	
 	if(currentTabId=="collections"){
@@ -71,9 +77,12 @@ function loadShop(currentTabId){
 	function(msg,data){
 		pageInfo[currentTabId].totalRow = data.totalRow;
 		if(pageInfo[currentTabId].totalRow<=0){
-			$("#"+currentTabId+"Container").append("暂无相应商家");
+			$("#"+currentTabId+"Container").html("暂无相应商家");
 		}else{
 			var tpl = $('#shop-tpl').html();
+			if(pageInfo[currentTabId].pageNumber==1){
+                $("#"+currentTabId+"Container").html("");
+            }
 			laytpl(tpl).render(data.list, function(html){
 				$("#"+currentTabId+"Container").append(html);
 				$('div[data-score]').raty({
@@ -86,13 +95,17 @@ function loadShop(currentTabId){
 			pageInfo[currentTabId].pageNumber++;
 		}
 	},function(msg){
-		$.alert(msg)
+            $("#"+currentTabId+"Container").html(msg);
 	})
 }
 
+function chooseAddr() {
+    $.router.loadPage('#map-mobile');
+}
+
 $(function(){
-	loadShop(currentTabId=$(".shopTab.active").attr("id"));	
-	
+	loadShop(currentTabId=$(".shopTab:first").attr("id"));
+
 	$(".swiper-container").swiper({
 		pagination: '.swiper-pagination',
         slidesPerView: 'auto',
@@ -112,17 +125,18 @@ $(function(){
         setTimeout(function() {
             loading = false;
 
-            loadShop(currentTabId);
-            
             var len = $("#"+currentTabId+"Container .card").length;
-	    		if(pageInfo[currentTabId].totalRow==undefined || len>=pageInfo[currentTabId].totalRow){
+			if(pageInfo[currentTabId].totalRow==undefined || (len>=pageInfo[currentTabId].totalRow && pageInfo[currentTabId].totalRow!=-1)){
                 $("#"+currentTabId+"InfiniteScroll").html("已加载全部");
+                $.detachInfiniteScroll($('.infinite-scroll'));
                 return;
-    		}
+    		}else{
+                loadShop(currentTabId);
+			}
 			
         }, 1000);
     });
-	
+
 	 $('#searchAll').bind('search', function () {
 		 var type = $("select[name='searchWay'] option:selected").val();
 		 var keyword = $(this).val();
@@ -131,6 +145,8 @@ $(function(){
 	 
 	 $(".shopTab").on("click",function(){
 		currentTabId = $(this).attr("id");
+		$(".infinite-scroll").trigger("infinite");
+		$.attachInfiniteScroll($('.infinite-scroll'));
 	})
 })
 </script>
@@ -139,7 +155,7 @@ $(function(){
 <div class="page page-current" id="mainPage">
 	<header class="bar bar-nav bg-primary">
 		<img src="${base}/resources/images/logo-text.png" style="width: 2rem;position: absolute;right:10px;">
-		<div class="title color-default location text-over" onclick="javascript:$.router.loadPage('#map-mobile');">
+		<div class="title color-default location text-over" onclick="chooseAddr();">
 			&nbsp;<i class="fa fa-map-marker"></i>
 			&nbsp;<span id="addressText">选择地址</span>
 		</div>
@@ -240,7 +256,7 @@ $(function(){
 							￥{{d[i].DELIVERY_THRESHOLD}}起送,配送费{{d[i].DELIVERY_PRICE}}元
 						</div>
 						<div class="col-50">
-							1.5km&nbsp;/&nbsp;<font class="color-success">{{d[i].DELIVERYED_TIME}}分钟</font>
+							{{d[i].DISTANCE}}km&nbsp;/&nbsp;<font class="color-success">{{d[i].DELIVERYED_TIME}}分钟</font>
 						</div>
 					</div>
 	            </div>

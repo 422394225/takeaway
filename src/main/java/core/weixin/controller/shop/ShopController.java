@@ -14,23 +14,18 @@ import com.jfinal.log.Log;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
+import com.jfinal.plugin.activerecord.SqlPara;
 import com.jfinal.weixin.sdk.api.ApiConfig;
 import com.jfinal.weixin.sdk.api.ApiConfigKit;
-
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.lang3.StringUtils;
-
 import core.admin.service.shop.relation.ShopTypeRelationService;
 import core.admin.service.shop.relation.impl.ShopTypeRelationServiceImpl;
+import core.common.constants.ShopConstants;
 import core.common.utils.QiniuUtils;
 import core.interceptor.JSSDKInterceptor;
 import core.model.Shop;
 import core.model.ShopType;
 import core.model.ShopTypeRelation;
+import core.utils.LocationUtils;
 import core.utils.MD5Util;
 import core.validate.ShopWXValidate;
 import core.vo.ConditionsVO;
@@ -38,6 +33,10 @@ import core.vo.JSONError;
 import core.vo.JSONSuccess;
 import core.weixin.api.MediaApi;
 import core.weixin.base.BaseController;
+import org.apache.commons.lang3.StringUtils;
+
+import java.text.DecimalFormat;
+import java.util.*;
 
 /**
  * Description:
@@ -91,7 +90,7 @@ public class ShopController extends BaseController {
 		shop.set("ADMIN_NAME", getPara("adminName"));
 		shop.set("DESCRIPTION", getPara("description"));
 		shop.set("ADDRESS", getPara("address"));
-		shop.set("LATIDUTE", getPara("latitude"));
+		shop.set("LATITUDE", getPara("latitude"));
 		shop.set("LONGITUDE", getPara("longitude"));
 		String addressCode = getPara("addressCode");
 		shop.set("PCODE", addressCode.substring(0, 2) + "0000");
@@ -153,40 +152,68 @@ public class ShopController extends BaseController {
 	public void ajaxShops() {
 		JSONObject params = JSONObject.parseObject(HttpKit.readData(getRequest()));
 		ConditionsVO conditionsVO = new ConditionsVO();
+		SqlPara sqlPara = null;
+
 		String flag = params.getString("flag");
+		JSONObject loc = null;
 		if (StringUtils.isNotEmpty(flag)) {
 			switch (flag) {
 			case "hotShop": {
-				Map<String, Object> condi = new LinkedHashMap<>();
-				condi.put("RATE_AVG", "DESC");
-				condi.put("SALE_NUM", "DESC");
-				conditionsVO.getOrderbyCond().putAll(condi);
+				Map<String, Object> order = new LinkedHashMap<>();
+				order.put("RATE_AVG", "DESC");
+				order.put("SALE_NUM", "DESC");
+				conditionsVO.getOrderbyCond().putAll(order);
+				sqlPara = Db.getSqlPara("shop.list", conditionsVO.getConditions());
 				break;
 			}
 			case "neighbor": {
-				conditionsVO.getLimitCond().putAll(Kv.by("RATE_AVG", "DESC"));
-				conditionsVO.getOrderbyCond().putAll(Kv.by("RATE_AVG", "DESC"));
+				try {
+					loc = params.getJSONObject("loc");
+				}catch (Exception e){
+					renderJson(new JSONError(ShopConstants.getValue(flag)+"加载失败！"));
+					return;
+				}
+				sqlPara = Db.getSqlPara("shop.groupByDistant",loc);
 				break;
 			}
 			case "collections": {
+				String openId = params.getString("openId");
+				Record collections = Db.findFirst(Db.getSql("user.getCollections"),openId);
+				if (collections!=null){
+					String collectionsStr = collections.getStr("COLLECTION");
+					String sqlParams = "'"+collectionsStr.replace(",","','")+"'";
+					sqlPara = Db.getSqlPara("shop.inId",Kv.by("inParams",sqlParams));
+				}
 				break;
 			}
 			default:
 				break;
 			}
 		}
-		Integer pageNumber = params.getInteger("pageNumber");
-		Integer pageSize = params.getInteger("pageSize");
-		if (pageNumber != null) {
-			if (pageSize == null) {
-				pageSize = 10;
+		if(sqlPara!=null){
+			Integer pageNumber = params.getInteger("pageNumber");
+			Integer pageSize = params.getInteger("pageSize");
+			if (pageNumber != null) {
+				if (pageSize == null) {
+					pageSize = 10;
+				}
+				Page<Record> shops = Db.paginate(pageNumber, pageSize,sqlPara);
+				if("neighbor".equals(flag)) {
+					DecimalFormat df = new java.text.DecimalFormat("0.00");
+					for (Record record : shops.getList()) {
+						Double distance = LocationUtils.getDistance(loc.getDouble("lng"), loc.getDouble("lat"),
+								record.getDouble("LONGITUDE"), record.getDouble("LATITUDE"));
+						record.set("DISTANCE", df.format(distance));
+					}
+				}
+				renderJson(new JSONSuccess(shops));
+			} else {
+				List<Record> shops = Db.find(sqlPara);
+				renderJson(new JSONSuccess(shops));
 			}
-			Page<Shop> shops = Shop.dao.paginate(pageNumber, pageSize,
-					Db.getSqlPara("shop.list", conditionsVO.getConditions()));
-			renderJson(new JSONSuccess(shops));
-		} else {
-			List<Shop> shops = Shop.dao.find(Db.getSqlPara("shop.list", conditionsVO.getConditions()));
-			renderJson(new JSONSuccess(shops));
+		}
+		else{
+			renderJson(new JSONError(ShopConstants.getValue(flag)+"加载失败！"));
 		}
 	}
 

@@ -5,23 +5,6 @@
 
 package core.weixin.controller.order;
 
-import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Random;
-import java.util.Set;
-
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Before;
@@ -31,15 +14,22 @@ import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.weixin.sdk.jfinal.MsgInterceptor;
 import com.jfinal.weixin.sdk.utils.HttpUtils;
-
 import core.model.Food;
 import core.model.Order;
 import core.model.Shop;
 import core.model.User;
+import core.utils.LocationUtils;
 import core.utils.MD5Util;
 import core.vo.JSONError;
 import core.vo.JSONSuccess;
 import core.weixin.controller.WeixinMsgController;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.Map.Entry;
 
 /**
  * Description:
@@ -50,7 +40,6 @@ import core.weixin.controller.WeixinMsgController;
 
 public class OrderController extends WeixinMsgController {
 	private static final String WEIXIN_PRE_PAY_URL = "https://api.mch.weixin.qq.com/pay/unifiedorder";
-	private static final double EARTH_RADIUS = 6378137;
 	private Log log = Log.getLog(OrderController.class);
 	private String[] getType = { "" };
 
@@ -280,8 +269,8 @@ public class OrderController extends WeixinMsgController {
 		setAttr("openid", openid);
 		String orderType = getPara("orderType");
 		String typeId = getPara("typeId");
-		String userLongitude = getPara("userLongitude");
-		String userLatidute = getPara("userLatidute");
+		String userLongitude = getPara("lng");
+		String userLatidute = getPara("lat");
 		String pccode = getPara("pccode");
 		Integer page = getParaToInt("page");
 		if (page == null || page <= 0)
@@ -290,13 +279,8 @@ public class OrderController extends WeixinMsgController {
 		if (pageCount == null || pageCount <= 0 || pageCount >= 20)
 			pageCount = 20;
 		String orderBy = "";
-		if ("distance".equals(orderType))
-			orderBy = " (LONGITUDE-" + userLongitude + ")* (LONGITUDE-" + userLongitude + ")+ (LATIDUTE-" + userLatidute
-					+ ")* (LATIDUTE-" + userLatidute + ") ASC ";
-		else if ("rate".equals(orderType))
-			orderBy = " RATE_AVG DESC ";
-		else
-			orderBy = " RAND() ";
+			orderBy = " (LONGITUDE-" + userLongitude + ")* (LONGITUDE-" + userLongitude + ")+ (LATITUDE-" + userLatidute
+					+ ")* (LATITUDE-" + userLatidute + ") ASC ";
 		if (typeId == null)
 			typeId = "";
 		else
@@ -306,11 +290,12 @@ public class OrderController extends WeixinMsgController {
 		else
 			pccode = " AND PCCODE='" + pccode + "' ";
 		DecimalFormat df = new java.text.DecimalFormat("0.00");
-		List<Record> shops = Db.find("SELECT * FROM T_SHOP WHERE " + " STATE=2  " + pccode + typeId + " ORDER BY "
-				+ orderBy + " LIMIT " + (pageCount * (page - 1)) + "," + pageCount);
+		String sql = "SELECT * FROM T_SHOP WHERE " + " STATE=2  " + pccode + typeId + " ORDER BY "
+				+ orderBy + " LIMIT " + (pageCount * (page - 1)) + "," + pageCount;
+		List<Record> shops = Db.find(sql);
 		for (Record record : shops) {
-			record.set("distance", df.format((getDistance(Double.valueOf(userLongitude), Double.valueOf(userLatidute),
-					record.getDouble("LONGITUDE"), record.getDouble("LATIDUTE")))) + "km");
+			record.set("distance", df.format((LocationUtils.getDistance(Double.valueOf(userLongitude), Double.valueOf(userLatidute),
+					record.getDouble("LONGITUDE"), record.getDouble("LATITUDE")))) + "km");
 		}
 		renderJson(new JSONSuccess(shops));
 	}
@@ -356,35 +341,4 @@ public class OrderController extends WeixinMsgController {
 		render("interShop.html");
 	}
 
-	/**
-	 * 转化为弧度(rad)
-	 */
-	private static double rad(double d) {
-		return d * Math.PI / 180.0;
-	}
-
-	/**
-	 * 基于googleMap中的算法得到两经纬度之间的距离,计算精度与谷歌地图的距离精度差不多，相差范围在0.2米以下
-	 * 
-	 * @param lon1
-	 *            第一点的精度
-	 * @param lat1
-	 *            第一点的纬度
-	 * @param lon2
-	 *            第二点的精度
-	 * @param lat3
-	 *            第二点的纬度
-	 * @return 返回的距离，单位km
-	 */
-	public static double getDistance(double lon1, double lat1, double lon2, double lat2) {
-		double radLat1 = rad(lat1);
-		double radLat2 = rad(lat2);
-		double a = radLat1 - radLat2;
-		double b = rad(lon1) - rad(lon2);
-		double s = 2 * Math.asin(Math.sqrt(
-				Math.pow(Math.sin(a / 2), 2) + Math.cos(radLat1) * Math.cos(radLat2) * Math.pow(Math.sin(b / 2), 2)));
-		s = s * EARTH_RADIUS / 1000;
-		// s = Math.round(s * 10000) / 10000;
-		return s;
-	}
 }

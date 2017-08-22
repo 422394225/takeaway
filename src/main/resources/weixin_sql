@@ -9,6 +9,14 @@
 		JOIN t_shop AS s ON str.SHOPID = s.ID
 		WHERE str.TYPEID = ?
 	#end
+	#sql("inId")
+	    SELECT * FROM t_shop WHERE ID IN (#(inParams))
+	#end
+	#sql("groupByDistant")
+        SELECT s.*,((LONGITUDE-#(lng))*(LONGITUDE-#(lng))+ (LATITUDE-#(lat))* (LATITUDE-#(lat))) AS dst
+        FROM t_shop AS s
+        ORDER BY dst ASC
+    #end
 #end
 
 #namespace("food")
@@ -16,5 +24,11 @@
 		SELECT f.*,s.`NAME` AS SHOP_NAME,s.`RATE_AVG` FROM t_food AS f
 		LEFT JOIN t_shop AS s ON f.SHOP_ID = s.ID
 		WHERE f.`STATE` = '1' AND f.`NAME` LIKE '%#(keyword)%'
+	#end
+#end
+
+#namespace("user")
+	#sql("getCollections")
+		SELECT COLLECTION FROM t_user WHERE ID =?
 	#end
 #end

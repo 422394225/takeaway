@@ -64,7 +64,8 @@ var Kit={
 var WxStore = {
 	getUser:function(){
 		try{
-			return JSON.parse(localStorage.getItem("user"));
+			var user = JSON.parse(localStorage.getItem("user"));
+			return user;
 		}catch(e){
 			console.log(e);
 			return new Object();

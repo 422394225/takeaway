@@ -14,14 +14,6 @@ import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
-
-import java.io.File;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.lang3.StringUtils;
-
 import core.admin.controller.base.BaseController;
 import core.admin.service.audit.AuditService;
 import core.admin.service.audit.impl.AuditServiceImpl;
@@ -40,6 +32,12 @@ import core.validate.ShopValidate;
 import core.vo.DTParams;
 import core.vo.JSONError;
 import core.vo.JSONSuccess;
+import org.apache.commons.lang3.StringUtils;
+
+import java.io.File;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Description:
@@ -158,7 +156,7 @@ public class ShopController extends BaseController {
 		shop.set("ADMIN_NAME", getPara("adminName"));
 		shop.set("DESCRIPTION", getPara("description"));
 		shop.set("ADDRESS", getPara("address"));
-		shop.set("LATIDUTE", getPara("latitude"));
+		shop.set("LATITUDE", getPara("latitude"));
 		shop.set("LONGITUDE", getPara("longitude"));
 		String addressCode = getPara("addressCode");
 		shop.set("PCODE", addressCode.substring(0, 2) + "0000");
