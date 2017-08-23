@@ -31,6 +31,7 @@ public class WeixinRoutes extends Routes {
 		add("/wx/tools", ToolsController.class, "/tools");
 		add("/wx/order", OrderController.class, "/order");
 		add("/wx/delivery", DeliveryController.class, "/delivery");
+		add("/wx/food", DeliveryController.class, "/food");
 		// api接口
 		add("/api/v1/user", UserController.class);
 		add("/api/v1/share", ShareController.class);

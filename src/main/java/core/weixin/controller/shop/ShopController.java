@@ -246,4 +246,10 @@ public class ShopController extends BaseController {
 	public void typeMore() {
 		render("typeMore.html");
 	}
+
+	public void front(){
+		String id = getPara("id");
+		setAttr("shop",Shop.dao.findById(id));
+		render("front.html");
+	}
 }

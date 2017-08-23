@@ -264,7 +264,8 @@ public class OrderController extends WeixinMsgController {
 	 * pccode:地区编码
 	 * 
 	 */
-	public void getShopList() {
+	//  weifg 已移植到shop里
+	/*public void getShopList() {
 		String openid = getPara("openid");
 		setAttr("openid", openid);
 		String orderType = getPara("orderType");
@@ -298,13 +299,14 @@ public class OrderController extends WeixinMsgController {
 					record.getDouble("LONGITUDE"), record.getDouble("LATITUDE")))) + "km");
 		}
 		renderJson(new JSONSuccess(shops));
-	}
+	}*/
 
 	/**
 	 * return : {error:"",data{ shop(店铺信息 object):"" ,typeList(分类
 	 * object){ID:"",NAME:"",foods(商品array)[]} } }
 	 */
-	public void getShopInfo() {
+	// weifg 已有
+	/*public void getShopInfo() {
 		String openid = getPara("openid");
 		setAttr("openid", openid);
 		String shopId = getPara("shopId");
@@ -328,9 +330,10 @@ public class OrderController extends WeixinMsgController {
 		}
 		result.put("typeList", foodTypes);
 		renderJson(new JSONSuccess(result));
-	}
+	}*/
 
-	public void interShop() {
+	//weifg 已有
+	/*public void interShop() {
 		String openid = getPara("openid");
 		setAttr("openid", openid);
 		String shopId = getPara("shopId");
@@ -339,6 +342,6 @@ public class OrderController extends WeixinMsgController {
 		List<Record> foods = Db.find("SELECT * FROM T_FOOD WHERE SHOP_ID=?", shopId);
 		setAttr("foods", foods);
 		render("interShop.html");
-	}
+	}*/
 
 }

@@ -227,7 +227,7 @@ $(function(){
 </div>
 <script id="shop-tpl" type="text/html">
 {{# for(var i = 0, len = d.length; i < len; i++){ }}
-	<div class="card">
+	<div class="card" onclick="enterShop('{{d[i].ID}}')">
 	    <div class="card-content">
 	      <div class="list-block media-list">
 	        <ul>

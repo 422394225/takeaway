@@ -3,11 +3,11 @@
      {
           "type":"view",
           "name":"点单",
-          "url":"https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxabc1c52c7de5bbd4&redirect_uri=http%3a%2f%2f177l3a5827.51mypc.cn%2foauth&response_type=code&scope=snsapi_base&state=%2fwx%2forder#wechat_redirect"
+          "url":"https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxa78f4c350a06e3c4&redirect_uri=http%3A%2F%2Ftakeaway.viphk.ngrok.org%2foauth&response_type=code&scope=snsapi_base&state=%2fwx%2forder#wechat_redirect"
       }, {
           "type":"view",
           "name":"首页",
-          "url":"https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxabc1c52c7de5bbd4&redirect_uri=http%3a%2f%2f177l3a5827.51mypc.cn%2foauth&response_type=code&scope=snsapi_base&state=%2fwx#wechat_redirect"
+          "url":"https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxa78f4c350a06e3c4&redirect_uri=http%3A%2F%2Ftakeaway.viphk.ngrok.org%2foauth&response_type=code&scope=snsapi_base&state=%2fwx#wechat_redirect"
       }
          ,{
            "name":"菜单",
@@ -15,12 +15,12 @@
      {
           "type":"view",
           "name":"店铺入驻",
-          "url":"http://177l3a5827.51mypc.cn/wx/shop/add"
+          "url":"http://takeaway.viphk.ngrok.org/wx/shop/add"
       },
      {
           "type":"view",
           "name":"配送员入口",
-          "url":"http://177l3a5827.51mypc.cn/wx/delivery/"
+          "url":"http://takeaway.viphk.ngrok.org/wx/delivery/"
       }]
       }]
 }

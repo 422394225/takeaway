@@ -90,7 +90,7 @@ function renderTpl(tpl,data){
 </div>
 <script id="shop-tpl" type="text/html">
 {{# for(var i = 0, len = d.length; i < len; i++){ }}
-	<div class="card">
+	<div class="card" onclick="enterShop('{{d[i].ID}}')">
 	    <div class="card-content">
 	      <div class="list-block media-list">
 	        <ul>
@@ -174,7 +174,7 @@ function renderTpl(tpl,data){
 						</div>
 					</div>
 					<div class="row no-gutter">
-						<div class="col-50">
+						<div class="col-50" onclick="enterShop('{{d[i].SHOP_ID}}')">
 							<font color="#0894ec"><i class="fa fa-home"></i>{{d[i].SHOP_NAME}}</font>
 						</div>
 						<div class="col-50" data-score="{{d[i].RATE_AVG}}"></div>

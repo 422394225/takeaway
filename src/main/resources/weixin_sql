@@ -23,7 +23,8 @@
 
 #namespace("food")
 	#sql("search")
-		SELECT f.*,s.`NAME` AS SHOP_NAME,s.`RATE_AVG` FROM t_food AS f
+		SELECT f.*,s.`NAME` AS SHOP_NAME,s.`RATE_AVG`,s.`ID` AS SHOP_ID,f.`ID` AS FOOD_ID
+		FROM t_food AS f
 		LEFT JOIN t_shop AS s ON f.SHOP_ID = s.ID
 		WHERE f.`STATE` = '1' AND f.`NAME` LIKE '%#(keyword)%'
         ORDER BY s.RATE_AVG

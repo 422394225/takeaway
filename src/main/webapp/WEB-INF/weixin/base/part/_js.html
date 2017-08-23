@@ -43,6 +43,9 @@ function initUser(){
 	}
 	WxStore.setUser(user)
 }
+function enterShop(id) {
+    location.href="${base}/wx/shop/front?id="+id;
+}
 </script>
 <script src="${base}/resources/light7/js/light7.min.js" type="text/javascript"></script>
 <script src="${base}/resources/javascripts/jweixin-1.2.0.js" type="text/javascript"></script>
