@@ -2,12 +2,14 @@
 	#sql("search")
 		SELECT * FROM t_shop AS s
 		WHERE s.`NAME` LIKE '%#(keyword)%'
+		ORDER BY s.RATE_AVG
 	#end
 	#sql("getByType")
 		SELECT s.* FROM 
 		t_shop_type_relation AS str
 		JOIN t_shop AS s ON str.SHOPID = s.ID
 		WHERE str.TYPEID = ?
+        ORDER BY s.RATE_AVG
 	#end
 	#sql("inId")
 	    SELECT * FROM t_shop WHERE ID IN (#(inParams))
@@ -24,6 +26,7 @@
 		SELECT f.*,s.`NAME` AS SHOP_NAME,s.`RATE_AVG` FROM t_food AS f
 		LEFT JOIN t_shop AS s ON f.SHOP_ID = s.ID
 		WHERE f.`STATE` = '1' AND f.`NAME` LIKE '%#(keyword)%'
+        ORDER BY s.RATE_AVG
 	#end
 #end
 

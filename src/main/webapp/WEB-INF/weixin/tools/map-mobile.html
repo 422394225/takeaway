@@ -135,7 +135,13 @@ $(window).resize(function(){
 		   	 $("#longitude").val(currentPoi.lng)
 		   	 $("#addressCode").val(currentPoi.adcode)
 		   	 $("#address").val(currentPoi.address).change();
-		   	 $("#addressText").text(currentPoi.address); 
+		   	 $("#addressText").text(currentPoi.address);
+		   	 try{
+                 pageInfo.neighbor={pageNumber:1,pageSize:5,totalRow:-1}
+		   	     loadShop("neighbor")
+                 $.attachInfiniteScroll($('.infinite-scroll'));
+                 $("#"+currentTabId+"InfiniteScroll").html("<div class=\"preloader\"></div>");
+			 }catch(e) {}
 	    }
 	    
 	    function poiPickerReady(poiPicker) {
