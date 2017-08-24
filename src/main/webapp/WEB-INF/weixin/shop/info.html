@@ -1,0 +1,212 @@
+<#include "../base/main/_main.html"/>
+<#assign wxMeta> </#assign>
+<#assign wxCss> </#assign>
+<#assign wxJavascript> </#assign>
+<@mainLayout wxTitle="商家信息" wxMeta=wxMeta wxCss=wxCss
+wxJavascript=wxJavascript>
+<header class="bar bar-nav bg-primary">
+	<img src="${base}/resources/images/logo-text.png"
+		style="width: 2rem; position: absolute; right: 10px;">
+	<h1 class='title'>商家信息</h1>
+</header>
+<body>
+	<div class="content">
+		<div class="list-block media-list">
+			<ul>
+				<li><a class="item-content">
+						<div class="item-media">
+							<img src="${shop.IMG}" width="80">
+						</div>
+						<div class="item-inner">
+							<div class="item-title-row">
+								<div class="item-title">${shop.NAME}</div>
+								<div class="item-after">
+									<div>
+										<label class="label-switch"> <input type="checkbox"
+											id="shopStateInput">
+											<div class="checkbox" id="shopStateDiv"></div>
+										</label>
+										<div id="auditState"></div>
+									</div>
+								</div>
+							</div>
+							<div class="item-subtitle">${shop.TEL}</div>
+
+						</div>
+				</a></li>
+				<li><a class="item-content">
+						<div class="item-media" style="visibility: hidden">
+							<img src="#" width="80">
+						</div>
+						<div class="item-inner">
+							<div class="item-title-row">
+								<div class="item-title">地址</div>
+							</div>
+							<div class="item-subtitle">${shop.ADDRESS}</div>
+						</div>
+				</a></li>
+				<li><a class="item-content">
+						<div class="item-media" style="visibility: hidden">
+							<img src="#" width="80">
+						</div>
+						<div class="item-inner">
+							<div class="item-title-row">
+								<div class="item-title">QQ</div>
+							</div>
+							<div class="item-subtitle">${shop.QQ}</div>
+						</div>
+				</a></li>
+				<li><a class="item-content">
+						<div class="item-media">
+							<div href="#" class="button button-round" id="takeSaleNumBtn"
+								style="width: 80px;" onclick="lookSaleNum()">查看</div>
+						</div>
+						<div class="item-inner">
+							<div class="item-title-row">
+								<div class="item-title">总销售额</div>
+							</div>
+							<div class="item-subtitle" id="saleNumDiv">?</div>
+						</div>
+				</a></li>
+				<li><a class="item-content">
+						<div class="item-media" style="visibility: hidden">
+							<img src="#" width="80">
+						</div>
+						<div class="item-inner">
+							<div class="item-title-row">
+								<div class="item-title">总评论数：&nbsp;${shop.RATE_COUNT}</div>
+							</div>
+							<div class="item-subtitle">平均评分：&nbsp;${shop.RATE_AVG}</div>
+						</div>
+				</a></li>
+				<li><a class="item-content">
+						<div class="item-media" style="visibility: hidden">
+							<img src="#" width="80">
+						</div>
+						<div class="item-inner">
+							<div class="content-padded">
+								<div class="row">
+									<div class="col-20">5分</div>
+									<div class="col-20">4分</div>
+									<div class="col-20">3分</div>
+									<div class="col-20">2分</div>
+									<div class="col-20">1分</div>
+								</div>
+								<div class="row">
+									<div class="col-20">${shop.RATE_5}</div>
+									<div class="col-20">${shop.RATE_4}</div>
+									<div class="col-20">${shop.RATE_3}</div>
+									<div class="col-20">${shop.RATE_2}</div>
+									<div class="col-20">${shop.RATE_1}</div>
+								</div>
+
+							</div>
+						</div>
+				</a></li>
+				<li><div class="item-content item-center">
+						<div class="item-inner">
+							<div class="item-title-row">
+								<a class="button button-round"
+								href="/wx/shop/editShop">编辑店铺</a>
+								<a class="button button-round"
+								 href="/wx/shop/editFood">编辑商品</a>
+							</div>
+						</div>
+				</div></li>
+			</ul>
+		</div>
+	</div>
+</body>
+</@mainLayout>
+<script>
+	if(${shop.AUDIT_STATE}==0){
+		$("#shopStateInput").attr("disabled",true); 
+		$("#auditState").html("未审核");
+	}
+	if(${shop.AUDIT_STATE}==2){
+		$("#shopStateInput").attr("disabled",true); 
+		$("#auditState").html("未通过审核");
+	}
+	if(${shop.AUDIT_STATE}==1){
+		if(${shop.STATE}==-2){
+			$("#shopStateInput").attr("disabled",true); 
+			$("#auditState").html("已被删除");
+		}
+		if(${shop.STATE}==-1){
+			$("#shopStateInput").attr("disabled",true); 
+			$("#auditState").html("未开业");
+		}
+		if(${shop.STATE}==0){
+			$("#auditState").html("休息中");
+		}
+		if(${shop.STATE}==2){
+			$("#shopStateInput").attr("checked",true) 
+			$("#auditState").html("营业中");
+		}
+	}
+	$("#shopStateInput").click(function (){
+		if($("#shopStateInput").attr('checked')){
+			$("#shopStateInput").attr('checked',false);
+			 $.ajax({
+			        url: '/wx/shop/setState?state=0', 
+			        async: true,
+			        type: 'GET',
+			        success: function(data , textStatus){
+			          if(data.error){
+			        	  alert(data.msg)
+				        	location.reload();
+			      	  }
+			          else{
+			 			$("#auditState").html("休息中");
+			          }
+			        },
+			       
+			        error: function(jqXHR , textStatus , errorThrown){
+			        	location.reload();
+			        }
+			       
+			      });
+		}
+		else{
+			$("#shopStateInput").attr("checked",true);
+			$.ajax({
+		        url: '/wx/shop/setState?state=2', 
+		        async: true,
+		        type: 'GET',
+		        success: function(data , textStatus){
+		          if(data.error){
+		        	  alert(data.msg)
+			        	location.reload();
+		      	  }
+		          else{
+		 			$("#auditState").html("营业中");
+		          }
+		        },
+		       
+		        error: function(jqXHR , textStatus , errorThrown){
+		        	location.reload();
+		        }
+		       
+		      });
+		}
+	})
+	function lookSaleNum() {
+		$.ajax({
+	        url: '/wx/shop/getSaleNum', 
+	        async: true,
+	        type: 'GET',
+	        success: function(data , textStatus){
+	          if(data.error){
+	        	  alert(data.msg)
+	      	  }
+	          else{
+	        	$("#saleNumDiv").html(data.data);
+	          }
+	        },
+	       
+	        error: function(jqXHR , textStatus , errorThrown){
+	        }
+	       
+	      });
+	}
+</script>

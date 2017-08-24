@@ -21,7 +21,7 @@ import core.validate.base.ShortCircuitValidate;
  * @date 2017年7月20日下午9:27:21
  */
 
-public class ShopWXValidate extends ShortCircuitValidate {
+public class ShopWXEditValidate extends ShortCircuitValidate {
 	private ShopService service = new ShopServiceImpl();
 
 	@Override
@@ -36,7 +36,7 @@ public class ShopWXValidate extends ShortCircuitValidate {
 		validateRequired("name", "msg", "请输入商家名称");
 		validateRequired("adminName", "msg", "请输入负责人名称");
 		validateRequired("shopTypeId", "msg", "请选择商家分类");
-		// validateRequired("logo", "msg", "请上传商家logo");
+		validateRequired("logo", "msg", "请上传商家logo");
 		validateRequired("address", "msg", "请输入商家地址");
 		validateRequired("latitude", "msg", "请从地图上选择一个坐标,将用于定位");
 		validateRequired("longitude", "msg", "请从地图上选择一个坐标,将用于定位");
