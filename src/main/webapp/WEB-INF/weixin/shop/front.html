@@ -1,0 +1,45 @@
+<#include "../base/main/_main.html"/>
+<#assign wxMeta>
+</#assign>
+<#assign wxCss>
+<link href="${base}/resources/light7/css/light7-swiper.min.css" rel="stylesheet" type="text/css" />
+<link href="${base}/resources/stylesheets/wx_front.css" rel="stylesheet" type="text/css" />
+</#assign>
+<#assign wxJavascript>
+<script src="${base}/resources/light7/js/light7-swiper.min.js" type="text/javascript"></script>
+<script>
+$(function(){
+    $(".leftBar-item").on("click",function () {
+		$(".leftBar-item").removeClass("active");
+		$(this).addClass("active");
+    })
+})
+</script>
+</#assign>
+<@mainLayout wxTitle=shop.NAME wxMeta=wxMeta wxCss=wxCss wxJavascript=wxJavascript>
+<div class="page page-current" id="mainPage">
+	<div class="content bg-default">
+		<div class="pageContent bg-default">
+			<div class="shopInfo bg-primary">
+				<div class="logo">
+					<img src="${(shop.IMG)!}"/>
+				</div>
+			</div>
+			<div class="leftBar">
+				<#list types as type>
+					<#if type_index==0>
+						<div class="leftBar-item active">
+							${(type.NAME)!}
+						</div>
+					<#else>
+						<div class="leftBar-item">
+							${(type.NAME)!}
+						</div>
+					</#if>
+				</#list>
+			</div>
+			<div class="rightList"></div>
+		</div>
+	</div>
+</div>
+</@mainLayout>
