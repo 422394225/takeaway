@@ -5,6 +5,16 @@
 
 package core.weixin.controller.shop;
 
+import java.text.DecimalFormat;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.Cookie;
+
+import org.apache.commons.lang3.StringUtils;
+
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Before;
 import com.jfinal.kit.HttpKit;
@@ -17,6 +27,7 @@ import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.SqlPara;
 import com.jfinal.weixin.sdk.api.ApiConfig;
 import com.jfinal.weixin.sdk.api.ApiConfigKit;
+
 import core.admin.service.shop.relation.ShopTypeRelationService;
 import core.admin.service.shop.relation.impl.ShopTypeRelationServiceImpl;
 import core.common.constants.ShopConstants;
@@ -33,10 +44,6 @@ import core.vo.JSONError;
 import core.vo.JSONSuccess;
 import core.weixin.api.MediaApi;
 import core.weixin.base.BaseController;
-import org.apache.commons.lang3.StringUtils;
-
-import java.text.DecimalFormat;
-import java.util.*;
 
 /**
  * Description:
@@ -48,6 +55,111 @@ import java.util.*;
 public class ShopController extends BaseController {
 	private Log log = Log.getLog(ShopController.class);
 	private ShopTypeRelationService strService = new ShopTypeRelationServiceImpl();
+	private String encrypt_key = PropKit.get("encrypt_key");
+
+	public void editFood() {
+		renderText("123");
+	}
+
+	@Before(JSSDKInterceptor.class)
+	public void editShop() {
+		setAttr("shopId", getCookie("shopId"));
+		Map<String, String> params = new HashMap<>();
+		params.put("not_deleted", "1");
+		setAttr("shopTypes", ShopType.dao.find(Db.getSqlPara("shopType.list", params)));
+		Integer shopId = getCookieToInt("shopId");
+		if (shopId == null) {
+			render("login.html");
+			return;
+		}
+		Shop shop = Shop.dao.findById(shopId);
+		List<Record> type = Db.find(
+				"SELECT b.ID TYPE_ID,b.NAME TYPE_NAME FROM T_SHOP_TYPE_RELATION a LEFT JOIN T_SHOP_TYPE b ON a.TYPEID=b.ID WHERE a.SHOPID=?",
+				shopId);
+		StringBuilder typeString = new StringBuilder("");
+		StringBuilder typeIds = new StringBuilder("");
+		if (type.size() != 0) {
+			for (Record record : type) {
+				typeString.append(record.getStr("TYPE_NAME"));
+				typeString.append(",");
+				typeIds.append(record.getInt("TYPE_ID") + "");
+				typeIds.append(",");
+			}
+			typeString.deleteCharAt(typeString.length() - 1);
+			typeIds.deleteCharAt(typeIds.length() - 1);
+		}
+		setAttr("SHOP_TYPE_STRING", typeString.toString());
+		System.out.println("SHOP_TYPE_IDS" + typeIds.toString());
+		setAttr("SHOP_TYPE_IDS", typeIds.toString());
+		setAttr("shop", shop);
+		render("edit.html");
+	}
+
+	@Override
+	public void index() {
+		// TODO Auto-generated method stub
+		super.index();
+		String shopId = getCookie("shopId");
+		setAttr("shopId", shopId);
+		if (shopId == null) {
+			render("login.html");
+			return;
+		}
+		setAttr("shop", Shop.dao.findById(shopId));
+		render("info.html");
+	}
+
+	public void login() {
+		String username = getPara("username");
+		String password = getPara("password");
+		if (username == null || "".equals(username)) {
+			renderJson(new JSONError("请输入用户名"));
+			return;
+		}
+		Record record = Db.findFirst("SELECT * FROM T_SHOP WHERE USERNAME=?", username);
+		if (record == null) {
+			renderJson(new JSONError("没有这个人哦~"));
+			return;
+		}
+		record = Db.findFirst("SELECT * FROM T_SHOP WHERE USERNAME=? AND PASSWORD=?", username,
+				MD5Util.encrypt(password + encrypt_key));
+		if (record == null) {
+			renderJson(new JSONError("密码错了哦~"));
+			return;
+		}
+		setCookie(new Cookie("shopId", record.getInt("ID") + ""));
+		renderJson(new JSONSuccess());
+
+	}
+
+	public void setState() {
+		try {
+			Integer shopId = Integer.valueOf(getCookie("shopId"));
+			Integer state = Integer.valueOf(getPara("state"));
+			Shop shop = Shop.dao.findById(shopId);
+			if (state == null) {
+				renderJson(new JSONError("参数错误"));
+				return;
+			}
+			shop.set("STATE", state);
+			shop.update();
+			renderJson(new JSONSuccess());
+		} catch (Exception e) {
+			renderJson(new JSONError(e.toString()));
+		}
+
+	}
+
+	public void getSaleNum() {
+		try {
+			Integer shopId = Integer.valueOf(getCookie("shopId"));
+			renderJson(new JSONSuccess(
+					Db.queryDouble("SELECT SUM(PAY_PRICE) FROM T_ORDER WHERE SHOP_ID=? GROUP BY SHOP_ID", shopId)));
+		} catch (Exception e) {
+			renderJson(new JSONError(e.toString()));
+		}
+
+	}
 
 	/**
 	 * 如果要支持多公众账号，只需要在此返回各个公众号对应的 ApiConfig 对象即可 可以通过在请求 url 中挂参数来动态从数据库中获取
@@ -106,11 +218,17 @@ public class ShopController extends BaseController {
 		if ("on".equals(onStr)) {
 			on = 1;
 		}
-		//上传素材
-		ApiConfigKit.setThreadLocalApiConfig(getApiConfig());
-
-		String logoUrl = QiniuUtils.upload(MediaApi.mediaGet(getPara("logo")));
-		shop.set("IMG", logoUrl + "?imageView2/1/w/200/h/200");
+		if (getPara("logo") != null) {
+			// 上传素材
+			ApiConfigKit.setThreadLocalApiConfig(getApiConfig());
+			String logoUrl = QiniuUtils.upload(MediaApi.mediaGet(getPara("logo")));
+			shop.set("IMG", logoUrl + "?imageView2/1/w/200/h/200");
+		} else {
+			if (shop.get("IMG") == null) {
+				renderJson(new JSONError("请上传图片"));
+				return;
+			}
+		}
 		shop.set("AUTO_OPEN", on);
 		if (StringUtils.isNotEmpty(id)) {
 			shop.update();
@@ -169,20 +287,20 @@ public class ShopController extends BaseController {
 			case "neighbor": {
 				try {
 					loc = params.getJSONObject("loc");
-				}catch (Exception e){
-					renderJson(new JSONError(ShopConstants.getValue(flag)+"加载失败！"));
+				} catch (Exception e) {
+					renderJson(new JSONError(ShopConstants.getValue(flag) + "加载失败！"));
 					return;
 				}
-				sqlPara = Db.getSqlPara("shop.groupByDistant",loc);
+				sqlPara = Db.getSqlPara("shop.groupByDistant", loc);
 				break;
 			}
 			case "collections": {
 				String openId = params.getString("openId");
-				Record collections = Db.findFirst(Db.getSql("user.getCollections"),openId);
-				if (collections!=null){
+				Record collections = Db.findFirst(Db.getSql("user.getCollections"), openId);
+				if (collections != null) {
 					String collectionsStr = collections.getStr("COLLECTION");
-					String sqlParams = "'"+collectionsStr.replace(",","','")+"'";
-					sqlPara = Db.getSqlPara("shop.inId",Kv.by("inParams",sqlParams));
+					String sqlParams = "'" + collectionsStr.replace(",", "','") + "'";
+					sqlPara = Db.getSqlPara("shop.inId", Kv.by("inParams", sqlParams));
 				}
 				break;
 			}
@@ -190,15 +308,15 @@ public class ShopController extends BaseController {
 				break;
 			}
 		}
-		if(sqlPara!=null){
+		if (sqlPara != null) {
 			Integer pageNumber = params.getInteger("pageNumber");
 			Integer pageSize = params.getInteger("pageSize");
 			if (pageNumber != null) {
 				if (pageSize == null) {
 					pageSize = 10;
 				}
-				Page<Record> shops = Db.paginate(pageNumber, pageSize,sqlPara);
-				if("neighbor".equals(flag)) {
+				Page<Record> shops = Db.paginate(pageNumber, pageSize, sqlPara);
+				if ("neighbor".equals(flag)) {
 					DecimalFormat df = new java.text.DecimalFormat("0.00");
 					for (Record record : shops.getList()) {
 						Double distance = LocationUtils.getDistance(loc.getDouble("lng"), loc.getDouble("lat"),
@@ -211,9 +329,8 @@ public class ShopController extends BaseController {
 				List<Record> shops = Db.find(sqlPara);
 				renderJson(new JSONSuccess(shops));
 			}
-		}
-		else{
-			renderJson(new JSONError(ShopConstants.getValue(flag)+"加载失败！"));
+		} else {
+			renderJson(new JSONError(ShopConstants.getValue(flag) + "加载失败！"));
 		}
 	}
 
