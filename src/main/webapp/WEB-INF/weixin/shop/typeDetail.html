@@ -47,7 +47,7 @@ $(function(){
 	<div class="content">
         <div id="shopContainer">
         <#list shops as shop>
-		<div class="card">
+		<div class="card" onclick="enterShop('${(shop.ID)!}')">
 		    <div class="card-content">
 		      <div class="list-block media-list">
 		        <ul>
@@ -62,21 +62,23 @@ $(function(){
 		              <div class="item-subtitle">
 						<div class="row no-gutter">
 							<div class="col-40" data-score="${(shop.RATE_AVG)!}"></div>
-							<div class="col-20">
+							<div class="col-20" style="text-align: center">
 								<font color="#ff6000">${(shop.RATE_AVG)!}</font>
 							</div>
 							<div class="col-20">
 								已售${(shop.SALE_NUM)!}单
 							</div>
 						</div>
-						<div class="row no-gutter">
-							<div class="col-60">
-								￥${(shop.DELIVERY_THRESHOLD)!}起送,配送费${(shop.DELIVERY_PRICE)!}元
-							</div>
-							<div class="col-40">
-								1.5km&nbsp;/&nbsp;<font class="color-success">${(shop.DELIVERYED_TIME)!}min</font>
-							</div>
-						</div>
+						  <div class="row no-gutter">
+							  <div class="col-100">
+								  <font color="#ffd700">${(shop.DELIVERY_THRESHOLD)!}</font>元起送,配送费<font color="#ff8c00">${(shop.DELIVERY_PRICE)!}</font>元
+							  </div>
+						  </div>
+						  <div class="row no-gutter">
+							  <div class="col-100">
+								  将于<font class="color-success">${(shop.DELIVERYED_TIME)!}分钟</font>后送达
+							  </div>
+						  </div>
 		            </div>
 		          </li>
 		        </ul>
