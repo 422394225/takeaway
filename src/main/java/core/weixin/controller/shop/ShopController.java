@@ -22,6 +22,7 @@ import core.admin.service.shop.relation.impl.ShopTypeRelationServiceImpl;
 import core.common.constants.ShopConstants;
 import core.common.utils.QiniuUtils;
 import core.interceptor.JSSDKInterceptor;
+import core.model.FoodType;
 import core.model.Shop;
 import core.model.ShopType;
 import core.model.ShopTypeRelation;
@@ -250,6 +251,7 @@ public class ShopController extends BaseController {
 	public void front(){
 		String id = getPara("id");
 		setAttr("shop",Shop.dao.findById(id));
+		setAttr("types", FoodType.dao.find(Db.getSqlPara("foodType.getByShopId",Kv.by("id",id))));
 		render("front.html");
 	}
 }

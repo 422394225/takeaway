@@ -36,3 +36,11 @@
 		SELECT COLLECTION FROM t_user WHERE ID =?
 	#end
 #end
+
+#namespace("foodType")
+    #sql("getByShopId")
+        SELECT * FROM t_food_type
+        WHERE SHOP_ID =#(id) AND DELETED = 0
+        ORDER BY CREATE_TIME
+    #end
+#end
