@@ -1,23 +1,17 @@
 package core.weixin.controller;
 
 import com.jfinal.kit.PropKit;
-import com.jfinal.weixin.sdk.api.ApiConfig;
-import com.jfinal.weixin.sdk.api.ApiResult;
-import com.jfinal.weixin.sdk.api.CallbackIpApi;
-import com.jfinal.weixin.sdk.api.CustomServiceApi;
-import com.jfinal.weixin.sdk.api.MenuApi;
-import com.jfinal.weixin.sdk.api.QrcodeApi;
-import com.jfinal.weixin.sdk.api.ShorturlApi;
-import com.jfinal.weixin.sdk.api.TemplateMsgApi;
+import com.jfinal.log.Log;
+import com.jfinal.weixin.sdk.api.*;
 import com.jfinal.weixin.sdk.jfinal.ApiController;
+import core.vo.JSONError;
+import core.vo.JSONSuccess;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
-import core.vo.JSONError;
-import core.vo.JSONSuccess;
-
 public class WeixinApiController extends ApiController {
+	private Log log = Log.getLog(WeixinApiController.class);
 
 	/**
 	 * 如果要支持多公众账号，只需要在此返回各个公众号对应的  ApiConfig 对象即可
@@ -59,7 +53,7 @@ public class WeixinApiController extends ApiController {
 		StringBuffer sb = new StringBuffer("");
 		try {//从配置读取菜单
 			InputStreamReader reader = new InputStreamReader(
-					getClass().getClassLoader().getResourceAsStream("menu.json"));
+					getClass().getClassLoader().getResourceAsStream("menu.json"),"UTF-8");
 			BufferedReader bufferedReader = new BufferedReader(reader);
 			String str;
 			while ((str = bufferedReader.readLine()) != null) {
@@ -70,9 +64,11 @@ public class WeixinApiController extends ApiController {
 			renderJson(new JSONSuccess("菜单JSON文件读取失败"));
 			return;
 		}
+		log.info(sb.toString());
 		ApiResult apiResult = MenuApi.createMenu(sb.toString());
-		if (apiResult.isSucceed())
+		if (apiResult.isSucceed()){
 			renderJson(new JSONSuccess("菜单生成成功!"));
+		}
 		else
 			renderJson(new JSONError("菜单生成失败!" + sb.toString() + "\n" + apiResult.getErrorMsg()));
 	}
