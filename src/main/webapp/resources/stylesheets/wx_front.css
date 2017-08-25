@@ -1,0 +1,41 @@
+.shopInfo{
+	position: absolute;
+	top:0;
+	left: 0;
+	right: 0;
+	height: 30%;
+}
+.leftBar{
+	position: absolute;
+	top: 30%;
+	left: 0;
+	bottom: 0;
+	width: 25%;
+	overflow-y: scroll;
+	background-color: #efefef;
+}
+.leftBar-item{
+	border-bottom:1px solid #dadada;
+	padding: .5rem .3rem;
+	font-size: .8rem;
+	color: #666;
+	cursor: pointer;
+	background-color: #efefef;
+}
+.leftBar-item.active{
+	background-color: white;
+	font-weight: 600;
+	border-bottom-left-radius: 10px;
+	-moz-border-bottom-left-radius: 10px;
+	-webkit-border-bottom-left-radius: 10px;
+	border-top-left-radius: 10px;
+	-moz-border-top-left-radius: 10px;
+	-webkit-border-top-left-radius: 10px;
+}
+.rightList{
+	position: absolute;
+	left: 25%;
+	right: 0;
+	top: 30%;
+	bottom: 0;
+}
