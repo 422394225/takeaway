@@ -69,7 +69,7 @@ public class DeliveryApiController extends WeixinMsgController {
 	public void download() {
 		URL url = getClass().getClassLoader().getResource("nali.apk");
 		String urlString = URLDecoder.decode(url.getPath());
-		System.out.println(urlString);
+		// System.out.println(urlString);
 		// BufferedReader bufferedReader = new BufferedReader(reader);
 		// String fpath = System.getProperty("user.dir");
 		// System.out.println(fpath);
