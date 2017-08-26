@@ -15,7 +15,7 @@ public interface FoodService extends DataTableService {
 
 	public boolean checkFoodName(String shopName);
 
-	public Food findByName(String name);
+	public Food findByName(Integer shopId, String name);
 
 	public List<FoodType> findFoodTypeByShopName(String shopName);
 

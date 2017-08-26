@@ -9,10 +9,11 @@
 	    <label class="col-sm-3 control-label" for="formGroupInputLarge">
 	    	所属商家名<span style="color:red">*</span>
 	    </label>
-	    <div class="col-sm-6">
-			<input class="form-control" type="text" name="shopName" oninput='onShopNameInput()' id="formGroupInputLarge" value="">
+	    <div class="col-sm-6 shopNameDiv">
+			<input class="form-control" type="text" name="shopName" oninput='onShopNameInput()' id="formGroupInputLarge" value=""AUTOCOMPLETE="OFF">
 	    </div>
 		<label id="checkShopName"></label>
+		
 	</div>
 	<div class="form-group form-group-md">
 	    <label class="col-sm-3 control-label" for="formGroupInputLarge">
@@ -73,15 +74,7 @@
 	    	描述
 	    </label>
 	    <div class="col-sm-6">
-			<input class="form-control" type="text" name="DESCRIPTION" id="formGroupInputLarge" value="">
-	    </div>
-	</div>
-	<div class="form-group form-group-md">
-	    <label class="col-sm-3 control-label" for="formGroupInputLarge">
-	    	单订单限制(0为不限制)
-	    </label>
-	    <div class="col-sm-6">
-			<input class="form-control" type="text" name="SALE_MINIT" id="formGroupInputLarge" value="">
+			<textarea class="form-control" name="DESCRIPTION" id="formGroupInputLarge" value=""/>
 	    </div>
 	</div>
 	<div class="form-group form-group-md">
@@ -113,17 +106,154 @@
 	</div>
 </from>
 <script>
+$(function(){
+	var objDiv = $("<div id=\"keysList\" style=z-index:3;position:absolute;display:none;background:#FFFFFF;border:1px solid #CCCCCC;font-size:14px;cursor: default;\"></div>").appendTo($(".shopNameDiv")); // 添加显示提示的div
+	var selectedIndex = -1; // 提示列表中选中项的下标
+	// 输入搜索关键字的文本框对象
+	var objInput = $("input[name='shopName']").bind({
+	blur	: outSelection,	// 文本框失去焦点，搜索提示消失
+	focus	: checkAndShow,	// 文本框得到焦点
+	keydown	: whenKeyDown,	// 文本框的按键事件
+	keyup	: checkKeyCode
+	});
+	function whenKeyDown(evt) { // for IE6
+	if (evt.keyCode == 27) { // Esc
+	objDiv.empty();
+	objDiv.hide();
+	return false;
+	} else if (evt.keyCode == 13) { // 回车，在浏览器提交表单前处理
+	outSelection();
+	objInput.unbind("focus", checkAndShow)
+	.unbind("blur", outSelection);
+	}
+	}
+	// 判断按下的键
+	function checkKeyCode(evt) {
+	var keyCode = evt.keyCode;
+	if (keyCode == 38 || keyCode == 40) { // 上下方向键
+	if (objDiv.children().length == 0)
+		checkAndShow();
+	else {
+	if (keyCode == 40) selectedIndex++;
+	else selectedIndex--;
+	changeSelection(true);
+	}
+	} else {
+	checkAndShow();
+	}
+	}
+	// 发送AJAX请求，处理响应
+	function checkAndShow() {
+	var strInput = objInput.val();
+	if (strInput == "") {
+	outSelection();
+	} else {
+	selectedIndex = -1;
+	objDiv.empty();
+	getSuggests(strInput);
+	}
+	function getSuggests(strInput) { // 发送AJAX请求
+	var data = "keyWord=" + strInput;
+	$.ajax({
+	url	: "${base}/food/getShopName",
+	data	: data,
+	type	: "get",
+	dataType: "json",
+	success	: iAmBack
+	});
+	}
+	function iAmBack(arrList) { // 处理响应
+	if (arrList && arrList.length > 0) {
+	for (var intTmp = 0; intTmp < arrList.length; intTmp++)
+	addOption(arrList[intTmp], intTmp);
+	divPosition();
+	objDiv.show();
+	} else {
+	objDiv.hide();
+	}
+	}
+	function addOption(emp, i) { // 向列表里添加项目
+	$("<div></div>").html(emp.ename).bind({
+	mousedown	: outSelection,
+	mouseout	: function() {$(this).removeClass();},
+	mouseover	: function() {selectedIndex = i; changeSelection(true);}
+	})
+	.appendTo(objDiv);
+	}
+	} // end of checkAndShow()
+	// 通过上下方向键在选项中移动
+	function changeSelection(cycle) {
+	var	children = objDiv.children();
+	var maxIndex = children.length - 1;
+	if(cycle) {
+	//设置循环选中
+	if (selectedIndex < 0) {selectedIn
+	dex = maxIndex;}
+	if (selectedIndex > maxIndex) {selectedIndex = 0;}
+	} else {
+	//设置不循环选中
+	if (selectedIndex < 0) {selectedIndex = 0;}
+	if (selectedIndex > maxIndex) {selectedIndex = maxIndex;}
+	}
+	children.each(function(i, child) {
+	if(i != selectedIndex) {
+	$(child).removeClass();
+	} else {
+	$(child).addClass("sman_selectedStyle");
+	objInput.val($(child).html());
+	}
+	});
+	}
+	// 清空并隐藏提示列表
+	function outSelection() {
+	objDiv.html("");
+	objDiv.hide();
+	$.getJSON("${base}/food/checkShopName?shopName="+$("input[name='shopName']").val(),function(json){
+	    $("#checkShopName").text(json.mess);
+	    $("select[name='TYPE']").empty();
+	    $.each(json.type, function(i, field){
+	    	 $("select[name='TYPE']").append("<option value='"+field.id+"'>"+field.name+"</option>");
+	      });
+	    });
+	}
+	// 确定下拉列表的位置和宽度
+	function divPosition() {
+
+	var e = objInput[0];
+	var ie = (document.all) ? true : false;
+	var inputWidth=$("input[name='shopName']").offset().width;
+	// 定义列表区在不同浏览器中的位置
+	if (ie) {
+	var top = 0-$(".modal-header").offset().top-$(".modal-header").offset().height;
+	var left = -2-$("modal-header").offset().left-inputWidth;
+	} else {
+	var top = 2-$(".modal-header").offset().top-$(".modal-header").offset().height;
+	var left = 0-$(".modal-header").offset().left-inputWidth;
+	}
+	while (e.offsetParent) {
+	left += e.offsetLeft + (e.currentStyle ? (parseInt(e.currentStyle.borderLeftWidth)).NaN0() : 0);
+	top += e.offsetTop + (e.currentStyle ? (parseInt(e.currentStyle.borderTopWidth)).NaN0() : 0);
+	e = e.offsetParent;
+	}
+	left += e.offsetLeft + (e.currentStyle ? (parseInt(e.currentStyle.borderLeftWidth)).NaN0() : 0);
+	top += e.offsetTop + (e.currentStyle ? (parseInt(e.currentStyle.borderTopWidth)).NaN0() : 0);
+	objDiv[0].style.top = (top + objInput[0].clientHeight) + "px";
+	objDiv[0].style.left = left + "px";
+	objDiv[0].style.width = (objInput[0].clientWidth + 1) + "px";
+	}
+
+	});
 function addType(){
 	 var modalHeight=$(window).height() / 2 - $('#youModel .modal-dialog').height() / 2; 
 	 if($("#checkShopName").text()!='存在商家'){
-		var a= BootstrapDialog.show({
-			size: BootstrapDialog.SIZE_SMALL,
-			type:BootstrapDialog.TYPE_DANGER,
-			title:'error',
-			message:'请先输入存在的商家名'
-		});
-		return;
-	}
+			var a= BootstrapDialog.show({
+				size: BootstrapDialog.SIZE_SMALL,
+				type:BootstrapDialog.TYPE_DANGER,
+				title:'error',
+				message:'请先输入存在的商家名'
+			});
+			return;
+		}
 	BootstrapDialog.show({
 	type:BootstrapDialog.TYPE_DEFAULT,
 	size: BootstrapDialog.SIZE_SMALL,
@@ -178,15 +308,7 @@ Kit.form({btnId:"#submitBtn",formId:"#add-form",
  		layer.msg(msg);
  	}
 });
-function onShopNameInput(){
-	$.getJSON("${base}/food/checkShopName?shopName="+$("input[name='shopName']").val(),function(json){
-    $("#checkShopName").text(json.mess);
-    $("select[name='TYPE']").empty();
-    $.each(json.type, function(i, field){
-    	 $("select[name='TYPE']").append("<option value='"+field.id+"'>"+field.name+"</option>");
-      });
-    });
-}
+
 function onFoodNameInput(event){
 	var result =$.ajax({url:"${base}/food/checkFoodName?foodName="+event.target.value,async:false});
 	$("#checkFoodName").html(result.responseText);

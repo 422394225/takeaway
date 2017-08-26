@@ -37,8 +37,8 @@ public class FoodServiceImpl extends DataTableServiceImpl implements FoodService
 	}
 
 	@Override
-	public Food findByName(String name) {
-		Food food = Food.dao.findFirst("select * from t_food where name=?", name);
+	public Food findByName(Integer shopId, String name) {
+		Food food = Food.dao.findFirst("select * from t_food where name=? and SHOP_ID=?", name, shopId);
 		return food;
 	}
 

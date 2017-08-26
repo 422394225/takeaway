@@ -129,7 +129,7 @@
 	t_food AS d
 	LEFT JOIN t_shop t ON d.SHOP_ID = t.ID
 	LEFT JOIN t_food_type c ON d.TYPE_ID = c.ID
-	WHERE 1=1 AND d.STATE='1'
+	WHERE 1=1 AND d.STATE>-1
 		#@dbCondition_alias(conditions,mainAlias,aliasMap)
 	#end
 	#sql("histroy")
