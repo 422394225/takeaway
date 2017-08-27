@@ -158,11 +158,12 @@ public class OrderController extends WeixinMsgController {
 		keyMap.put("fee_type", "CNY");
 		keyMap.put("total_fee", ((int) (totalPrice * 100)) + "");
 		keyMap.put("spbill_create_ip", PropKit.get("spbill_create_ip"));
-		keyMap.put("notify_url", "http://177l3a5827.51mypc.cn/wx/order/createOrder");
+		keyMap.put("notify_url", PropKit.get("server.address") + "/wx/order/createOrder");
 		keyMap.put("trade_type", "JSAPI");
-		keyMap.put("openid", "oNCcWxDAdFm-PsfV9h6yWfoFoirw");
+		keyMap.put("openid", userid);
 		String sign = getSign(keyMap);
 		keyMap.put("sign", sign);
+		System.out.println(keyMap);
 		String urlResult = HttpUtils.post(WEIXIN_PRE_PAY_URL, new String(callMapToXML(keyMap)));
 		System.out.println(urlResult);
 		Document doc = Jsoup.parse(urlResult);
