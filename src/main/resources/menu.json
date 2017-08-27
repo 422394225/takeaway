@@ -21,11 +21,6 @@
           "type":"view",
           "name":"配送员入口",
           "url":"http://www.nalicity.cn/wx/delivery/"
-      },
-     {
-          "type":"view",
-          "name":"测试支付",
-          "url":"https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxa78f4c350a06e3c4&redirect_uri=http%3A%2F%2Fwww.nalicity.cn%2fwx%2forder&response_type=code&scope=snsapi_base&state=%2fwx#wechat_redirect"
       }]
       }]
 }

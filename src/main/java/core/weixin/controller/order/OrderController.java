@@ -55,6 +55,7 @@ public class OrderController extends WeixinMsgController {
 		String openid = getAttrForStr("openid");
 		User user = User.dao.findById(openid);
 		setAttr("user", user);
+		render("index.html");
 	}
 
 	//
