@@ -52,7 +52,7 @@ public class OrderController extends WeixinMsgController {
 
 	@Before(MsgInterceptor.class)
 	public void index() {
-		String openid = getAttrForStr("openId");
+		String openid = getPara("openId");
 		User user = User.dao.findById(openid);
 		setAttr("user", user);
 		render("index.html");
