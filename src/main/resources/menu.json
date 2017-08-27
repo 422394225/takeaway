@@ -3,11 +3,11 @@
      {
           "type":"view",
           "name":"点单",
-          "url":"https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxa78f4c350a06e3c4&redirect_uri=http%3A%2F%2Ftakeaway.viphk.ngrok.org%2foauth&response_type=code&scope=snsapi_base&state=%2fwx%2forder#wechat_redirect"
+          "url":"https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxa78f4c350a06e3c4&redirect_uri=http%3A%2F%2Fwww.nalicity.cn%2foauth&response_type=code&scope=snsapi_base&state=%2fwx%2forder#wechat_redirect"
       }, {
           "type":"view",
           "name":"首页",
-          "url":"https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxa78f4c350a06e3c4&redirect_uri=http%3A%2F%2Ftakeaway.viphk.ngrok.org%2foauth&response_type=code&scope=snsapi_base&state=%2fwx#wechat_redirect"
+          "url":"https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxa78f4c350a06e3c4&redirect_uri=http%3A%2F%2Fwww.nalicity.cn%2foauth&response_type=code&scope=snsapi_base&state=%2fwx#wechat_redirect"
       }
          ,{
            "name":"菜单",
@@ -15,12 +15,17 @@
      {
           "type":"view",
           "name":"店铺入驻",
-          "url":"http://takeaway.viphk.ngrok.org/wx/shop/add"
+          "url":"http://www.nalicity.cn/wx/shop/add"
       },
      {
           "type":"view",
           "name":"配送员入口",
-          "url":"http://takeaway.viphk.ngrok.org/wx/delivery/"
+          "url":"http://www.nalicity.cn/wx/delivery/"
+      },
+     {
+          "type":"view",
+          "name":"测试支付",
+          "url":"https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxa78f4c350a06e3c4&redirect_uri=http%3A%2F%2Fwww.nalicity.cn%2foauth&response_type=code&scope=snsapi_base&state=%2fwx#wechat_redirect"
       }]
       }]
 }
