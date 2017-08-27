@@ -1,7 +1,6 @@
 package core.common.routes;
 
 import com.jfinal.config.Routes;
-import core.interceptor.WxApiConfigInterceptor;
 import core.weixin.controller.ShareController;
 import core.weixin.controller.WeiXinOauthController;
 import core.weixin.controller.WeixinApiController;
@@ -21,7 +20,6 @@ public class WeixinRoutes extends Routes {
 	@Override
 	public void config() {
 		setBaseViewPath("WEB-INF/weixin/");
-		addInterceptor(new WxApiConfigInterceptor());
 		// 微信
 		add("/msg", WeixinMsgController.class);
 		add("/api", WeixinApiController.class);
