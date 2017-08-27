@@ -147,11 +147,11 @@ public class OrderController extends WeixinMsgController {
 		keyMap.put("appid", "wx7d654593ab6ec6a4");
 		keyMap.put("mch_id", PropKit.get("mch_id"));
 		keyMap.put("device_info", "WEB");
-		StringBuilder builder = new StringBuilder();
+		StringBuilder nonceNorBuilder = new StringBuilder();
 		Random random = new Random();
 		for (int i = 0; i < 16; i++)
-			builder.append((char) (random.nextInt(26) + 'A'));
-		keyMap.put("nonce_str", builder.toString());
+			nonceNorBuilder.append((char) (random.nextInt(26) + 'A'));
+		keyMap.put("nonce_str", nonceNorBuilder.toString());
 		keyMap.put("sign_type", "MD5");
 		keyMap.put("body", "那里外卖-订单支付");
 		keyMap.put("out_trade_no", order.getInt("ID") + "");
@@ -168,27 +168,28 @@ public class OrderController extends WeixinMsgController {
 		System.out.println(urlResult);
 		Document doc = Jsoup.parse(urlResult);
 		if ("SUCCESS".equals(doc.getElementsByTag("result_code").text())) {
-			order.set("PREPAY_ID", doc.getElementsByTag("prepay_id").text());
-			order.update();
-			result.put("orderid", order.getInt("ID"));
-			result.put("prepay_id", doc.getElementsByTag("prepay_id").text());
-			result.put("appid", "wx7d654593ab6ec6a4");
-			result.put("timeStamp", new Date().getTime() / 1000);
-			builder = new StringBuilder();
+			long timeStamp = new Date().getTime() / 1000;
+			nonceNorBuilder = new StringBuilder();
 			random = new Random();
 			for (int i = 0; i < 16; i++)
-				builder.append((char) (random.nextInt(26) + 'A'));
-			result.put("nonce_str", builder.toString());
-			result.put("package", "prepay_id=" + doc.getElementsByTag("prepay_id").text());
-			result.put("signType", "MD5");
+				nonceNorBuilder.append((char) (random.nextInt(26) + 'A'));
+			String prepayId = doc.getElementsByTag("prepay_id").text();
+			String appId = PropKit.get("appId");
+			String package1 = "prepay_id=" + doc.getElementsByTag("prepay_id").text();
+			String signType = "MD5";
+			order.set("PREPAY_ID", prepayId);
+			order.update();
+			result.put("appId", appId);
+			result.put("timeStamp", timeStamp + "");
+			result.put("nonce_str", nonceNorBuilder.toString());
+			result.put("package", package1);
+			result.put("signType", signType);
 			Map<String, String> map = new HashMap<>();
-			map.put("orderid", order.getInt("ID") + "");
-			map.put("prepay_id", doc.getElementsByTag("prepay_id").text());
-			map.put("appid", "wx7d654593ab6ec6a4");
-			map.put("timeStamp", (new Date().getTime() / 1000) + "");
-			map.put("nonce_str", builder.toString());
-			map.put("package1", "prepay_id=" + doc.getElementsByTag("prepay_id").text());
-			map.put("signType", "MD5");
+			map.put("appid", appId);
+			map.put("timeStamp", timeStamp + "");
+			map.put("nonce_str", nonceNorBuilder.toString());
+			map.put("package1", package1);
+			map.put("signType", signType);
 			result.put("paySign", getSign(map));
 			renderJson(new JSONSuccess(result));
 		} else {
