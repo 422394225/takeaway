@@ -92,6 +92,7 @@ public class FoodController extends Controller {
 	}
 
 	public void save() {
+		getFile();
 		try {
 			Food food = new Food();
 			try {
@@ -113,7 +114,7 @@ public class FoodController extends Controller {
 				return;
 			}
 			String name = getPara("NAME");
-			Food food1 = foodService.findByName(name);
+			Food food1 = foodService.findByName(shop.getInt("ID"), name);
 			if (food1 != null) {
 				renderJson(new JSONError("商品已存在"));
 				return;
@@ -121,6 +122,10 @@ public class FoodController extends Controller {
 			String price = getPara("price");
 			String UNIT = getPara("UNIT");
 			String DESCRIPTION = getPara("DESCRIPTION");
+			if (DESCRIPTION.length() > 50) {
+				renderJson(new JSONError("描述不能超过50字哦~"));
+				return;
+			}
 			Boolean USE_STOCK = getParaToBoolean("USE_STOCK");
 			String STOCK = getPara("STOCK");
 			String TYPE = getPara("TYPE");
@@ -145,22 +150,26 @@ public class FoodController extends Controller {
 			renderJson(new JSONSuccess("添加成功"));
 		} catch (Exception e) {
 			e.printStackTrace();
-			renderJson(new JSONError("1"));
+			renderJson(new JSONError("添加失败"));
 
 		}
 	}
 
 	public void saveEdit() {
+		getFile();
 		try {
-			Food food = new Food();
+			String foodId = getPara("foodId");
+			Food food = Food.dao.findById(foodId);
+			String imgPath = null;
 			try {
 				UploadFile file = getFile("IMG");
 				if (file != null) {
 					String localFilePath = file.getUploadPath() + File.separator + file.getFileName();
 					String path = QiniuUtils.upload(localFilePath);
 					String crop = getPara("crop");// 截图参数
-					food.set("IMG", path + (StringUtils.isNotEmpty(crop) ? crop : ""));
-				}
+					imgPath = path + (StringUtils.isNotEmpty(crop) ? crop : "");
+				} else
+					imgPath = food.getStr("IMG");
 			} catch (Exception e) {
 				renderJson(new JSONError("图片错误"));
 				return;
@@ -171,18 +180,21 @@ public class FoodController extends Controller {
 				renderJson(new JSONError("店铺不存在"));
 				return;
 			}
-			String foodId = getPara("foodId");
 			String name = getPara("NAME");
 			String price = getPara("price");
 			String UNIT = getPara("UNIT");
 			String DESCRIPTION = getPara("DESCRIPTION");
+			if (DESCRIPTION.length() > 50) {
+				renderJson(new JSONError("描述不能超过50字哦~"));
+				return;
+			}
 			Boolean USE_STOCK = getParaToBoolean("USE_STOCK");
 			String STOCK = getPara("STOCK");
 			String TYPE = getPara("TYPE");
 			String SALE_LIMIT = getPara("SALE_LIMIT");
 			String ORIGN_PRICE = getPara("ORIGN_PRICE");
-			food.set("ID", foodId);
 			food.delete();
+			food.set("IMG", imgPath);
 			food.set("ID", null);
 			food.set("SHOP_ID", shop.get("ID"));
 			food.set("NAME", name);
@@ -192,6 +204,7 @@ public class FoodController extends Controller {
 			food.set("ORIGN_PRICE", ORIGN_PRICE == null || ORIGN_PRICE.equals("") ? 0 : Double.valueOf(ORIGN_PRICE));
 			food.set("UNIT", UNIT);
 			food.set("DESCRIPTION", DESCRIPTION);
+			food.set("CREATE_TIME", null);
 			USE_STOCK = USE_STOCK == null ? false : USE_STOCK;
 			food.set("USE_STOCK", USE_STOCK ? 1 : 0);
 			if (USE_STOCK != null && USE_STOCK)
@@ -287,5 +300,35 @@ public class FoodController extends Controller {
 			e.printStackTrace();
 			renderText("error");
 		}
+	}
+
+	public void onShelf() {
+		try {
+			String foodId = getPara("foodId");
+			Food food = foodService.findById(foodId);
+			food.set("STATE", 1);
+			food.update();
+			renderText("success");
+		} catch (Exception e) {
+			log.info("error in offShelf");
+			e.printStackTrace();
+			renderText("error");
+		}
+	}
+
+	public void getShopName() {
+		String keyWord = getPara("keyWord");
+		List<Record> records = Db.find("select `NAME` from t_shop where NAME like '%" + keyWord + "%'");
+		JSONArray array = new JSONArray();
+		int i = 0;
+		for (Record record : records) {
+			JSONObject object = new JSONObject();
+			object.put("ename", record.getStr("NAME"));
+			array.add(object);
+			if (++i == 10)
+				break;
+		}
+		System.out.println(array);
+		renderJson(array);
 	}
 }

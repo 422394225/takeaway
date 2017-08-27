@@ -5,31 +5,38 @@
 
 package core.weixin.controller.order;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Random;
+import java.util.Set;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Before;
 import com.jfinal.kit.PropKit;
 import com.jfinal.log.Log;
-import com.jfinal.plugin.activerecord.Db;
-import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.weixin.sdk.jfinal.MsgInterceptor;
 import com.jfinal.weixin.sdk.utils.HttpUtils;
+
 import core.model.Food;
 import core.model.Order;
 import core.model.Shop;
 import core.model.User;
-import core.utils.LocationUtils;
 import core.utils.MD5Util;
 import core.vo.JSONError;
 import core.vo.JSONSuccess;
 import core.weixin.controller.WeixinMsgController;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-
-import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.Map.Entry;
 
 /**
  * Description:
@@ -48,6 +55,7 @@ public class OrderController extends WeixinMsgController {
 		String openid = getAttrForStr("openid");
 		User user = User.dao.findById(openid);
 		setAttr("user", user);
+		render("index.html");
 	}
 
 	//
@@ -264,84 +272,60 @@ public class OrderController extends WeixinMsgController {
 	 * pccode:地区编码
 	 * 
 	 */
-	//  weifg 已移植到shop里
-	/*public void getShopList() {
-		String openid = getPara("openid");
-		setAttr("openid", openid);
-		String orderType = getPara("orderType");
-		String typeId = getPara("typeId");
-		String userLongitude = getPara("lng");
-		String userLatidute = getPara("lat");
-		String pccode = getPara("pccode");
-		Integer page = getParaToInt("page");
-		if (page == null || page <= 0)
-			page = 1;
-		Integer pageCount = getParaToInt("pageCount");
-		if (pageCount == null || pageCount <= 0 || pageCount >= 20)
-			pageCount = 20;
-		String orderBy = "";
-			orderBy = " (LONGITUDE-" + userLongitude + ")* (LONGITUDE-" + userLongitude + ")+ (LATITUDE-" + userLatidute
-					+ ")* (LATITUDE-" + userLatidute + ") ASC ";
-		if (typeId == null)
-			typeId = "";
-		else
-			typeId = " AND ID IN (SELECT SHOPID FROM T_SHOP_TYPE_RELATION WHERE TYPEID='" + typeId + "' ";
-		if (pccode == null)
-			pccode = "";
-		else
-			pccode = " AND PCCODE='" + pccode + "' ";
-		DecimalFormat df = new java.text.DecimalFormat("0.00");
-		String sql = "SELECT * FROM T_SHOP WHERE " + " STATE=2  " + pccode + typeId + " ORDER BY "
-				+ orderBy + " LIMIT " + (pageCount * (page - 1)) + "," + pageCount;
-		List<Record> shops = Db.find(sql);
-		for (Record record : shops) {
-			record.set("distance", df.format((LocationUtils.getDistance(Double.valueOf(userLongitude), Double.valueOf(userLatidute),
-					record.getDouble("LONGITUDE"), record.getDouble("LATITUDE")))) + "km");
-		}
-		renderJson(new JSONSuccess(shops));
-	}*/
+	// weifg 已移植到shop里
+	/*
+	 * public void getShopList() { String openid = getPara("openid");
+	 * setAttr("openid", openid); String orderType = getPara("orderType");
+	 * String typeId = getPara("typeId"); String userLongitude = getPara("lng");
+	 * String userLatidute = getPara("lat"); String pccode = getPara("pccode");
+	 * Integer page = getParaToInt("page"); if (page == null || page <= 0) page
+	 * = 1; Integer pageCount = getParaToInt("pageCount"); if (pageCount == null
+	 * || pageCount <= 0 || pageCount >= 20) pageCount = 20; String orderBy =
+	 * ""; orderBy = " (LONGITUDE-" + userLongitude + ")* (LONGITUDE-" +
+	 * userLongitude + ")+ (LATITUDE-" + userLatidute + ")* (LATITUDE-" +
+	 * userLatidute + ") ASC "; if (typeId == null) typeId = ""; else typeId =
+	 * " AND ID IN (SELECT SHOPID FROM T_SHOP_TYPE_RELATION WHERE TYPEID='" +
+	 * typeId + "' "; if (pccode == null) pccode = ""; else pccode =
+	 * " AND PCCODE='" + pccode + "' "; DecimalFormat df = new
+	 * java.text.DecimalFormat("0.00"); String sql =
+	 * "SELECT * FROM T_SHOP WHERE " + " STATE=2  " + pccode + typeId +
+	 * " ORDER BY " + orderBy + " LIMIT " + (pageCount * (page - 1)) + "," +
+	 * pageCount; List<Record> shops = Db.find(sql); for (Record record : shops)
+	 * { record.set("distance",
+	 * df.format((LocationUtils.getDistance(Double.valueOf(userLongitude),
+	 * Double.valueOf(userLatidute), record.getDouble("LONGITUDE"),
+	 * record.getDouble("LATITUDE")))) + "km"); } renderJson(new
+	 * JSONSuccess(shops)); }
+	 */
 
 	/**
 	 * return : {error:"",data{ shop(店铺信息 object):"" ,typeList(分类
 	 * object){ID:"",NAME:"",foods(商品array)[]} } }
 	 */
 	// weifg 已有
-	/*public void getShopInfo() {
-		String openid = getPara("openid");
-		setAttr("openid", openid);
-		String shopId = getPara("shopId");
-		if (shopId == null) {
-			renderJson(new JSONError("没有shopid"));
-			return;
-		}
-		JSONObject result = new JSONObject();
-		Shop shop = Shop.dao.findById(shopId);
-		result.put("shop", shop);
-		List<Record> foods = Db.find("SELECT * FROM T_FOOD WHERE SHOP_ID=? AND STATE=1", shopId);
-		List<Record> foodTypes = Db.find("SELECT `ID`,`NAME` FROM T_FOOD_TYPE WHERE `DELETED`=0 AND `SHOP_ID`=?",
-				shopId);
-		for (Record foodType : foodTypes) {
-			Integer foodTypeId = foodType.getInt("ID");
-			JSONArray foodArray = new JSONArray();
-			for (Record food : foods)
-				if (foodTypeId.equals(food.getInt("TYPE_ID")))
-					foodArray.add(food);
-			foodType.set("foods", foodArray);
-		}
-		result.put("typeList", foodTypes);
-		renderJson(new JSONSuccess(result));
-	}*/
+	/*
+	 * public void getShopInfo() { String openid = getPara("openid");
+	 * setAttr("openid", openid); String shopId = getPara("shopId"); if (shopId
+	 * == null) { renderJson(new JSONError("没有shopid")); return; } JSONObject
+	 * result = new JSONObject(); Shop shop = Shop.dao.findById(shopId);
+	 * result.put("shop", shop); List<Record> foods =
+	 * Db.find("SELECT * FROM T_FOOD WHERE SHOP_ID=? AND STATE=1", shopId);
+	 * List<Record> foodTypes = Db.
+	 * find("SELECT `ID`,`NAME` FROM T_FOOD_TYPE WHERE `DELETED`=0 AND `SHOP_ID`=?"
+	 * , shopId); for (Record foodType : foodTypes) { Integer foodTypeId =
+	 * foodType.getInt("ID"); JSONArray foodArray = new JSONArray(); for (Record
+	 * food : foods) if (foodTypeId.equals(food.getInt("TYPE_ID")))
+	 * foodArray.add(food); foodType.set("foods", foodArray); }
+	 * result.put("typeList", foodTypes); renderJson(new JSONSuccess(result)); }
+	 */
 
-	//weifg 已有
-	/*public void interShop() {
-		String openid = getPara("openid");
-		setAttr("openid", openid);
-		String shopId = getPara("shopId");
-		Shop shop = Shop.dao.findById(shopId);
-		setAttr("shop", shop);
-		List<Record> foods = Db.find("SELECT * FROM T_FOOD WHERE SHOP_ID=?", shopId);
-		setAttr("foods", foods);
-		render("interShop.html");
-	}*/
+	// weifg 已有
+	/*
+	 * public void interShop() { String openid = getPara("openid");
+	 * setAttr("openid", openid); String shopId = getPara("shopId"); Shop shop =
+	 * Shop.dao.findById(shopId); setAttr("shop", shop); List<Record> foods =
+	 * Db.find("SELECT * FROM T_FOOD WHERE SHOP_ID=?", shopId); setAttr("foods",
+	 * foods); render("interShop.html"); }
+	 */
 
 }

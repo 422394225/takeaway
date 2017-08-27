@@ -1,5 +1,7 @@
 package core.admin.controller.delivery;
 
+import java.util.List;
+
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.core.Controller;
@@ -8,6 +10,7 @@ import com.jfinal.log.Log;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
+
 import core.admin.service.delivery.DeliveryService;
 import core.admin.service.delivery.impl.DeliveryServiceImpl;
 import core.model.Delivery;
@@ -15,8 +18,6 @@ import core.utils.MD5Util;
 import core.vo.DTParams;
 import core.vo.JSONError;
 import core.vo.JSONSuccess;
-
-import java.util.List;
 
 /**
  * 
@@ -36,7 +37,7 @@ public class DeliveryController extends Controller {
 	}
 
 	public void getAppAddr() {
-		renderQrCode("http://177l3a5827.51mypc.cn/api/v1/delivery/download", 300, 300);
+		renderQrCode(PropKit.get("server.address") + "/api/v1/delivery/download", 300, 300);
 	}
 
 	public void recievePosition() {

@@ -58,6 +58,7 @@ public class WeiXinOauthController extends ApiController {
 			String openId = snsAccessToken.getOpenid();
 			JSONObject jsonObject = new JSONObject();
 			jsonObject.put("openId", openId);
+
 			if (openId == null) {
 				renderJson(new JSONError());
 			} else {

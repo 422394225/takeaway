@@ -5,18 +5,21 @@
 
 package core.weixin.controller.delivery;
 
+import java.io.File;
+import java.net.URL;
+import java.net.URLDecoder;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.UUID;
+
 import com.jfinal.kit.PropKit;
 import com.jfinal.log.Log;
 import com.jfinal.plugin.activerecord.Db;
+
 import core.utils.MD5Util;
 import core.vo.JSONError;
 import core.vo.JSONSuccess;
 import core.weixin.controller.WeixinMsgController;
-
-import java.io.File;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.UUID;
 
 /**
  * Description:
@@ -64,14 +67,18 @@ public class DeliveryApiController extends WeixinMsgController {
 	}
 
 	public void download() {
-		String fpath = "E:/git/takeaway/src/main/resources";
-		System.out.println(fpath);
-		File file = new File(fpath + "/nali.apk");
-
+		URL url = getClass().getClassLoader().getResource("nali.apk");
+		String urlString = URLDecoder.decode(url.getPath());
+		// System.out.println(urlString);
+		// BufferedReader bufferedReader = new BufferedReader(reader);
+		// String fpath = System.getProperty("user.dir");
+		// System.out.println(fpath);
+		// System.out.println(fpath);
+		File file = new File(urlString);
 		if (file.exists()) {
 			renderFile(file);
 		} else {
-			renderJson();
+			renderText("文件不存在" + urlString);
 		}
 	}
 

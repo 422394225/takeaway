@@ -80,14 +80,7 @@ if (keyCode == 40) selectedIndex++;
 else selectedIndex--;
 changeSelection(true);
 }
-} else if (keyCode == 8 || keyCode == 12
-|| keyCode == 46 || keyCode == 59
-|| (keyCode >= 48 && keyCode <= 57)
-|| (keyCode >= 65 && keyCode <= 90)
-|| (keyCode >= 96 && keyCode <= 107)
-|| (keyCode >= 109 && keyCode <= 111)
-|| (keyCode >= 186 && keyCode <= 192)
-|| (keyCode >= 219 && keyCode <= 222)) {
+} else  {
 checkAndShow();
 }
 }

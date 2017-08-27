@@ -26,9 +26,18 @@
 	        "columnDefs":[{
 	            "targets": -1,
 	            "data": null,
-	            "defaultContent": "<button class='histroy btn btn-info btn-xs' title='查看历史记录'><i class='fa fa-history'></i>"+
-	            				  "</button><button class='edit btn btn-success btn-xs' title='修改'><i class='fa fa-edit'></i></button>"+
-	        					  "<button class='xiajia btn btn-danger btn-xs' title='下架'><i class='fa fa-caret-down fa-lg'></i></button>"
+	            "render": function(data,type,row){
+	            	var stateIcon;
+	            	if(row["STATE"]==0){
+	            		stateIcon="<button class='shangjia btn btn-warning btn-xs' title='上架'><i class='fa fa-caret-up fa-lg'></i></button>";
+	            	}
+	            	else{
+	            		stateIcon="<button class='xiajia btn btn-danger btn-xs' title='下架'><i class='fa fa-caret-down fa-lg'></i></button>";
+	            	}
+	            	return "<button class='histroy btn btn-info btn-xs' title='查看历史记录'><i class='fa fa-history'></i>"+
+  				  "</button><button class='edit btn btn-success btn-xs' title='修改'><i class='fa fa-edit'></i></button>"+
+  				  stateIcon;
+	            }
 	        },{
 	        	"targets": 2,
 	            "render": function(data, type, row) {
@@ -118,6 +127,44 @@
             }]
         });
 		})
+		table.on("click",'.shangjia',function(){
+	        var data = table.row($(this).parents('tr')).data();
+			var foodId=data['ID'];
+			BootstrapDialog.show({
+			title: '是否上架商品',
+            message: '上架了要记得提醒商家~n(*≧▽≦*)n',
+            buttons: [{
+                label: '是',
+                action: function(dialogItself){
+                	 $.ajax({
+                	        url: '/food/onShelf?foodId='+foodId, // /api/leds/1
+                	        async: true,
+                	        type: 'GET',
+                	        success: function(data , textStatus){
+                	          if(data=="success"){
+                    	          window.location.href='/food';
+                	      	  }
+                	          else{
+                	        	  console.log("error to off shelf");
+                	        	  layer.msg("操作失败");
+                	        	  dialogItself.close();
+                	          }
+                	        },
+                	       
+                	        error: function(jqXHR , textStatus , errorThrown){
+                	          console.log("error");
+                	        },
+                	       
+                	      });
+                }
+            }, {
+                label: '否',
+                action: function(dialogItself){
+                    dialogItself.close();
+                }
+            }]
+        });
+		})
 		table.on("click",'.edit',function(){
 	        var data = table.row($(this).parents('tr')).data();
 			var foodId=data['ID'];
@@ -163,6 +210,14 @@
 	  		<td><input name="t.NAME" class="form-control"></td>
 	  		<td><label>商品名称</label></td>
 	  		<td><input name="d.NAME" class="form-control"></td>
+	  		<td><label>商品状态</label></td>
+	  		<td>
+	  			<select name="d.STATE" class="form-control">
+	  				<option value="">请选择</option>
+						<option value="0">已下架</option>
+						<option value="1">在售</option>
+	  			</select>
+	  		</td>
 	  		<td><button class="btn btn-success dataTableSortBtn">筛选</button></td>
 	  		<td><button class="btn btn-default dataTableResetBtn">重置</button></td>
 	  	</tr>
