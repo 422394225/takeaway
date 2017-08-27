@@ -7,6 +7,7 @@ package core.interceptor;
 
 import com.jfinal.aop.Interceptor;
 import com.jfinal.aop.Invocation;
+import com.jfinal.core.Controller;
 import com.jfinal.kit.PropKit;
 import com.jfinal.weixin.sdk.api.ApiConfig;
 import com.jfinal.weixin.sdk.api.ApiConfigKit;
@@ -18,7 +19,7 @@ import com.jfinal.weixin.sdk.api.ApiConfigKit;
  * @date 2017年4月17日下午9:48:53
  */
 
-public class WxApiConfigInterceptor implements Interceptor {
+public class WxApiConfigInterceptor extends Controller implements Interceptor {
 
 	@Override
 	public void intercept(Invocation ai) {

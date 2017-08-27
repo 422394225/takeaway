@@ -371,4 +371,5 @@ public class ShopController extends BaseController {
 		setAttr("types", FoodType.dao.find(Db.getSqlPara("foodType.getByShopId",Kv.by("id",id))));
 		render("front.html");
 	}
+
 }

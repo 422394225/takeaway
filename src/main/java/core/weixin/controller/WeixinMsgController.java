@@ -50,7 +50,6 @@ public class WeixinMsgController extends MsgControllerAdapter {
 	}
 
 	protected void processInTextMsg(InTextMsg inTextMsg) {
-		ApiConfigKit.setThreadLocalApiConfig(getApiConfig());
 		String msgContent = inTextMsg.getContent().trim();
 		// 帮助提示
 		if ("help".equalsIgnoreCase(msgContent) || "帮助".equals(msgContent)) {

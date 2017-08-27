@@ -46,3 +46,9 @@ div[data-score] img{
 	width:90%;
 	text-align: left;
 }
+.hide{
+	display: none;
+}
+.show{
+	display: block;
+}

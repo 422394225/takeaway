@@ -1,7 +1,7 @@
 package core.common.routes;
 
 import com.jfinal.config.Routes;
-
+import core.interceptor.WxApiConfigInterceptor;
 import core.weixin.controller.ShareController;
 import core.weixin.controller.WeiXinOauthController;
 import core.weixin.controller.WeixinApiController;
@@ -9,6 +9,7 @@ import core.weixin.controller.WeixinMsgController;
 import core.weixin.controller.delivery.DeliveryApiController;
 import core.weixin.controller.delivery.DeliveryController;
 import core.weixin.controller.feedback.FeedbackController;
+import core.weixin.controller.food.FoodController;
 import core.weixin.controller.index.IndexController;
 import core.weixin.controller.order.OrderController;
 import core.weixin.controller.shop.ShopController;
@@ -20,6 +21,7 @@ public class WeixinRoutes extends Routes {
 	@Override
 	public void config() {
 		setBaseViewPath("WEB-INF/weixin/");
+		addInterceptor(new WxApiConfigInterceptor());
 		// 微信
 		add("/msg", WeixinMsgController.class);
 		add("/api", WeixinApiController.class);
@@ -31,7 +33,7 @@ public class WeixinRoutes extends Routes {
 		add("/wx/tools", ToolsController.class, "/tools");
 		add("/wx/order", OrderController.class, "/order");
 		add("/wx/delivery", DeliveryController.class, "/delivery");
-		add("/wx/food", DeliveryController.class, "/food");
+		add("/wx/food", FoodController.class, "/food");
 		// api接口
 		add("/api/v1/user", UserController.class);
 		add("/api/v1/share", ShareController.class);

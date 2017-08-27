@@ -2,18 +2,68 @@
 <#assign wxMeta>
 </#assign>
 <#assign wxCss>
-<link href="${base}/resources/light7/css/light7-swiper.min.css" rel="stylesheet" type="text/css" />
 <link href="${base}/resources/stylesheets/wx_front.css" rel="stylesheet" type="text/css" />
 </#assign>
 <#assign wxJavascript>
-<script src="${base}/resources/light7/js/light7-swiper.min.js" type="text/javascript"></script>
+	<script src="${base}/resources/javascripts/lay/laytpl.js" type="text/javascript"></script>
 <script>
 $(function(){
+    $(".leftBar-item").each(function () {
+        var typeInfo = new Object();
+        typeInfo.id = $(this).attr("data-id");
+        typeInfo.name = $(this).text().trim();
+        loadFood(typeInfo);
+    })
     $(".leftBar-item").on("click",function () {
 		$(".leftBar-item").removeClass("active");
 		$(this).addClass("active");
+		var typeId = $(this).attr("data-id");
+        var offsetTop = $("#type"+typeId).offset().top-parseInt($("#type"+typeId).css("margin-top"));
+        var scrollTop = $(".rightList").offset().top+parseInt($(".rightList").css("margin-top"));
+		var offest = offsetTop-scrollTop;
+        if(scrollTop!=offsetTop){
+            $(".rightList").animate({scrollTop:offest},300);
+        }
     })
+    $(".add2cart").on("click",function (e) {
+        var amountOfFood = Number($(this).siblings(".amountOfFood").text()) ;
+        amountOfFood++;
+        $(this).siblings(".amountOfFood").text(amountOfFood);
+        $(this).siblings(".amountOfFood").show();
+        $(this).siblings(".minus2cart").show();
+    })
+    $(".minus2cart").on("click",function (e) {
+        var amountOfFood = Number($(this).siblings(".amountOfFood").text()) ;
+        amountOfFood--;
+        $(this).siblings(".amountOfFood").text(amountOfFood);
+        if(amountOfFood<=0){
+            $(this).siblings(".amountOfFood").hide();
+            $(this).hide();
+        }
+    })
+    $(".rightList").scroll(function() {
+        $(".leftBar-item").each(function () {
+
+        });
+    });
 })
+function loadFood(typeInfo) {
+	Kit.post("${base}/wx/food/ajaxFoodByType",{id:typeInfo.id},function (msg,data) {
+	    var info = new Object();
+	    info.typeInfo = typeInfo;
+	    info.data = data;
+		renderFood(info);
+	},function (msg,data) {
+		$.alert(msg)
+	},{async:false})
+}
+function renderFood(info) {
+    var tpl = $('#food-tpl').html();
+    laytpl(tpl).render(info, function(html){
+        $(".rightList").append(html);
+    });
+}
+
 </script>
 </#assign>
 <@mainLayout wxTitle=shop.NAME wxMeta=wxMeta wxCss=wxCss wxJavascript=wxJavascript>
@@ -21,25 +71,80 @@ $(function(){
 	<div class="content bg-default">
 		<div class="pageContent bg-default">
 			<div class="shopInfo bg-primary">
-				<div class="logo">
-					<img src="${(shop.IMG)!}"/>
+				<div class="topContainer">
+					<div class="logo">
+						<img src="${(shop.IMG)!}"/>
+					</div>
+					<div class="">
+
+					</div>
 				</div>
 			</div>
 			<div class="leftBar">
 				<#list types as type>
-					<#if type_index==0>
-						<div class="leftBar-item active">
-							${(type.NAME)!}
-						</div>
-					<#else>
-						<div class="leftBar-item">
-							${(type.NAME)!}
-						</div>
-					</#if>
+					<div class="leftBar-item <#if type_index==0>active</#if>" data-id="${(type.ID)!}">
+						${(type.NAME)!}
+					</div>
 				</#list>
 			</div>
-			<div class="rightList"></div>
+			<div class="rightList">
+
+			</div>
+			<div class="cart-wrapper"></div>
+			<div class="cart">
+				<img src="${base}/resources/images/shopping_cart.png"/>
+			</div>
 		</div>
 	</div>
 </div>
+<script id="food-tpl" type="text/html">
+	<div class="content-block-title" id="type{{d.typeInfo.id}}" style="margin:.75rem .75rem .5rem">
+		{{d.typeInfo.name}}
+	</div>
+	{{# for(var i = 0, len = d.data.length; i < len; i++){ }}
+    <div class="card no-margin">
+        <div class="card-content">
+			<div class="list-block media-list">
+				<ul>
+					<li class="item-content">
+						<div class="item-media">
+							<img src="{{d.data[i].IMG}}" width="60">
+						</div>
+						<div class="item-inner">
+							<div class="item-title-row">
+								<div class="item-title">
+									<div class="row no-gutter">
+										<div class="col-30">
+											{{d.data[i].NAME}}
+										</div>
+										<div class="col-30">
+											<font size=".75rem">&nbsp;已售{{d.data[i].SALE_NUM}}单</font>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="item-subtitle">
+								<span style="color:#a9a9a9;font-size:.5rem;">{{d.data[i].DESCRIPTION}}</span>
+							</div>
+							<div class="item-subtitle">
+								售价:
+								{{# if(d.data[i].ORIGN_PRICE!=d.data[i].PRICE){ }}
+								<font color="gray" style="text-decoration:line-through">￥{{d.data[i].ORIGN_PRICE}}</font>
+								{{# } }}
+								<font color="#ef3204">￥{{d.data[i].PRICE}}</font>
+								<span>/{{d.data[i].UNIT}}</span>
+							</div>
+							<div class="item-subtitle cartOp" data-id="{{d.data[i].ID}}" data-img="{{d.data[i].IMG}}">
+								<span class="fa fa-minus-circle color-primary minus2cart" style="display: none"></span>
+								<span class="color-success amountOfFood" style="display: none">0</span>
+								<span class="fa fa-plus-circle color-primary add2cart"></span>
+							</div>
+						</div>
+					</li>
+				</ul>
+			</div>
+        </div>
+	</div>
+	{{# } }}
+</script>
 </@mainLayout>

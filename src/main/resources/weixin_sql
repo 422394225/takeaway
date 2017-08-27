@@ -29,6 +29,11 @@
 		WHERE f.`STATE` = '1' AND f.`NAME` LIKE '%#(keyword)%'
         ORDER BY s.RATE_AVG
 	#end
+	#sql("getByType")
+	    SELECT * FROM t_food
+	    WHERE TYPE_ID = #(id)
+	    AND STATE = 1
+	#end
 #end
 
 #namespace("user")

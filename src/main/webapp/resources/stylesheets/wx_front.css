@@ -3,7 +3,25 @@
 	top:0;
 	left: 0;
 	right: 0;
-	height: 30%;
+	bottom: 70%;
+}
+/*.logo{
+	position: absolute;
+	left: 1rem;
+	top: 1rem;
+}
+.logo img{
+	width: 5rem;
+	border: 2px solid white;
+}*/
+.topContainer{
+	padding: 5%;
+}
+.logo{
+}
+.logo img{
+	height: 100px;
+	border: 2px solid white;
 }
 .leftBar{
 	position: absolute;
@@ -38,4 +56,42 @@
 	right: 0;
 	top: 30%;
 	bottom: 0;
+	overflow-y: scroll;
+}
+.card{
+	width: 100%;
+}
+.list-block .item-subtitle{
+	white-space: normal;
+}
+.cartOp{
+	text-align: right;
+}
+.cartOp span{
+	font-size: 1rem;
+	line-height: 1rem;
+	margin-left:.5rem;
+}
+.cart-wrapper{
+	position: absolute;
+	left: .5em;
+	bottom: .5em;
+	height: 10%;
+	width: 35%;
+	/*background-color: rgba(80,80,81,0.5);*/
+	border-radius: 30px;
+}
+.cart{
+	position: absolute;
+	left: .5em;
+	width: 35%;
+	bottom: .5em;
+	height: 10%;
+}
+.cart-item{
+	position: absolute;
+	width: 2em;
+	height: 2em;
+	bottom: 2em;
+	border-radius: .5em;
 }
