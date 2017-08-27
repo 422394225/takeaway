@@ -3,11 +3,11 @@
      {
           "type":"view",
           "name":"点单",
-          "url":"https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxa78f4c350a06e3c4&redirect_uri=http%3A%2F%2Fwww.nalicity.cn%2foauth&response_type=code&scope=snsapi_base&state=%2fwx%2forder#wechat_redirect"
+          "url":"https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx7d654593ab6ec6a4&redirect_uri=http%3A%2F%2Fwww.nalicity.cn%2foauth&response_type=code&scope=snsapi_base&state=%2fwx%2forder#wechat_redirect"
       }, {
           "type":"view",
           "name":"首页",
-          "url":"https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxa78f4c350a06e3c4&redirect_uri=http%3A%2F%2Fwww.nalicity.cn%2foauth&response_type=code&scope=snsapi_base&state=%2fwx#wechat_redirect"
+          "url":"https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx7d654593ab6ec6a4&redirect_uri=http%3A%2F%2Fwww.nalicity.cn%2foauth&response_type=code&scope=snsapi_base&state=%2fwx#wechat_redirect"
       }
          ,{
            "name":"菜单",
