@@ -28,7 +28,7 @@ if (typeof WeixinJSBridge == "undefined"){
 	   onBridgeReady();
 	}
 function preOrder(){
-$.post("wx/order/createOrder",{shopid:"2",userAddress:"address",userTel:"tel",userName:"username",foods:"[{id:25,num:1},{id:24,num:4}]"},function(result){
+$.post("wx/order/createOrder",{shopid:"2",userAddress:"address",userTel:"tel",userName:"username",foods:"[{id:35,num:1},{id:38,num:4}]"},function(result){
 	alert(result.error)
     $("#sss").html(result.error);
 	if(result.error==false){
