@@ -192,7 +192,6 @@ public class OrderController extends WeixinMsgController {
 			result.put("paySign", getSign(map));
 			renderJson(new JSONSuccess(result));
 		} else {
-			System.out.println(doc);
 			renderJson(new JSONError(doc.getElementsByTag("return_msg").text()));
 		}
 	}
