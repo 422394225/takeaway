@@ -11,6 +11,7 @@ import core.weixin.controller.feedback.FeedbackController;
 import core.weixin.controller.food.FoodController;
 import core.weixin.controller.index.IndexController;
 import core.weixin.controller.order.OrderController;
+import core.weixin.controller.order.OrderRecieveController;
 import core.weixin.controller.shop.ShopController;
 import core.weixin.controller.tools.ToolsController;
 import core.weixin.controller.user.UserController;
@@ -30,6 +31,7 @@ public class WeixinRoutes extends Routes {
 		add("/wx/shop", ShopController.class, "/shop");
 		add("/wx/tools", ToolsController.class, "/tools");
 		add("/wx/order", OrderController.class, "/order");
+		add("/wx/orderRecieve", OrderRecieveController.class, "/orderRecieve");
 		add("/wx/delivery", DeliveryController.class, "/delivery");
 		add("/wx/food", FoodController.class, "/food");
 		// api接口

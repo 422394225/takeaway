@@ -8,6 +8,7 @@
 <@mainLayout wxTitle="点单"  wxMeta=wxMeta wxCss=wxCss wxJavascript=wxJavascript>
 <a href="wx/order/interShop?shopId=2&openid=${user.ID}">点这里</a>
 <button onclick="preOrder()">提交预订单</button>
+<div>${user.ID}</div>
 <div>
 <a id="sss">
 </a></div><div>
@@ -28,8 +29,7 @@ if (typeof WeixinJSBridge == "undefined"){
 	   onBridgeReady();
 	}
 function preOrder(){
-$.post("wx/order/createOrder",{shopid:"2",userAddress:"address",userTel:"tel",userName:"username",foods:"[{id:35,num:1},{id:38,num:4}]"},function(result){
-	alert(result.error)
+$.post("wx/order/createOrder",{userid:"${user.ID}",shopid:"2",userAddress:"address",userTel:"tel",userName:"username",foods:"[{id:26,num:1},{id:32,num:2}]"},function(result){
     $("#sss").html(result.error);
 	if(result.error==false){
 	    WeixinJSBridge.invoke(
@@ -42,7 +42,6 @@ $.post("wx/order/createOrder",{shopid:"2",userAddress:"address",userTel:"tel",us
    	           "paySign":result.data.paySign //微信签名 
    	       },
    	       function(res){
-   	    	   alert(res.err_msg);
    	           if(res.err_msg == "get_brand_wcpay_request:ok" ) {}     // 使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回    ok，但并不保证它绝对可靠。 
    	       }
    	   ); 
