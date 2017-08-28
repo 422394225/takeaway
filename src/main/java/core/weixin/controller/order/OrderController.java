@@ -144,7 +144,7 @@ public class OrderController extends WeixinMsgController {
 		result.put("orderid", order.getInt("ID"));
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
 		java.util.Map<String, String> keyMap = new HashMap<>();
-		keyMap.put("appid", "wx7d654593ab6ec6a4");
+		keyMap.put("appid", PropKit.get("appId"));
 		keyMap.put("mch_id", PropKit.get("mch_id"));
 		keyMap.put("device_info", "WEB");
 		StringBuilder nonceNorBuilder = new StringBuilder();
@@ -153,19 +153,18 @@ public class OrderController extends WeixinMsgController {
 			nonceNorBuilder.append((char) (random.nextInt(26) + 'A'));
 		keyMap.put("nonce_str", nonceNorBuilder.toString());
 		keyMap.put("sign_type", "MD5");
-		keyMap.put("body", "那里外卖-订单支付");
+		keyMap.put("body", "订单支付");
 		keyMap.put("out_trade_no", order.getInt("ID") + "");
 		keyMap.put("fee_type", "CNY");
 		keyMap.put("total_fee", ((int) (totalPrice * 100)) + "");
 		keyMap.put("spbill_create_ip", PropKit.get("spbill_create_ip"));
-		keyMap.put("notify_url", PropKit.get("server.address") + "/wx/order/createOrder");
+		keyMap.put("notify_url", PropKit.get("server.address") + "/wx/orderRecieve/orderPayed");
 		keyMap.put("trade_type", "JSAPI");
 		keyMap.put("openid", userid);
 		String sign = getSign(keyMap);
 		keyMap.put("sign", sign);
-		System.out.println(keyMap);
 		String urlResult = HttpUtils.post(WEIXIN_PRE_PAY_URL, new String(callMapToXML(keyMap)));
-		System.out.println(urlResult);
+
 		Document doc = Jsoup.parse(urlResult);
 		if ("SUCCESS".equals(doc.getElementsByTag("result_code").text())) {
 			long timeStamp = new Date().getTime() / 1000;
@@ -181,20 +180,31 @@ public class OrderController extends WeixinMsgController {
 			order.update();
 			result.put("appId", appId);
 			result.put("timeStamp", timeStamp + "");
-			result.put("nonce_str", nonceNorBuilder.toString());
-			result.put("package", package1);
+			result.put("nonceStr", nonceNorBuilder.toString());
+			result.put("package1", package1);
 			result.put("signType", signType);
 			Map<String, String> map = new HashMap<>();
-			map.put("appid", appId);
+			map.put("appId", appId);
 			map.put("timeStamp", timeStamp + "");
-			map.put("nonce_str", nonceNorBuilder.toString());
-			map.put("package1", package1);
+			map.put("nonceStr", nonceNorBuilder.toString());
+			map.put("package", package1);
 			map.put("signType", signType);
 			result.put("paySign", getSign(map));
 			renderJson(new JSONSuccess(result));
 		} else {
 			renderJson(new JSONError(doc.getElementsByTag("return_msg").text()));
 		}
+	}
+
+	public void orderPayed() {
+		Map<String, String[]> paraMap = getParaMap();
+		for (Entry<String, String[]> entry : paraMap.entrySet()) {
+			System.out.println(entry.getKey());
+			for (String string : entry.getValue()) {
+				System.out.println("\t" + string);
+			}
+		}
+		render("orderPayed.html");
 	}
 
 	public String getSign(Map<String, String> keyMap) {
@@ -214,7 +224,7 @@ public class OrderController extends WeixinMsgController {
 		paraBuilder.append("key");
 		paraBuilder.append("=");
 		paraBuilder.append(PropKit.get("mch_key"));
-		System.out.println(paraBuilder.toString());
+		// System.out.println(paraBuilder.toString());
 		return MD5Util.encrypt(paraBuilder.toString()).toUpperCase();
 	}
 
@@ -310,11 +320,11 @@ public class OrderController extends WeixinMsgController {
 	 * setAttr("openid", openid); String shopId = getPara("shopId"); if (shopId
 	 * == null) { renderJson(new JSONError("没有shopid")); return; } JSONObject
 	 * result = new JSONObject(); Shop shop = Shop.dao.findById(shopId);
-	 * result.put("shop", shop); List<Record> foods =
-	 * Db.find("SELECT * FROM T_FOOD WHERE SHOP_ID=? AND STATE=1", shopId);
-	 * List<Record> foodTypes = Db.
-	 * find("SELECT `ID`,`NAME` FROM T_FOOD_TYPE WHERE `DELETED`=0 AND `SHOP_ID`=?"
-	 * , shopId); for (Record foodType : foodTypes) { Integer foodTypeId =
+	 * result.put("shop", shop); List<Record> foods = Db.find(
+	 * "SELECT * FROM T_FOOD WHERE SHOP_ID=? AND STATE=1", shopId); List<Record>
+	 * foodTypes = Db. find(
+	 * "SELECT `ID`,`NAME` FROM T_FOOD_TYPE WHERE `DELETED`=0 AND `SHOP_ID`=?" ,
+	 * shopId); for (Record foodType : foodTypes) { Integer foodTypeId =
 	 * foodType.getInt("ID"); JSONArray foodArray = new JSONArray(); for (Record
 	 * food : foods) if (foodTypeId.equals(food.getInt("TYPE_ID")))
 	 * foodArray.add(food); foodType.set("foods", foodArray); }
