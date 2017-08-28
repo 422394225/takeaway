@@ -50,7 +50,13 @@ public class WeixinMsgController extends MsgControllerAdapter {
 	}
 
 	protected void processInTextMsg(InTextMsg inTextMsg) {
-		ApiConfigKit.setThreadLocalApiConfig(getApiConfig());
+		ApiConfig ac = getApiConfig();
+		ApiConfigKit.setThreadLocalApiConfig(ac);
+		logger.info("isEncryptMessage:"+ac.isEncryptMessage()+"");
+		logger.info("getEncodingAesKey:"+ac.getEncodingAesKey());
+		logger.info("getAppId:"+ac.getAppId());
+		logger.info("getAppSecret:"+ac.getAppSecret());
+		logger.info("getToken:"+ac.getToken());
 		String msgContent = inTextMsg.getContent().trim();
 		// 帮助提示
 		if ("help".equalsIgnoreCase(msgContent) || "帮助".equals(msgContent)) {
