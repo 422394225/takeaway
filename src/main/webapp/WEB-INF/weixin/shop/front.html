@@ -8,23 +8,39 @@
 	<script src="${base}/resources/javascripts/lay/laytpl.js" type="text/javascript"></script>
 <script>
 $(function(){
+    var foodTypes = new Object();
     $(".leftBar-item").each(function () {
         var typeInfo = new Object();
         typeInfo.id = $(this).attr("data-id");
         typeInfo.name = $(this).text().trim();
         loadFood(typeInfo);
+        var typeId = $(this).attr("data-id");
+        //保存偏移
+        var offsetTop = $("#type"+typeId).position().top;
+        foodTypes[typeId] = offsetTop;
+        foodTypes["o-"+offsetTop] = typeId;
     })
-    $(".leftBar-item").on("click",function () {
-		$(".leftBar-item").removeClass("active");
-		$(this).addClass("active");
-		var typeId = $(this).attr("data-id");
-        var offsetTop = $("#type"+typeId).offset().top-parseInt($("#type"+typeId).css("margin-top"));
-        var scrollTop = $(".rightList").offset().top+parseInt($(".rightList").css("margin-top"));
-		var offest = offsetTop-scrollTop;
-        if(scrollTop!=offsetTop){
-            $(".rightList").animate({scrollTop:offest},300);
-        }
+    $(".leftBar-item").on("click",function (e) {
+        setActive($(this));
+        var typeId = $(this).attr("data-id");
+		$(".rightList").animate({scrollTop:foodTypes[typeId]},300);
+        e.stopPropagation();
     })
+   /* $(".rightList").scroll(function(e) {
+        var scrollTop = $(".rightList").scrollTop();
+        var position = 0;
+        var lastId =  foodTypes["o-"+position];
+        for(var id in foodTypes){
+            if(position<=scrollTop<=foodTypes[id]){
+                setActive($("div[data-id='"+lastId+"']"));
+                return;
+			}
+            position = foodTypes[id];
+            lastId =  foodTypes["o-"+position];
+		}
+    });*/
+
+
     $(".add2cart").on("click",function (e) {
         var amountOfFood = Number($(this).siblings(".amountOfFood").text()) ;
         amountOfFood++;
@@ -41,12 +57,11 @@ $(function(){
             $(this).hide();
         }
     })
-    $(".rightList").scroll(function() {
-        $(".leftBar-item").each(function () {
-
-        });
-    });
 })
+function setActive(dom) {
+    $(".leftBar-item").removeClass("active");
+    dom.addClass("active");
+}
 function loadFood(typeInfo) {
 	Kit.post("${base}/wx/food/ajaxFoodByType",{id:typeInfo.id},function (msg,data) {
 	    var info = new Object();
