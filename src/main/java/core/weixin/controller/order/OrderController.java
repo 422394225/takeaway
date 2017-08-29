@@ -5,7 +5,6 @@
 
 package core.weixin.controller.order;
 
-import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -193,6 +192,7 @@ public class OrderController extends WeixinMsgController {
 			result.put("paySign", getSign(map));
 			renderJson(new JSONSuccess(result));
 		} else {
+			System.out.println(urlResult);
 			renderJson(new JSONError(doc.getElementsByTag("return_msg").text()));
 		}
 	}
