@@ -13,6 +13,7 @@ import com.jfinal.plugin.activerecord.Record;
 
 import core.admin.service.order.OrderService;
 import core.admin.service.order.impl.OrderServiceImpl;
+import core.model.Order;
 import core.vo.DTParams;
 
 /**
@@ -104,7 +105,22 @@ public class OrderController extends Controller {
 	}
 
 	public void accept() {
-		renderText(getPara("id"));
+		Order order = Order.dao.findById(getParaToInt("id"));
+		if (order.getInt("ORDER_STATE") != 2) {
+			renderText("订单状态错误:" + order.getInt("ORDER_STATE"));
+			return;
+		}
+		if (order.getInt("PAY_STATE") != 1) {
+			renderText("支付状态错误:" + order.getInt("PAY_STATE"));
+			return;
+		}
+		if (order.getInt("CANCEL_STATE") != null) {
+			renderText("退款状态错误:" + order.getInt("CANCEL_STATE"));
+			return;
+		}
+		order.set("ORDER_STATE", 3);
+		order.update();
+		renderText("接单成功啦~~~o(*￣▽￣*)ブ");
 	}
 
 	public void reject() {

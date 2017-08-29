@@ -5,41 +5,18 @@
 
 package core.weixin.controller.order;
 
-import java.net.URLEncoder;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import java.util.Random;
-import java.util.Set;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.jfinal.aop.Before;
 import com.jfinal.kit.HttpKit;
-import com.jfinal.kit.PropKit;
 import com.jfinal.log.Log;
-import com.jfinal.weixin.sdk.jfinal.MsgInterceptor;
-import com.jfinal.weixin.sdk.utils.HttpUtils;
 
-import core.model.Food;
 import core.model.Order;
-import core.model.Shop;
-import core.model.User;
-import core.utils.MD5Util;
-import core.vo.JSONError;
-import core.vo.JSONSuccess;
 import core.vo.OrderPayResult;
 import core.weixin.controller.WeixinMsgController;
 
@@ -53,6 +30,8 @@ import core.weixin.controller.WeixinMsgController;
 public class OrderRecieveController extends WeixinMsgController {
 	private Log log = Log.getLog(OrderRecieveController.class);
 	private final String RECIEVE_SUCCESS_RESULT = "<xml>  <return_code><![CDATA[SUCCESS]]></return_code> <return_msg><![CDATA[OK]]></return_msg></xml>";
+	private final String RECIEVE_FAIL_RESULT_PRE = "<xml>  <return_code><![CDATA[FAIL]]></return_code> <return_msg><![CDATA[";
+	private final String RECIEVE_FAIL_RESULT_SUF = "]]></return_msg></xml>";
 
 	public void index() {
 		renderText("OrderRecieveControllerindex");
@@ -64,6 +43,19 @@ public class OrderRecieveController extends WeixinMsgController {
 		Document doc = Jsoup.parse(xmlMsg);
 		Element xmlElement = doc.select("xml").first();
 		OrderPayResult result = new OrderPayResult(xmlElement);
+		if ("SUCCESS".equals(result.result_code)) {
+			Order order = Order.dao.findById(result.out_trade_no);
+			if (order.getDouble("PAY_PRICE") * 100 != result.total_fee) {
+				renderText(RECIEVE_FAIL_RESULT_PRE + "金额校验失败" + RECIEVE_FAIL_RESULT_SUF);
+				return;
+			}
+			if (order.getInt("ORDER_STATE") == 1 && order.getInt("PAY_STATE") == 0
+					&& order.getInt("CANCEL_STATE") == null) {
+				order.set("ORDER_STATE", 2);
+				order.set("PAY_STATE", 1);
+				order.update();
+			}
+		}
 		renderText(RECIEVE_SUCCESS_RESULT);
 	}
 
