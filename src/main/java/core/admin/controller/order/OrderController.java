@@ -1,19 +1,28 @@
 package core.admin.controller.order;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.UUID;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.core.Controller;
+import com.jfinal.kit.PropKit;
 import com.jfinal.log.Log;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
+import com.jfinal.weixin.sdk.utils.HttpUtils;
 
 import core.admin.service.order.OrderService;
 import core.admin.service.order.impl.OrderServiceImpl;
 import core.model.Order;
+import core.utils.WeiXinUtils;
 import core.vo.DTParams;
 
 /**
@@ -27,6 +36,7 @@ public class OrderController extends Controller {
 
 	private Log log = Log.getLog(OrderController.class);
 	private OrderService orderService = new OrderServiceImpl();
+	private static final String WEIXIN_REFUND_URL = "https://api.mch.weixin.qq.com/secapi/pay/refund";
 
 	public void index() {
 		String showType = getPara("showType");
@@ -107,15 +117,15 @@ public class OrderController extends Controller {
 	public void accept() {
 		Order order = Order.dao.findById(getParaToInt("id"));
 		if (order.getInt("ORDER_STATE") != 2) {
-			renderText("订单状态错误:" + order.getInt("ORDER_STATE"));
+			renderText("订单状态错误:" + orderService.getCode("t_order.ORDER_STATE", order.getInt("ORDER_STATE")));
 			return;
 		}
 		if (order.getInt("PAY_STATE") != 1) {
-			renderText("支付状态错误:" + order.getInt("PAY_STATE"));
+			renderText("支付状态错误:" + orderService.getCode("t_order.PAY_STATE", order.getInt("PAY_STATE")));
 			return;
 		}
 		if (order.getInt("CANCEL_STATE") != null) {
-			renderText("退款状态错误:" + order.getInt("CANCEL_STATE"));
+			renderText("退款状态错误:" + orderService.getCode("t_order.CANCEL_STATE", order.getInt("CANCEL_STATE")));
 			return;
 		}
 		order.set("ORDER_STATE", 3);
@@ -124,7 +134,35 @@ public class OrderController extends Controller {
 	}
 
 	public void reject() {
-		renderText(getPara("id"));
+		int orderId = getParaToInt("id");
+		Order order = Order.dao.findById(orderId);
+		if (order.getStr("REFUND_NO") == null) {
+			order.set("REFUND_NO", UUID.randomUUID().toString().replace("-", ""));
+			order.update();
+		}
+		double tempPayPrice = order.getDouble("PAY_PRICE") * 100;
+		int payPrice = (int) tempPayPrice;
+		Map<String, String> paraMap = new HashMap<>();
+		paraMap.put("appid", PropKit.get("appId"));
+		paraMap.put("mch_id", PropKit.get("mch_id"));
+		paraMap.put("nonce_str", WeiXinUtils.getNonceNorString());
+		paraMap.put("sign_type", "MD5");
+		paraMap.put("out_trade_no", orderId + "");
+		paraMap.put("out_refund_no", order.getStr("REFUND_NO"));
+		paraMap.put("total_fee", payPrice + "");
+		paraMap.put("refund_fee", payPrice + "");
+		paraMap.put("refund_desc", "订单退款");
+		paraMap.put("sign", WeiXinUtils.getSign(paraMap));
+		String para = new String(WeiXinUtils.callMapToXML(paraMap));
+		System.out.println(para);
+		String urlResult = HttpUtils.post(WEIXIN_REFUND_URL, para);
+		System.out.println(urlResult);
+		Document doc = Jsoup.parse(urlResult);
+		if ("SUCCESS".equals(doc.getElementsByTag("result_code").text())) {
+			renderText("退款成功！");
+			return;
+		}
+		renderText("退款失败：" + urlResult);
 	}
 
 }

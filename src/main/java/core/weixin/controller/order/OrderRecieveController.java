@@ -5,14 +5,10 @@
 
 package core.weixin.controller.order;
 
-import java.util.Map;
-import java.util.Map.Entry;
-
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
-import com.alibaba.fastjson.JSONObject;
 import com.jfinal.kit.HttpKit;
 import com.jfinal.log.Log;
 
@@ -59,16 +55,17 @@ public class OrderRecieveController extends WeixinMsgController {
 		renderText(RECIEVE_SUCCESS_RESULT);
 	}
 
-	public void orderPayed1() {
-		JSONObject params = JSONObject.parseObject(HttpKit.readData(getRequest()));
-		Map<String, String[]> paraMap = getParaMap();
-		for (Entry<String, String[]> entry : paraMap.entrySet()) {
-			System.out.println(entry.getKey());
-			for (String string : entry.getValue()) {
-				System.out.println("\t" + string);
-			}
-		}
-		renderText("orderPayed");
-
-	}
+	// public void orderPayed1() {
+	// JSONObject params =
+	// JSONObject.parseObject(HttpKit.readData(getRequest()));
+	// Map<String, String[]> paraMap = getParaMap();
+	// for (Entry<String, String[]> entry : paraMap.entrySet()) {
+	// System.out.println(entry.getKey());
+	// for (String string : entry.getValue()) {
+	// System.out.println("\t" + string);
+	// }
+	// }
+	// renderText("orderPayed");
+	//
+	// }
 }

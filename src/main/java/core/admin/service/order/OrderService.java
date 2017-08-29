@@ -10,4 +10,6 @@ public interface OrderService extends DataTableService {
 	Record getDetail(String orderId);
 
 	Record getSimpleFoodHistroy(int foodId);
+
+	String getCode(String fieldName, int code);
 }
