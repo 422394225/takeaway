@@ -1,70 +1,67 @@
 package core.vo;
 
-import java.util.Map;
-
-import org.eclipse.jdt.internal.compiler.lookup.CatchParameterBinding;
 import org.jsoup.nodes.Element;
 
 public class OrderPayResult {
 	/** 微信分配的公众账号ID（企业号corpid即为此appId） */
-	String appid;
+	public String appid;
 	/** 微信支付分配的商户号 */
-	String mch_id;
+	public String mch_id;
 	/** 微信支付分配的终端设备号， */
-	String device_info;
+	public String device_info;
 	/** 随机字符串，不长于32位 */
-	String nonce_str;
+	public String nonce_str;
 	/** 签名，详见签名算法 */
-	String sign;
+	public String sign;
 	/** 签名类型，目前支持HMAC-SHA256和MD5，默认为MD5 */
-	String sign_type;
+	public String sign_type;
 	/** SUCCESS/FAIL */
-	String result_code;
+	public String result_code;
 	/** 错误返回的信息描述 */
-	String err_code;
+	public String err_code;
 	/** 错误返回的信息描述 */
-	String err_code_des;
+	public String err_code_des;
 	/** 用户在商户appid下的唯一标识 */
-	String openid;
+	public String openid;
 	/** 用户是否关注公众账号，Y-关注，N-未关注，仅在公众账号类型支付有效 */
-	String is_subscribe;
+	public String is_subscribe;
 	/** JSAPI、NATIVE、APP */
-	String trade_type;
+	public String trade_type;
 	/** 银行类型，采用字符串类型的银行标识，银行类型见银行列表 */
-	String bank_type;
+	public String bank_type;
 	/** 订单总金额，单位为分 */
-	Integer total_fee;
+	public Integer total_fee;
 	/** 应结订单金额=订单金额-非充值代金券金额，应结订单金额<=订单金额。 */
-	Integer settlement_total_fee;
+	public Integer settlement_total_fee;
 	/** 货币类型，符合ISO4217标准的三位字母代码，默认人民币：CNY，其他值列表详见货币类型 */
-	String fee_type;
+	public String fee_type;
 	/** 现金支付金额订单现金支付金额，详见支付金额 */
-	Integer cash_fee;
+	public Integer cash_fee;
 	/** 货币类型，符合ISO4217标准的三位字母代码，默认人民币：CNY，其他值列表详见货币类型 */
-	String cash_fee_type;
+	public String cash_fee_type;
 	/** 代金券金额<=订单金额，订单金额-代金券金额=现金支付金额，详见支付金额 */
-	Integer coupon_fee_all;
+	public Integer coupon_fee_all;
 	/** 代金券使用数量 */
-	Integer coupon_count;
+	public Integer coupon_count;
 	/**
 	 * CASH--充值代金券 NO_CASH---非充值代金券
 	 * 并且订单使用了免充值券后有返回（取值：CASH、NO_CASH）。$n为下标,从0开始编号，举例：coupon_type_0
 	 */
-	String[] coupon_type;
+	public String[] coupon_type;
 	/** 代金券ID,$n为下标，从0开始编号 */
-	String[] coupon_id;
+	public String[] coupon_id;
 	/** 单个代金券支付金额,$n为下标，从0开始编号 */
-	Integer[] coupon_fee;
+	public Integer[] coupon_fee;
 	/** 微信支付订单号 */
-	String transaction_id;
+	public String transaction_id;
 	/** 商户系统内部订单号，要求32个字符内，只能是数字、大小写字母_-|*@ ，且在同一个商户号下唯一。 */
-	String out_trade_no;
+	public String out_trade_no;
 	/** 商家数据包，原样返回 */
-	String attach;
+	public String attach;
 	/**
 	 * 支付完成时间，格式为yyyyMMddHHmmss，如2009年12月25日9点10分10秒表示为20091225091010。其他详见时间规则
 	 */
-	String time_end;
+	public String time_end;
 
 	public OrderPayResult(Element xmlElement) {
 		try {

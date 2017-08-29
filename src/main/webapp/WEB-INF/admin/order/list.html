@@ -133,10 +133,14 @@ $(function(){
 		        cssClass: 'btn btn-link', 
 		        action: function(dialogRef){    
 		            dialogRef.close();
+		        	$(".reload").click();
 		        }
 		    }]
         });
 	});
+	$(".reload").on("click",function(){
+		table.ajax.reload(null, false);// 刷新表格数据，分页信息不会重置
+	})
 	table.on("click",'.place',function(){
         var data = table.row($(this).parents('tr')).data();
 		var deliveryId=data['DELIVERY_ID'];
@@ -165,6 +169,7 @@ $(function(){
 		        cssClass: 'btn btn-link', 
 		        action: function(dialogRef){    
 		            dialogRef.close();
+		        	$(".reload").click();
 		        }
 		    }]
         });
