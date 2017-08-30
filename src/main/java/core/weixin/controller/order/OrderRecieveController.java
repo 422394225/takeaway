@@ -55,6 +55,27 @@ public class OrderRecieveController extends WeixinMsgController {
 		renderText(RECIEVE_SUCCESS_RESULT);
 	}
 
+	public void refund() {
+		String xmlMsg = HttpKit.readData(getRequest());
+		System.out.println(xmlMsg);
+		Document doc = Jsoup.parse(xmlMsg);
+		Element xmlElement = doc.select("xml").first();
+		OrderPayResult result = new OrderPayResult(xmlElement);
+		if ("SUCCESS".equals(result.result_code)) {
+			Order order = Order.dao.findById(result.out_trade_no);
+			if (order.getDouble("PAY_PRICE") * 100 != result.total_fee) {
+				renderText(RECIEVE_FAIL_RESULT_PRE + "金额校验失败" + RECIEVE_FAIL_RESULT_SUF);
+				return;
+			}
+			if (order.getInt("ORDER_STATE") == 1 && order.getInt("PAY_STATE") == 0
+					&& order.getInt("CANCEL_STATE") == null) {
+				order.set("ORDER_STATE", 2);
+				order.set("PAY_STATE", 1);
+				order.update();
+			}
+		}
+		renderText(RECIEVE_SUCCESS_RESULT);
+	}
 	// public void orderPayed1() {
 	// JSONObject params =
 	// JSONObject.parseObject(HttpKit.readData(getRequest()));

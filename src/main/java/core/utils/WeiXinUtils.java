@@ -209,7 +209,7 @@ public class WeiXinUtils {
 		paraBuilder.append("key");
 		paraBuilder.append("=");
 		paraBuilder.append(PropKit.get("mch_key"));
-		// System.out.println(paraBuilder.toString());
+		System.out.println(paraBuilder.toString());
 		return MD5Util.encrypt(paraBuilder.toString()).toUpperCase();
 	}
 

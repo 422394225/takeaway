@@ -1,5 +1,7 @@
 package core.admin.controller.order;
 
+import java.net.URLEncoder;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,13 +19,14 @@ import com.jfinal.log.Log;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
-import com.jfinal.weixin.sdk.utils.HttpUtils;
 
 import core.admin.service.order.OrderService;
 import core.admin.service.order.impl.OrderServiceImpl;
 import core.model.Order;
+import core.utils.ClientCustomSSL;
 import core.utils.WeiXinUtils;
 import core.vo.DTParams;
+import core.vo.JSONSuccess;
 
 /**
  * 
@@ -109,6 +112,14 @@ public class OrderController extends Controller {
 		result.put("draw", params.getDraw());
 		result.put("recordsTotal", orders.getTotalRow());
 		List<Record> list = orders.getList();
+		for (Record record : list) {
+			if (record.getInt("CANCEL_STATE") != null
+					&& (record.getInt("CANCEL_STATE") == 1 || record.getInt("CANCEL_STATE") == 3)) {
+				System.out.println(orderService.getCode("t_order.ORDER_STATE", record.getInt("ORDER_STATE")));
+				record.set("STATESTRING", record.getStr("STATESTRING") + ","
+						+ orderService.getCode("t_order.ORDER_STATE", record.getInt("ORDER_STATE")));
+			}
+		}
 		result.put("data", list);
 		result.put("recordsFiltered", orders.getTotalRow());
 		renderJson(result);
@@ -133,7 +144,7 @@ public class OrderController extends Controller {
 		renderText("接单成功啦~~~o(*￣▽￣*)ブ");
 	}
 
-	public void reject() {
+	public void refund() {
 		int orderId = getParaToInt("id");
 		Order order = Order.dao.findById(orderId);
 		if (order.getStr("REFUND_NO") == null) {
@@ -151,18 +162,43 @@ public class OrderController extends Controller {
 		paraMap.put("out_refund_no", order.getStr("REFUND_NO"));
 		paraMap.put("total_fee", payPrice + "");
 		paraMap.put("refund_fee", payPrice + "");
-		paraMap.put("refund_desc", "订单退款");
+		paraMap.put("refund_desc", URLEncoder.encode("订单退款"));
 		paraMap.put("sign", WeiXinUtils.getSign(paraMap));
 		String para = new String(WeiXinUtils.callMapToXML(paraMap));
-		System.out.println(para);
-		String urlResult = HttpUtils.post(WEIXIN_REFUND_URL, para);
+		String urlResult = null;
+		try {
+			urlResult = ClientCustomSSL.post(WEIXIN_REFUND_URL, para);
+		} catch (Exception exception) {
+			renderText("接口调用失败");
+		}
 		System.out.println(urlResult);
 		Document doc = Jsoup.parse(urlResult);
-		if ("SUCCESS".equals(doc.getElementsByTag("result_code").text())) {
+		if ("SUCCESS".equals(doc.getElementsByTag("result_code").text())
+				|| "订单已全额退款".equals(doc.select("err_code_des").text())) {
 			renderText("退款成功！");
+			order.set("PAY_STATE", -2);
+			order.set("CANCEL_STATE", 2);
+			order.set("FINISH_CANCEL_TIME", new Date());
+			order.update();
 			return;
 		}
-		renderText("退款失败：" + urlResult);
+		order.set("PAY_STATE", -1);
+		order.set("CANCEL_STATE", 1);
+		order.update();
+		if (doc.select("err_code_des").size() == 0)
+			renderText("退款失败：" + doc.select("return_msg").text());
+		else
+			renderText("退款失败：" + doc.select("err_code_des").text());
+	}
+
+	public void rejectRefund() {
+		int orderId = getParaToInt("id");
+		Order order = Order.dao.findById(orderId);
+		order.set("CANCEL_STATE", 1);
+		order.set("CANCEL_SHOP_REASON", getPara("rejectReason"));
+		order.set("FINISH_CANCEL_TIME", new Date());
+		order.update();
+		renderJson(new JSONSuccess("成功"));
 	}
 
 }

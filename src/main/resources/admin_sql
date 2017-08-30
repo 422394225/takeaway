@@ -153,7 +153,7 @@
 	LEFT JOIN t_delivery c ON d.DELIVERY_ID=c.ID
 	LEFT JOIN t_dict_code cc1 ON cc1.FIELD='t_order.CANCEL_STATE' and d.CANCEL_STATE=cc1.`CODE` 
 	LEFT JOIN t_dict_code cc2 ON cc2.FIELD='t_order.ORDER_STATE' and d.ORDER_STATE=cc2.`CODE` 
-	WHERE 1=1 AND (d.ORDER_STATE='2' OR d.CANCEL_STATE='0')
+	WHERE 1=1 AND ((d.ORDER_STATE='2' AND d.CANCEL_STATE!='2') OR d.CANCEL_STATE='0') 
 		#@dbCondition_alias(conditions,mainAlias,aliasMap)
 	#end
 	#sql("listAll")
