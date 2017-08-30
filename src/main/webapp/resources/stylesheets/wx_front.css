@@ -75,27 +75,30 @@
 	line-height: 1rem;
 	margin-left:.5rem;
 }
-.cart-wrapper{
+
+#cart{
 	position: absolute;
-	left: .5em;
-	bottom: .5em;
-	height: 10%;
-	width: 35%;
-	border-radius: 30px;
+	right: 1rem;
+	bottom: 1rem;
+	width: 6.1em;
+	height: 4em;
+	line-height: 4em;
+	background: url("../images/shopping_cart.png") no-repeat center;
+	background-size: cover;
+	z-index: 999999;
 }
-.cart{
+#cart div{
+	display: inline-block;
+ }
+#cart .count{
 	position: absolute;
-	left: .5em;
-	width: 35%;
-	bottom: .5em;
-	height: 10%;
+	left: 1.6em;
+	text-align: center;
 }
-.cart-item{
+#cart .amount{
 	position: absolute;
-	width: 2em;
-	height: 2em;
-	bottom: 2em;
-	border-radius: .5em;
+	left: 3.6em;
+	text-align: center;
 }
 .modal-overlay, .popup-overlay, .preloader-indicator-overlay{
 	background: rgba(255,255,255,0) !important;
