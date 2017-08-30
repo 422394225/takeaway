@@ -6,17 +6,9 @@
 package core.weixin.controller.order;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Random;
-import java.util.Set;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -33,7 +25,7 @@ import core.model.Food;
 import core.model.Order;
 import core.model.Shop;
 import core.model.User;
-import core.utils.MD5Util;
+import core.utils.WeiXinUtils;
 import core.vo.JSONError;
 import core.vo.JSONSuccess;
 import core.weixin.controller.WeixinMsgController;
@@ -147,11 +139,7 @@ public class OrderController extends WeixinMsgController {
 		keyMap.put("appid", PropKit.get("appId"));
 		keyMap.put("mch_id", PropKit.get("mch_id"));
 		keyMap.put("device_info", "WEB");
-		StringBuilder nonceNorBuilder = new StringBuilder();
-		Random random = new Random();
-		for (int i = 0; i < 16; i++)
-			nonceNorBuilder.append((char) (random.nextInt(26) + 'A'));
-		keyMap.put("nonce_str", nonceNorBuilder.toString());
+		keyMap.put("nonce_str", WeiXinUtils.getNonceNorString());
 		keyMap.put("sign_type", "MD5");
 		keyMap.put("body", "订单支付");
 		keyMap.put("out_trade_no", order.getInt("ID") + "");
@@ -161,17 +149,15 @@ public class OrderController extends WeixinMsgController {
 		keyMap.put("notify_url", PropKit.get("server.address") + "/wx/orderRecieve/orderPayed");
 		keyMap.put("trade_type", "JSAPI");
 		keyMap.put("openid", userid);
-		String sign = getSign(keyMap);
-		keyMap.put("sign", sign);
-		String urlResult = HttpUtils.post(WEIXIN_PRE_PAY_URL, new String(callMapToXML(keyMap)));
+		keyMap.put("sign", WeiXinUtils.getSign(keyMap));
+		String paraXml = new String(WeiXinUtils.callMapToXML(keyMap));
+		System.out.println(paraXml);
+		String urlResult = HttpUtils.post(WEIXIN_PRE_PAY_URL, paraXml);
 
 		Document doc = Jsoup.parse(urlResult);
 		if ("SUCCESS".equals(doc.getElementsByTag("result_code").text())) {
 			long timeStamp = new Date().getTime() / 1000;
-			nonceNorBuilder = new StringBuilder();
-			random = new Random();
-			for (int i = 0; i < 16; i++)
-				nonceNorBuilder.append((char) (random.nextInt(26) + 'A'));
+			String nonceNor = WeiXinUtils.getNonceNorString();
 			String prepayId = doc.getElementsByTag("prepay_id").text();
 			String appId = PropKit.get("appId");
 			String package1 = "prepay_id=" + doc.getElementsByTag("prepay_id").text();
@@ -180,16 +166,16 @@ public class OrderController extends WeixinMsgController {
 			order.update();
 			result.put("appId", appId);
 			result.put("timeStamp", timeStamp + "");
-			result.put("nonceStr", nonceNorBuilder.toString());
+			result.put("nonceStr", nonceNor);
 			result.put("package1", package1);
 			result.put("signType", signType);
 			Map<String, String> map = new HashMap<>();
 			map.put("appId", appId);
 			map.put("timeStamp", timeStamp + "");
-			map.put("nonceStr", nonceNorBuilder.toString());
+			map.put("nonceStr", nonceNor);
 			map.put("package", package1);
 			map.put("signType", signType);
-			result.put("paySign", getSign(map));
+			result.put("paySign", WeiXinUtils.getSign(map));
 			renderJson(new JSONSuccess(result));
 		} else {
 			System.out.println(urlResult);
@@ -197,83 +183,20 @@ public class OrderController extends WeixinMsgController {
 		}
 	}
 
-	public void orderPayed() {
-		Map<String, String[]> paraMap = getParaMap();
-		for (Entry<String, String[]> entry : paraMap.entrySet()) {
-			System.out.println(entry.getKey());
-			for (String string : entry.getValue()) {
-				System.out.println("\t" + string);
-			}
-		}
-		render("orderPayed.html");
-	}
+	// public void orderPayed() {
+	// Map<String, String[]> paraMap = getParaMap();
+	// for (Entry<String, String[]> entry : paraMap.entrySet()) {
+	// System.out.println(entry.getKey());
+	// for (String string : entry.getValue()) {
+	// System.out.println("\t" + string);
+	// }
+	// }
+	// render("orderPayed.html");
+	// }
 
-	public String getSign(Map<String, String> keyMap) {
-		List<Entry<String, String>> list = new ArrayList<Entry<String, String>>(keyMap.entrySet());
-		Collections.sort(list, new Comparator<Map.Entry<String, String>>() {
-			public int compare(Map.Entry<String, String> o1, Map.Entry<String, String> o2) {
-				return (o1.getKey().compareTo(o2.getKey()));
-			}
-		});
-		StringBuilder paraBuilder = new StringBuilder();
-		for (Entry<String, String> entry : list) {
-			paraBuilder.append(entry.getKey());
-			paraBuilder.append("=");
-			paraBuilder.append(entry.getValue());
-			paraBuilder.append("&");
-		}
-		paraBuilder.append("key");
-		paraBuilder.append("=");
-		paraBuilder.append(PropKit.get("mch_key"));
-		// System.out.println(paraBuilder.toString());
-		return MD5Util.encrypt(paraBuilder.toString()).toUpperCase();
-	}
-
-	public static byte[] callMapToXML(Map map) {
-		StringBuffer sb = new StringBuffer();
-		sb.append("<xml>");
-		mapToXMLTest2(map, sb);
-		sb.append("</xml>");
-		try {
-			return sb.toString().getBytes("UTF-8");
-		} catch (Exception e) {
-		}
-		return null;
-	}
-
-	private static void mapToXMLTest2(Map map, StringBuffer sb) {
-		Set set = map.keySet();
-		for (Iterator it = set.iterator(); it.hasNext();) {
-			String key = (String) it.next();
-			Object value = map.get(key);
-			if (null == value)
-				value = "";
-			if (value.getClass().getName().equals("java.util.ArrayList")) {
-				ArrayList list = (ArrayList) map.get(key);
-				sb.append("<" + key + ">");
-				for (int i = 0; i < list.size(); i++) {
-					HashMap hm = (HashMap) list.get(i);
-					mapToXMLTest2(hm, sb);
-				}
-				sb.append("</" + key + ">");
-
-			} else {
-				if (value instanceof HashMap) {
-					sb.append("<" + key + ">");
-					mapToXMLTest2((HashMap) value, sb);
-					sb.append("</" + key + ">");
-				} else {
-					sb.append("<" + key + ">" + value + "</" + key + ">");
-				}
-
-			}
-
-		}
-	}
-
-	public void recieveCreateOrder() {
-
-	}
+	// public void recieveCreateOrder() {
+	//
+	// }
 
 	/**
 	 * orderType:distance 按距离排序 rate:好评数排序 没有参数：随机排序<br>

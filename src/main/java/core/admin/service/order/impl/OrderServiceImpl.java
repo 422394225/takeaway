@@ -22,4 +22,9 @@ public class OrderServiceImpl extends DataTableServiceImpl implements OrderServi
 		String sql = "SELECT A.NAME,A.PRICE,A.TYPE_ID,A.UNIT,B.NAME AS TYPE,A.IMG FROM T_FOOD A LEFT JOIN T_FOOD_TYPE B ON A.TYPE_ID=B.ID WHERE A.ID=?";
 		return Db.findFirst(sql, foodId);
 	}
+
+	@Override
+	public String getCode(String fieldName, int code) {
+		return Db.queryStr("SELECT `NAME` FROM T_DICT_CODE WHERE FIELD=? AND CODE=?", fieldName, code);
+	}
 }

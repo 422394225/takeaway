@@ -1,14 +1,14 @@
 package core.utils;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import com.jfinal.core.Controller;
 import com.jfinal.kit.HashKit;
 import com.jfinal.kit.PropKit;
 import com.jfinal.kit.StrKit;
 import com.jfinal.plugin.ehcache.CacheKit;
-
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import core.admin.service.menu.MenuService;
 import core.admin.service.menu.impl.MenuServiceImpl;
@@ -17,8 +17,8 @@ import core.utils.EmailUtils.MailData;
 
 /**
  * Web相关工具类
- * @author Javen
- * 2016年4月2日
+ * 
+ * @author Javen 2016年4月2日
  */
 public final class WebUtils {
 
@@ -27,6 +27,7 @@ public final class WebUtils {
 
 	/**
 	 * 密码:md5hex
+	 * 
 	 * @param pwd
 	 * @return
 	 */
@@ -36,6 +37,7 @@ public final class WebUtils {
 
 	/**
 	 * 读取cookie
+	 * 
 	 * @param request
 	 * @param key
 	 * @return
@@ -53,7 +55,8 @@ public final class WebUtils {
 	}
 
 	/**
-	 * 清除 某个指定的cookie 
+	 * 清除 某个指定的cookie
+	 * 
 	 * @param response
 	 * @param key
 	 */
@@ -63,6 +66,7 @@ public final class WebUtils {
 
 	/**
 	 * 设置cookie
+	 * 
 	 * @param response
 	 * @param name
 	 * @param value
@@ -79,6 +83,7 @@ public final class WebUtils {
 
 	/**
 	 * 获取浏览器信息
+	 * 
 	 * @param Controller
 	 * @return String
 	 */
@@ -88,6 +93,7 @@ public final class WebUtils {
 
 	/**
 	 * 获取浏览器信息
+	 * 
 	 * @param HttpServletRequest
 	 * @return String
 	 */
@@ -97,6 +103,7 @@ public final class WebUtils {
 
 	/**
 	 * 获取ip
+	 * 
 	 * @param request
 	 * @return
 	 */
@@ -107,6 +114,7 @@ public final class WebUtils {
 
 	/**
 	 * 获取ip
+	 * 
 	 * @param request
 	 * @return
 	 */
@@ -139,6 +147,7 @@ public final class WebUtils {
 
 	/**
 	 * 邮箱发送验证码
+	 * 
 	 * @param email
 	 * @param code
 	 * @param sendEmialType
@@ -156,6 +165,7 @@ public final class WebUtils {
 
 	/**
 	 * 意见反馈
+	 * 
 	 * @param email
 	 * @param contact
 	 * @param account
@@ -177,6 +187,7 @@ public final class WebUtils {
 
 	/**
 	 * 异步发送Email
+	 * 
 	 * @param email
 	 * @param subject
 	 * @param content
@@ -187,6 +198,7 @@ public final class WebUtils {
 
 	/**
 	 * 同步发送Email
+	 * 
 	 * @param email
 	 * @param subject
 	 * @param content
@@ -213,4 +225,5 @@ public final class WebUtils {
 		MenuService menuService = new MenuServiceImpl();
 		CacheKit.put("menuCache", admin.get("ID") + "menus", menuService.getMenuByPower(admin));
 	}
+
 }
