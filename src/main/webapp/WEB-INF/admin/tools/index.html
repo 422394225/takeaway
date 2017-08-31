@@ -27,6 +27,17 @@
 			layer.alert(msg,{icon:5});
 		});
 	}
+	function sendMess(){
+		layer.load(1, {shade: [0.3,'#000']});
+		Kit.post("${base}/tools/sendMess",{},function(msg){
+			layer.closeAll('loading');
+			layer.alert(msg);
+		},
+		function(msg){
+			layer.closeAll('loading');
+			layer.alert(msg,{icon:5});
+		});
+	}
 	function reboot(){
 	    $('#rebootModel').modal({
 	        keyboard: true
@@ -42,6 +53,7 @@
 	<button class="btn btn-info" onclick="weixinApi('getMenu')">获取菜单</button>
 	<button class="btn btn-success" onclick="weixinApi('createMenu')">创建菜单</button>
 	<button class="btn btn-danger" onclick="reboot()">&nbsp;重启&nbsp;</button>
+	<button class="btn btn-danger" onclick="sendMess()">&nbsp;发个信息&nbsp;</button>
 	<div><img src="/delivery/getAppAddr"/></div>
 	<div>配送员定位助手二维码</div>
 	<div><a href="${base}/api/v1/delivery/download"/>点这里下载</a></div>

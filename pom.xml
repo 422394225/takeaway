@@ -1,12 +1,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>cn.nn</groupId>
-  <artifactId>takeaway</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
-  <name>Takeway</name>
-  <url>http://maven.apache.org</url>
-  <properties>
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>cn.nn</groupId>
+	<artifactId>takeaway</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>Takeway</name>
+	<url>http://maven.apache.org</url>
+	<properties>
 		<!-- log4j日志文件管理包版本 -->
 		<slf4j.version>1.7.7</slf4j.version>
 		<log4j.version>1.2.17</log4j.version>
@@ -18,6 +18,29 @@
 	</properties>
 
 	<dependencies>
+	<!-- 百度语音api -->
+	<dependency>
+            <groupId>speech_sdk</groupId>
+            <artifactId>api</artifactId>
+            <version>1.3.8</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/aip-core-1.3.8.jar</systemPath>
+     </dependency> 
+	<dependency>
+            <groupId>speech_sdk</groupId>
+            <artifactId>json</artifactId>
+            <version>20160810</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/json-20160810.jar</systemPath>
+     </dependency> 
+	<dependency>
+            <groupId>speech_sdk</groupId>
+            <artifactId>speech_sdk</artifactId>
+            <version>1.0.1</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/speech_sdk-1.0.1.jar</systemPath>
+     </dependency> 
+	<!-- 百度语音api -->
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
@@ -38,16 +61,16 @@
 			<groupId>com.jfinal</groupId>
 			<artifactId>jetty-server</artifactId>
 			<version>8.1.8</version>
-			<!--IDEA要去掉-->
-			<!--<scope>provided</scope>-->
+			<!--IDEA要去掉 -->
+			<!--<scope>provided</scope> -->
 		</dependency>
 		<!-- jsp -->
 		<dependency>
 			<groupId>org.eclipse.jetty</groupId>
 			<artifactId>jetty-jsp</artifactId>
 			<version>8.1.8.v20121106</version>
-			<!--IDEA要去掉-->
-			<!--<scope>provided</scope>-->
+			<!--IDEA要去掉 -->
+			<!--<scope>provided</scope> -->
 		</dependency>
 		<!-- jsp -->
 		<dependency>
@@ -78,9 +101,9 @@
 			<version>1.3.1</version>
 		</dependency>
 		<dependency>
-		  <groupId>com.qiniu</groupId>
-		  <artifactId>qiniu-java-sdk</artifactId>
-		  <version>[7.2.0, 7.2.99]</version>
+			<groupId>com.qiniu</groupId>
+			<artifactId>qiniu-java-sdk</artifactId>
+			<version>[7.2.0, 7.2.99]</version>
 		</dependency>
 
 		<!-- 导入Mysql数据库链接jar包 -->
@@ -142,50 +165,50 @@
 			<version>2.6.12</version>
 		</dependency>
 		<dependency>
-		    <groupId>org.freemarker</groupId>
-		    <artifactId>freemarker</artifactId>
-		    <version>2.3.25-incubating</version>
+			<groupId>org.freemarker</groupId>
+			<artifactId>freemarker</artifactId>
+			<version>2.3.25-incubating</version>
 		</dependency>
 		<!-- 数据库版本管理 -->
 		<dependency>
-            <groupId>org.flywaydb</groupId>
-            <artifactId>flyway-core</artifactId>
-            <version>4.1.2</version>
-        </dependency>
-        <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <version>1.3.170</version>
-        </dependency>
-        <dependency>
-		    <groupId>com.github.stuxuhai</groupId>
-		    <artifactId>jpinyin</artifactId>
-		    <version>1.1.8</version>
+			<groupId>org.flywaydb</groupId>
+			<artifactId>flyway-core</artifactId>
+			<version>4.1.2</version>
 		</dependency>
 		<dependency>
-		  <groupId>org.jsoup</groupId>
-		  <artifactId>jsoup</artifactId>
-		  <version>${jsoup.version}</version>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<version>1.3.170</version>
 		</dependency>
 		<dependency>
-		    <groupId>org.apache.httpcomponents</groupId>
-		    <artifactId>httpclient</artifactId>
-		    <version>4.5.3</version>
+			<groupId>com.github.stuxuhai</groupId>
+			<artifactId>jpinyin</artifactId>
+			<version>1.1.8</version>
 		</dependency>
 		<dependency>
-		    <groupId>org.apache.httpcomponents</groupId>
-		    <artifactId>httpmime</artifactId>
-		    <version>4.5.3</version>
+			<groupId>org.jsoup</groupId>
+			<artifactId>jsoup</artifactId>
+			<version>${jsoup.version}</version>
 		</dependency>
 		<dependency>
-		    <groupId>com.google.zxing</groupId>
-		    <artifactId>core</artifactId>
-		    <version>3.3.0</version>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>4.5.3</version>
 		</dependency>
 		<dependency>
-		    <groupId>com.google.zxing</groupId>
-		    <artifactId>javase</artifactId>
-		    <version>3.3.0</version>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpmime</artifactId>
+			<version>4.5.3</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.zxing</groupId>
+			<artifactId>core</artifactId>
+			<version>3.3.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.zxing</groupId>
+			<artifactId>javase</artifactId>
+			<version>3.3.0</version>
 		</dependency>
 	</dependencies>
 
@@ -208,13 +231,14 @@
 				</configuration>
 			</plugin>
 			<!-- Idea 添加此插件以便启动jetty -->
-			 <plugin>
+			<plugin>
 				<groupId>org.eclipse.jetty</groupId>
 				<artifactId>jetty-maven-plugin</artifactId>
 				<version>9.3.11.v20160721</version>
 				<configuration>
 					<httpConnector>
-						<port>8081</port>启动端口号
+						<port>8081</port>
+						启动端口号
 					</httpConnector>
 					<stopPort>9966</stopPort>
 					<stopKey>stop</stopKey>
@@ -229,6 +253,16 @@
 							<value>.</value>
 						</systemProperty>
 					</systemProperties>
+					<!-- 本地包路径 -->
+					 <webResources>
+						<resource><directory>${project.basedir}/src/main/webapp/WEB-INF/lib</directory>
+							<targetPath>WEB-INF/lib</targetPath>
+							<filtering>false</filtering>
+							<includes>
+							<include>**/*.jar</include>
+					       </includes>
+						</resource>
+					</webResources>
 				</configuration>
 			</plugin>
 		</plugins>

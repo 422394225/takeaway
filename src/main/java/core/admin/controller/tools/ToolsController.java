@@ -13,6 +13,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
 import com.jfinal.kit.PropKit;
+import com.jfinal.weixin.sdk.api.AccessTokenApi;
+import com.jfinal.weixin.sdk.utils.HttpUtils;
 
 import core.utils.SMSUtils;
 import core.validate.PhoneValidate;
@@ -44,7 +46,12 @@ public class ToolsController extends Controller {
 		} catch (Exception e) {
 			renderJson(new JSONError("调起重启失败"));
 		}
+	}
 
+	public void sendMess() {
+		String mess = "{    \"touser\":\"oNCcWxDAdFm-PsfV9h6yWfoFoirw\",    \"msgtype\":\"text\",    \"text\":    {         \"content\":\"Hello World\"    }}";
+		HttpUtils.post("https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token="
+				+ AccessTokenApi.getAccessTokenStr(), mess);
 	}
 
 	public void cutter() {
