@@ -52,32 +52,72 @@ $(function(){
     });
 
     $(".add2cart").on("click",function (e) {
-        var amountOfFood = Number($(this).siblings(".amountOfFood").text()) ;
-        amountOfFood++;
-        $(this).siblings(".amountOfFood").text(amountOfFood);
-        $(this).siblings(".amountOfFood").show();
-        $(this).siblings(".minus2cart").show();
-        $("#cart .count").text(Number($("#cart .count").text())+1);
-        var price = Number($(this).parent().attr("data-price"));
-        debugger
-        $("#cart .pay").text(Number($("#cart .pay").text())+price);
+        var id = $(this).parent().attr("data-id");
+        dealBtn(id,'add');
+        dealCart();
     })
     $(".minus2cart").on("click",function (e) {
-        var amountOfFood = Number($(this).siblings(".amountOfFood").text()) ;
-        amountOfFood--;
-        $(this).siblings(".amountOfFood").text(amountOfFood);
-        if(amountOfFood<=0){
-            $(this).siblings(".amountOfFood").hide();
-            $(this).hide();
-        }
-        $("#cart .count").text(Number($("#cart .count").text())-1);
-        var price = Number($(this).parent().attr("data-price"));
-        $("#cart .pay").text(Number($("#cart .pay").text())-price);
+        var id = $(this).parent().attr("data-id");
+        dealBtn(id,'minus');
+        dealCart();
     })
-    $('#cart').draggabilly({
+    $('#cart').draggabilly({});
 
-	});
+    //还原购物车
+    var cart = WxStore.cart.get();
+    for(var id in cart){
+        dealBtn(id)
+    }
+    dealCart();
 })
+function dealBtn(id,op) {
+    var cartOp = $(".cartOp[data-id='"+id+"']");
+    //不存在或不是该店铺清空
+    if(cartOp==undefined || cartOp.length==0){
+        WxStore.cart.set(new Object());
+	}else{
+        var count = WxStore.cart.getParams(id);
+        if(count==undefined){
+            count = 0;
+        }
+        if(op=='add'){
+            //数量处理
+            count++;
+        }else if(op=='minus'){
+            if(count<0){
+                count = 0;
+            }else{
+                count--
+            }
+        }
+        //按钮处理
+        if(count<=0){
+            cartOp.find(".amountOfFood").hide();
+            cartOp.find(".minus2cart").hide();
+        }else{
+            cartOp.find(".amountOfFood").show();
+            cartOp.find(".minus2cart").show();
+        }
+        //按钮间数量显示
+        cartOp.find(".amountOfFood").text(count);
+        WxStore.cart.setParams(id,count);
+	}
+}
+function dealCart(){
+    var totalCount = 0;
+    var totalPrize = 0;
+    var cart = WxStore.cart.get();
+    for(var id in cart){
+        var p = Number($(".cartOp[data-id='"+id+"']").attr("data-price"));
+        var c = cart[id];
+        totalCount += cart[id];
+        totalPrize += p*c;
+    }
+    //餐盘数量显示
+    $("#cart .count").text(totalCount);
+    //餐盘价格显示
+    $("#cart .pay").text(totalPrize);
+}
 function setActive(dom) {
     $(".leftBar-item").removeClass("active");
     dom.addClass("active");

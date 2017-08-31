@@ -50,8 +50,6 @@ $(window).resize(function(){
 	var currentPoi = {};
 	function mapInit(){
 		initAMapUI();//异步组件调用
-		var latitude = $("#latitude").val();
-		var longitude = $("#longitude").val();
 		var option = {
 	        resizeEnable: true
 		}
@@ -110,12 +108,12 @@ $(window).resize(function(){
 	        AMap.event.addListener(geolocation, 'error', function(data) {
 	  	      $.alert('定位失败！<br>'+data.message)
 		    });
-		    
-	        if(latitude!=undefined && longitude!=undefined
-	        		&& latitude!="" && longitude!=""){
-		    	var lnglat = new AMap.LngLat(parseFloat(longitude),parseFloat(latitude));
+
+	        var ioc = WxStore.user.getParams("ioc");
+	        if(ioc!=undefined && ioc.lat!=undefined && loc.lng!=undefined){
+		    	var lnglat = new AMap.LngLat(parseFloat(loc.lng),parseFloat(ioc.lat));
 				map.setCenter(lnglat);
-				createMarker(lnglat)
+				createMarker(lnglat);
 			}else{
 				geolocation.getCurrentPosition();
 			}
@@ -201,6 +199,6 @@ $(window).resize(function(){
      	currentPoi.lat = lat;
         currentPoi.lng = lng;
         currentPoi.address = address;
-        WxStore.setParams("loc",currentPoi);
+        WxStore.user.setParams("loc",currentPoi);
 	 }
 </script>

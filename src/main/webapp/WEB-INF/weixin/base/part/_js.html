@@ -36,12 +36,12 @@ function initUser(){
 	if(openId!='' && openId!=undefined){//如果能取到刷新user
 		user.openId = openId;
 	}else{
-		var storeUser = WxStore.getUser();
+		var storeUser = WxStore.user.get();
 		if(storeUser!=undefined){
 			user.openId = storeUser.openId;
 		}
 	}
-	WxStore.setUser(user)
+	WxStore.user.set(user)
 }
 function enterShop(id) {
     location.href="${base}/wx/shop/front?id="+id;

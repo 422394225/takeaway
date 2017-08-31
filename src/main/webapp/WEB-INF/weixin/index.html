@@ -61,7 +61,7 @@ function loadShop(currentTabId){
 
 	//地理参数设置
 	if(currentTabId=="neighbor"){
-		pageData.loc = WxStore.getUser().loc;
+		pageData.loc = WxStore.user.get().loc;
 		if(pageData.loc==undefined){
             var msg = "未获取到位置信息请<font color='#0894ec' onclick='chooseAddr();'>选择地址</font>"+
 				"或<font color='#0894ec' onclick='loadShop(\""+currentTabId+"\");'>重试</font>";
@@ -71,7 +71,7 @@ function loadShop(currentTabId){
 	}
 	
 	if(currentTabId=="collections"){
-		pageData.openId = WxStore.getUser().openId;
+		pageData.openId = WxStore.user.get().openId;
 	}
 	
 	Kit.post("${base}/wx/shop/ajaxShops",JSON.stringify(pageData),

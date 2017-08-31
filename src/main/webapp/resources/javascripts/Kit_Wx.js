@@ -62,31 +62,60 @@ var Kit={
 	}
 }
 var WxStore = {
-	getUser:function(){
+	getObj:function(name){
 		try{
-			var user = JSON.parse(localStorage.getItem("user"));
-			return user;
+			var object = JSON.parse(localStorage.getItem(name));
+			if(object==null){
+				return new Object();
+			}else {
+                return object;
+			}
 		}catch(e){
 			console.log(e);
 			return new Object();
 		}
 	},
-	setUser:function(user){
+	setObj:function(name,obj){
 		try{
-			localStorage.setItem("user",JSON.stringify(user));
+			localStorage.setItem(name,JSON.stringify(obj));
 		}catch(e){
 			console.log(e);
 		}
 	},
-	setParams:function(key,value){
-		var user = this.getUser();
-		user[key] = value;
-		this.setUser(user);
-	},
-	getParams:function(key){
-		var user = this.getUser();
-		return user.key;
-	}
+    user:{
+        get:function () {
+            return WxStore.getObj("user");
+        },
+        set:function (obj) {
+            WxStore.setObj("user",obj)
+        },
+        setParams:function(key,value){
+            var user = WxStore.user.get();
+            user[key] = value;
+            WxStore.user.set(user);
+        },
+        getParams:function(key){
+            var user = WxStore.user.get();
+            return user[key];
+        }
+    },
+    cart:{
+        get:function () {
+            return WxStore.getObj("cart");
+        },
+        set:function (obj) {
+            WxStore.setObj("cart",obj)
+        },
+        setParams:function(key,value){
+            var cart = WxStore.cart.get();
+            cart[key] = value;
+            WxStore.cart.set(cart);
+        },
+        getParams:function(key){
+            var cart = WxStore.cart.get();
+            return cart[key];
+        }
+    }
 }
 function getProjectName(){
     var curWwwPath=window.document.location.href;

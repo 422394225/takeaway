@@ -78,9 +78,9 @@
 
 #cart{
 	position: absolute;
-	right: 1rem;
+	left: 1rem;
 	bottom: 1rem;
-	width: 6.1em;
+	width: 6em;
 	height: 4em;
 	line-height: 4em;
 	background: url("../images/shopping_cart.png") no-repeat center;
@@ -91,14 +91,15 @@
 	display: inline-block;
  }
 #cart .count{
-	position: absolute;
-	left: 1.6em;
+	float: left;
 	text-align: center;
+	width: 4em;
 }
 #cart .amount{
-	position: absolute;
-	left: 3.6em;
+	float: left;
 	text-align: center;
+	width: 2em;
+	font-size: .7em;
 }
 .modal-overlay, .popup-overlay, .preloader-indicator-overlay{
 	background: rgba(255,255,255,0) !important;
