@@ -80,12 +80,12 @@
 	position: absolute;
 	left: 1rem;
 	bottom: 1rem;
-	width: 6em;
+	width: 6.4em;
 	height: 4em;
 	line-height: 4em;
 	background: url("../images/shopping_cart.png") no-repeat center;
 	background-size: cover;
-	z-index: 999999;
+	z-index: 99;
 }
 #cart div{
 	display: inline-block;
@@ -93,7 +93,7 @@
 #cart .count{
 	float: left;
 	text-align: center;
-	width: 4em;
+	width: 4.3em;
 }
 #cart .amount{
 	float: left;
@@ -103,4 +103,48 @@
 }
 .modal-overlay, .popup-overlay, .preloader-indicator-overlay{
 	background: rgba(255,255,255,0) !important;
+}
+.cartDetail{
+	position: relative;
+	background-color: white;
+	width: 16rem;
+	padding-left: .5em;
+	line-height: 2em;
+	border: 1px solid #679cc7;
+	border-radius: 10px;
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
+}
+.cartDetailTitle .buy,.cartDetailContent .reset{
+	text-align: right;
+}
+.cartDetailContent img{
+	width: 2.5rem;
+	vertical-align: middle;
+}
+.cart-item{
+	width: 16rem;
+	text-align: center;
+	vertical-align: middle;
+	font-size: .8em;
+	margin-bottom: .5em;
+}
+.cart-item span{
+	font-size: 1em;
+}
+.item-element{
+	width: 3.5rem;
+	vertical-align: middle;
+}
+.item-element:nth-child(2){
+	width: 6rem;
+}
+.item-element:nth-child(3){
+	width: 2.5rem;
+}
+.item-element:nth-child(4){
+	width: 2.5rem;
+}
+.cartFoot{
+	text-align: center;
 }

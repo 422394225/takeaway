@@ -61,14 +61,29 @@ $(function(){
         dealBtn(id,'minus');
         dealCart();
     })
-    $('#cart').draggabilly({});
 
     //还原购物车
     var cart = WxStore.cart.get();
     for(var id in cart){
         dealBtn(id)
     }
-    dealCart();
+    dealCart()
+	
+    var draggie = $('#cart').draggabilly({});
+    draggie.on( 'staticClick', function( event, pointer ) {
+        var id = pointer.target.id;
+		if(id=='closeDetail'){
+            $(".cartDetail").hide();
+		}else if(id=='resetCart'){
+            WxStore.cart.set({});
+            dealCart();
+		}else if(id=='payCart'){
+
+        }
+		else{
+            showCart();
+		}
+	})
 })
 function dealBtn(id,op) {
     var cartOp = $(".cartOp[data-id='"+id+"']");
@@ -107,27 +122,48 @@ function dealCart(){
     var totalCount = 0;
     var totalPrize = 0;
     var cart = WxStore.cart.get();
+    var tpl = $('#cart-tpl').html();
+    var html = "";
     for(var id in cart){
         var p = Number($(".cartOp[data-id='"+id+"']").attr("data-price"));
         var c = cart[id];
+        //餐盘熟知、、数值计算
         totalCount += cart[id];
         totalPrize += p*c;
+
+        //餐盘详情模板渲染
+        if(cart[id]>0){
+            laytpl(tpl).render(foodsInfo[id], function(ele){
+                html+=ele;
+            });
+        }
     }
     //餐盘数量显示
     $("#cart .count").text(totalCount);
     //餐盘价格显示
     $("#cart .pay").text(totalPrize);
+    //餐盘详情显示
+
+    if(html==""){
+        html="<span>购物车空空如也，赶紧挑选您中意的美食哦(✪ω✪)</span>";
+	}
+    $(".cartDetailContent").html(html);
 }
 function setActive(dom) {
     $(".leftBar-item").removeClass("active");
     dom.addClass("active");
 }
+var foodsInfo = new Object();
 function loadFood(typeInfo) {
 	Kit.post("${base}/wx/food/ajaxFoodByType",{id:typeInfo.id},function (msg,data) {
 	    var info = new Object();
 	    info.typeInfo = typeInfo;
 	    info.data = data;
 		renderFood(info);
+
+		$(data).each(function () {
+            foodsInfo[this.ID] = this;
+        })
 	},function (msg,data) {
 		$.alert(msg)
 	},{async:false})
@@ -138,7 +174,9 @@ function renderFood(info) {
         $(".rightList").append(html);
     });
 }
-
+function showCart() {
+	$(".cartDetail").css("display","inline-block");
+}
 </script>
 </#assign>
 <@mainLayout wxTitle=shop.NAME wxMeta=wxMeta wxCss=wxCss wxJavascript=wxJavascript>
@@ -221,8 +259,17 @@ function renderFood(info) {
 		</div>
 	</div>
 	<div id="cart">
-		<div class="color-primary count">0</div>
-		<div class="color-warning amount">￥<span class="pay">0</span></div>
+		<div class="color-primary count" onclick="showCart();">0</div>
+		<div class="color-warning amount" onclick="showCart();">￥<span class="pay">0</span></div>
+		<div class="cartDetail" style="display: inline-block">
+			<div class="cartDetailTitle">
+				<span class="fa fa-cutlery color-primary" style="margin-right: 6rem">&nbsp;已选美食</span>
+				<button id="resetCart" class="reset button button-dark" style="display: inline-block;">清空</button>
+				<button id="payCart" class="buy button button-danger bg-danger" style="display: inline-block;">结账</button>
+			</div>
+			<div class="cartDetailContent"></div>
+			<div class="cartFoot"><button id="closeDetail" class="button button-light close" style="padding: 0 7rem;margin-bottom: .5em">关闭</button></div>
+		</div>
 	</div>
 </div>
 <script id="food-tpl" type="text/html">
@@ -230,7 +277,7 @@ function renderFood(info) {
 		{{d.typeInfo.name}}
 	</div>
 	{{# for(var i = 0, len = d.data.length; i < len; i++){ }}
-    <div class="card no-margin">
+    <div class="card no-margin" id="item{{d.data[i].ID}}">
         <div class="card-content">
 			<div class="list-block media-list">
 				<ul>
@@ -260,7 +307,7 @@ function renderFood(info) {
 								<font color="#ef3204">￥{{d.data[i].PRICE}}</font>
 								<span>/{{d.data[i].UNIT}}</span>
 							</div>
-							<div class="item-subtitle cartOp" data-id="{{d.data[i].ID}}" data-img="{{d.data[i].IMG}}"  data-price="{{d.data[i].PRICE}}">
+							<div class="item-subtitle cartOp" data-id="{{d.data[i].ID}}"  data-price="{{d.data[i].PRICE}}">
 								<span class="fa fa-minus-circle color-primary minus2cart" style="display: none"></span>
 								<span class="color-warning amountOfFood" style="display: none">0</span>
 								<span class="fa fa-plus-circle color-primary add2cart"></span>
@@ -272,5 +319,22 @@ function renderFood(info) {
         </div>
 	</div>
 	{{# } }}
+</script>
+<script id="cart-tpl" type="text/html">
+<div class="cart-item">
+	<div class="item-element">
+		<img src="{{d.IMG}}">
+	</div>
+	<div class="item-element">
+		{{d.NAME}}
+	</div>
+	<div class="item-element">
+		{{# var am = WxStore.cart.getParams(d.ID) }}
+		<font class="color-danger">￥{{d.PRICE*am}}</font>
+	</div>
+	<div class="item-element cartOp" data-id="{{d.ID}}">
+		<span class="color-warning amountOfFood">{{am}}{{d.UNIT}}</span>
+	</div>
+</div>
 </script>
 </@mainLayout>
