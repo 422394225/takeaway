@@ -1,15 +1,15 @@
 
-package core.admin.service.food.impl;
+package core.admin.service.foodType.impl;
 
 import java.util.List;
 
 import core.admin.service.base.impl.DataTableServiceImpl;
-import core.admin.service.food.FoodService;
+import core.admin.service.foodType.FoodTypeService;
 import core.model.Food;
 import core.model.FoodType;
 import core.model.Shop;
 
-public class FoodServiceImpl extends DataTableServiceImpl implements FoodService {
+public class FoodTypeServiceImpl extends DataTableServiceImpl implements FoodTypeService {
 
 	@Override
 	public Food findById(String id) {
@@ -52,15 +52,23 @@ public class FoodServiceImpl extends DataTableServiceImpl implements FoodService
 
 	@Override
 	public boolean existFoodType(int shopId, String type) {
-		FoodType foodType = FoodType.dao
-				.findFirst("select * from t_food_type where name=? and shop_id=? and a.deleted!=1", type, shopId);
+		FoodType foodType = FoodType.dao.findFirst("select * from t_food_type where name=? and shop_id=?", type,
+				shopId);
 		return foodType != null;
 	}
 
 	@Override
-	public FoodType findFoodType(String shopId, String type) {
-		FoodType foodType = FoodType.dao
-				.findFirst("select * from t_food_type where name=? and shop_id=? and a.deleted!=1", type, shopId);
+	public FoodType findFoodType(Integer shopId, String type) {
+		FoodType foodType = FoodType.dao.findFirst("select * from t_food_type where name=? and shop_id=?", type,
+				shopId);
+		return foodType;
+	}
+
+	@Override
+	public List<FoodType> findFoodTypeByShopName(String shopName, int expId) {
+		List<FoodType> foodType = FoodType.dao.find(
+				"select a.* from t_food_type a left join t_shop b on a.shop_id = b.id where b.name=? and a.id!=? and a.deleted!=1",
+				shopName, expId);
 		return foodType;
 	}
 

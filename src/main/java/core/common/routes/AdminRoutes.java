@@ -7,6 +7,7 @@ import core.admin.controller.admin.AdminController;
 import core.admin.controller.delivery.DeliveryController;
 import core.admin.controller.feedback.FeedbackController;
 import core.admin.controller.food.FoodController;
+import core.admin.controller.food.FoodTypeController;
 import core.admin.controller.index.IndexController;
 import core.admin.controller.log.LogController;
 import core.admin.controller.menu.MenuController;
@@ -38,6 +39,7 @@ public class AdminRoutes extends Routes {
 		add("user", UserController.class);
 		add("menu", MenuController.class);
 		add("food", FoodController.class);
+		add("foodType", FoodTypeController.class);
 		add("delivery", DeliveryController.class);
 		add("shop", ShopController.class);
 		add("shopType", ShopTypeController.class);

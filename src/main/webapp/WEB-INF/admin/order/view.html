@@ -129,15 +129,13 @@ $(function(){
 		else
 			imgPath=n.IMG;
 		var showDiv="<div class=\"form-group form-group-md\">"+
-	    "<label class=\"col-sm-3\" for=\"formGroupInputLarge\"style=\"text-align:right\"><img src=\""+imgPath+"\" style='width:60px;height:60px'></label>"+
+	    "<label class=\"col-sm-3\" for=\"formGroupInputLarge\"style=\"text-align:right\"><img src=\""+imgPath+"\" style='width:60px;height:60px'></img></label>"+
 	    "<div class=\"col-sm-6\" for=\"formGroupInputLarge\">"+
 	    "<label class=\"col-sm-7\">"+n.NAME+"</label>"+"<label class=\"col-sm-3\">￥"+n.PRICE+"</label>"+
 		"</div>"+
 		"<div class=\"col-sm-6\" for=\"formGroupInputLarge\">"+
-	    "<label class=\"col-sm-7\">分类："+n.TYPE+"</label>"+"<label class=\"col-sm-3\">"+n.COUNT+n.UNIT+"</label>"
-		"</div>"+
-		"</div>";
-		$("#foodForm").html(showDiv+$("#foodForm").html());
+	    "<label class=\"col-sm-7\">分类："+n.TYPE+"</label>"+"<label class=\"col-sm-3\">"+n.COUNT+n.UNIT+"</label></div></div>";
+		$("#foodForm").html($("#foodForm").html()+showDiv);
 	}
 	)
 })

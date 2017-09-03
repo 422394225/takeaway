@@ -1,21 +1,13 @@
 package core.utils;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.URL;
 import java.util.Map;
-
-import javax.net.ssl.HttpsURLConnection;
 
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.multipart.FilePart;
 import org.apache.commons.httpclient.methods.multipart.MultipartRequestEntity;
 import org.apache.commons.httpclient.methods.multipart.Part;
-import org.apache.http.client.ClientProtocolException;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -32,81 +24,6 @@ public class FileUploadUtil {
 			.set("pls", "audio/scpls").set("ram", "audio/x-pn-realaudio").set("rmi", "audio/mid")
 			.set("rmm", "audio/x-pn-realaudio").set("snd", "audio/basic").set("wav", "audio/wav")
 			.set("wax", "audio/x-ms-wax").set("wma", "audio/x-ms-wma");
-
-	/**
-	 * 上传微信视频专用
-	 * 
-	 * @param url
-	 * @param filePath
-	 * @param title
-	 * @param introduction
-	 * @return
-	 */
-	public static String postVedio1(String filePath) {
-		String fileExt = filePath.substring(filePath.lastIndexOf('.') + 1);
-		File file = new File(filePath);
-		if (!file.exists())
-			return null;
-		String result = null;
-		try {
-			URL url1 = new URL("https://api.weixin.qq.com/cgi-bin/media/upload?access_token="
-					+ AccessTokenApi.getAccessTokenStr() + "&type=voice");
-			HttpsURLConnection conn = (HttpsURLConnection) url1.openConnection();
-			conn.setConnectTimeout(5000);
-			conn.setReadTimeout(30000);
-			conn.setDoOutput(true);
-			conn.setDoInput(true);
-			conn.setUseCaches(false);
-			conn.setRequestMethod("POST");
-			conn.setRequestProperty("Accept",
-					"text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
-			conn.setRequestProperty("Connection", "Keep-Alive");
-			conn.setRequestProperty("Accept-Language", "zh-CN,zh;q=0.8");
-			conn.setRequestProperty("Cache-Control", "max-age=0");
-			String boundary = "-----------------------------" + System.currentTimeMillis();
-			conn.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + boundary);
-
-			OutputStream output = conn.getOutputStream();
-			output.write(("--" + boundary + "\r\n").getBytes());
-			// output.write(String.format("Content-Disposition: form-data;
-			// name=\"media\"; filename=\"%s\"\r\n",file.getName()).getBytes());
-			String des = String
-					.format("Content-Disposition:form-data;name=\"media\";filelength=\"{1}\";filename=\"{0}\"\r\nContent-Type:"
-							+ VOICE_CONTENT_TYPE.get(fileExt) + "\r\n\r\n", file.getName(), file.length());
-			System.out.println(des);
-			output.write(des.getBytes());
-			// output.write(("Content-Type: " + VOICE_CONTENT_TYPE.get(fileExt)
-			// + " \r\n\r\n").getBytes());
-			byte[] data = new byte[1024];
-			int len = 0;
-			FileInputStream input = new FileInputStream(file);
-			while ((len = input.read(data)) > -1) {
-				output.write(data, 0, len);
-			}
-			output.write(("--" + boundary + "\r\n").getBytes());
-			// output.write("Content-Disposition: form-data;
-			// name=\"description\";\r\n\r\n".getBytes());
-			// output.write(String.format("{\"title\":\"%s\",\"introduction\":\"%s\"}",
-			// "123", "123").getBytes());
-			// output.write(("\r\n--" + boundary + "--\r\n\r\n").getBytes());
-			output.flush();
-			output.close();
-			input.close();
-			InputStream resp = conn.getInputStream();
-			StringBuffer sb = new StringBuffer();
-			while ((len = resp.read(data)) > -1)
-				sb.append(new String(data, 0, len, "utf-8"));
-			resp.close();
-			result = sb.toString();
-			System.out.println(result);
-		} catch (ClientProtocolException e) {
-			System.out.println("postFile，不支持http协议");
-		} catch (IOException e) {
-			System.out.println("postFile数据传输失败");
-		}
-		System.out.println("result=" + result);
-		return result;
-	}
 
 	public static String postVedio(String filePath) {
 		String fileExt = filePath.substring(filePath.lastIndexOf('.') + 1);

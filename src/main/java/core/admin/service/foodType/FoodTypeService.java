@@ -1,5 +1,5 @@
 
-package core.admin.service.food;
+package core.admin.service.foodType;
 
 import java.util.List;
 
@@ -8,10 +8,10 @@ import core.model.Food;
 import core.model.FoodType;
 import core.model.Shop;
 
-public interface FoodService extends DataTableService {
+public interface FoodTypeService extends DataTableService {
 	public Food findById(String id);
 
-	public FoodType findFoodType(String shopId, String type);
+	public FoodType findFoodType(Integer shopId, String type);
 
 	public Shop findByShopName(String shopName);
 
@@ -20,6 +20,8 @@ public interface FoodService extends DataTableService {
 	public Food findByName(Integer shopId, String name);
 
 	public List<FoodType> findFoodTypeByShopName(String shopName);
+
+	public List<FoodType> findFoodTypeByShopName(String shopName, int expId);
 
 	public boolean existFoodType(int shopId, String type);
 

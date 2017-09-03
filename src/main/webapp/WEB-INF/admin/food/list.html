@@ -29,10 +29,10 @@
 	            "render": function(data,type,row){
 	            	var stateIcon;
 	            	if(row["STATE"]==0){
-	            		stateIcon="<button class='shangjia btn btn-warning btn-xs' title='上架'><i class='fa fa-caret-up fa-lg'></i></button>";
+	            		stateIcon="<button class='onShelf btn btn-warning btn-xs' title='上架'><i class='fa fa-caret-up fa-lg'></i></button>";
 	            	}
 	            	else{
-	            		stateIcon="<button class='xiajia btn btn-danger btn-xs' title='下架'><i class='fa fa-caret-down fa-lg'></i></button>";
+	            		stateIcon="<button class='offShelf btn btn-danger btn-xs' title='下架'><i class='fa fa-caret-down fa-lg'></i></button>";
 	            	}
 	            	return "<button class='histroy btn btn-info btn-xs' title='查看历史记录'><i class='fa fa-history'></i>"+
   				  "</button><button class='edit btn btn-success btn-xs' title='修改'><i class='fa fa-edit'></i></button>"+
@@ -89,7 +89,7 @@
 			    }]
 	        });
 		});
-		table.on("click",'.xiajia',function(){
+		table.on("click",'.offShelf',function(){
 	        var data = table.row($(this).parents('tr')).data();
 			var foodId=data['ID'];
 			BootstrapDialog.show({
@@ -127,7 +127,7 @@
             }]
         });
 		})
-		table.on("click",'.shangjia',function(){
+		table.on("click",'.onShelf',function(){
 	        var data = table.row($(this).parents('tr')).data();
 			var foodId=data['ID'];
 			BootstrapDialog.show({
@@ -236,7 +236,7 @@
         <th>销量</th>
         <th>创建时间</th>
         <th>商店名</th>
-        <th>查看所有变更</th>
+        <th>操作</th>
       </tr>
     </thead>
     <tbody></tbody>
