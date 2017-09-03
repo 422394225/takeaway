@@ -13,10 +13,11 @@ import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
 import com.jfinal.kit.PropKit;
-import com.jfinal.weixin.sdk.api.AccessTokenApi;
-import com.jfinal.weixin.sdk.utils.HttpUtils;
 
+import core.interceptor.WxApiConfigInterceptor;
+import core.model.Order;
 import core.utils.SMSUtils;
+import core.utils.WeiXinUtils;
 import core.validate.PhoneValidate;
 import core.vo.JSONError;
 import core.vo.JSONSuccess;
@@ -48,10 +49,11 @@ public class ToolsController extends Controller {
 		}
 	}
 
+	@Before(WxApiConfigInterceptor.class)
 	public void sendMess() {
-		String mess = "{    \"touser\":\"oNCcWxDAdFm-PsfV9h6yWfoFoirw\",    \"msgtype\":\"text\",    \"text\":    {         \"content\":\"Hello World\"    }}";
-		HttpUtils.post("https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token="
-				+ AccessTokenApi.getAccessTokenStr(), mess);
+		Order order = Order.dao.findById(107);
+		WeiXinUtils.sendOrderVideoAndMess(order);
+		renderJson(new JSONSuccess("发送成功"));
 	}
 
 	public void cutter() {
