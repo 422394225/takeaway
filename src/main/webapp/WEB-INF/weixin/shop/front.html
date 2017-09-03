@@ -68,30 +68,42 @@ $(function(){
         dealBtn(id)
     }
     dealCart()
-	
+
     var draggie = $('#cart').draggabilly({});
-    draggie.on( 'staticClick', function( event, pointer ) {
+    draggie.on('staticClick', function( event, pointer ) {
         var id = pointer.target.id;
 		if(id=='closeDetail'){
-            $(".cartDetail").hide();
+			closeCart();
 		}else if(id=='resetCart'){
-            WxStore.cart.set({});
-            dealCart();
-		}else if(id=='payCart'){
+            $.confirm('确认要清空购物车吗？', function () {
+                resetCart();
+            });
+        }else if(id=='payCart'){
 
         }
 		else{
             showCart();
 		}
 	})
+
+    function resetCart() {
+        WxStore.cart.set(new Object());
+        dealCart();
+        $(".amountOfFood").text(0);
+        $(".amountOfFood").hide();
+        $(".minus2cart").hide();
+    }
+    function closeCart() {
+        $(".cartDetail").hide();
+    }
 })
 function dealBtn(id,op) {
     var cartOp = $(".cartOp[data-id='"+id+"']");
+    var count = WxStore.cart.getParams(id);
     //不存在或不是该店铺清空
     if(cartOp==undefined || cartOp.length==0){
         WxStore.cart.set(new Object());
 	}else{
-        var count = WxStore.cart.getParams(id);
         if(count==undefined){
             count = 0;
         }
@@ -105,18 +117,18 @@ function dealBtn(id,op) {
                 count--
             }
         }
-        //按钮处理
-        if(count<=0){
-            cartOp.find(".amountOfFood").hide();
-            cartOp.find(".minus2cart").hide();
-        }else{
-            cartOp.find(".amountOfFood").show();
-            cartOp.find(".minus2cart").show();
-        }
-        //按钮间数量显示
-        cartOp.find(".amountOfFood").text(count);
-        WxStore.cart.setParams(id,count);
 	}
+    //按钮处理
+    if(count>0){
+        cartOp.find(".amountOfFood").show();
+        cartOp.find(".minus2cart").show();
+    }else{
+        cartOp.find(".amountOfFood").hide();
+        cartOp.find(".minus2cart").hide();
+    }
+    //按钮间数量显示
+    cartOp.find(".amountOfFood").text(count);
+    WxStore.cart.setParams(id,count);
 }
 function dealCart(){
     var totalCount = 0;
@@ -146,6 +158,9 @@ function dealCart(){
 
     if(html==""){
         html="<span>购物车空空如也，赶紧挑选您中意的美食哦(✪ω✪)</span>";
+        $("#payCart").hide();
+	}else{
+        $("#payCart").show();
 	}
     $(".cartDetailContent").html(html);
 }
@@ -176,6 +191,7 @@ function renderFood(info) {
 }
 function showCart() {
 	$(".cartDetail").css("display","inline-block");
+    $("#cart").animate({top:"1rem",left:"1rem"},300);
 }
 </script>
 </#assign>
@@ -261,14 +277,14 @@ function showCart() {
 	<div id="cart">
 		<div class="color-primary count" onclick="showCart();">0</div>
 		<div class="color-warning amount" onclick="showCart();">￥<span class="pay">0</span></div>
-		<div class="cartDetail" style="display: inline-block">
+		<div class="cartDetail" style="display: none">
 			<div class="cartDetailTitle">
 				<span class="fa fa-cutlery color-primary" style="margin-right: 6rem">&nbsp;已选美食</span>
 				<button id="resetCart" class="reset button button-dark" style="display: inline-block;">清空</button>
-				<button id="payCart" class="buy button button-danger bg-danger" style="display: inline-block;">结账</button>
+				<button id="closeDetail" class="close button button-light" style="display: inline-block;">关闭</button>
 			</div>
 			<div class="cartDetailContent"></div>
-			<div class="cartFoot"><button id="closeDetail" class="button button-light close" style="padding: 0 7rem;margin-bottom: .5em">关闭</button></div>
+			<div class="cartFoot"><button id="payCart" class="button button-danger bg-danger buy" style="padding: 0 7rem;margin-bottom: .5em">结账</button></div>
 		</div>
 	</div>
 </div>
