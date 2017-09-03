@@ -13,6 +13,7 @@ import org.jsoup.nodes.Document;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
 import com.jfinal.kit.PropKit;
 import com.jfinal.log.Log;
@@ -22,6 +23,7 @@ import com.jfinal.plugin.activerecord.Record;
 
 import core.admin.service.order.OrderService;
 import core.admin.service.order.impl.OrderServiceImpl;
+import core.interceptor.WxApiConfigInterceptor;
 import core.model.Order;
 import core.utils.ClientCustomSSL;
 import core.utils.WeiXinUtils;
@@ -125,22 +127,34 @@ public class OrderController extends Controller {
 		renderJson(result);
 	}
 
+	@Before(WxApiConfigInterceptor.class)
 	public void accept() {
 		Order order = Order.dao.findById(getParaToInt("id"));
 		if (order.getInt("ORDER_STATE") != 2) {
 			renderText("订单状态错误:" + orderService.getCode("t_order.ORDER_STATE", order.getInt("ORDER_STATE")));
 			return;
 		}
-		if (order.getInt("PAY_STATE") != 1) {
+		if (order.getInt("PAY_STATE") != 1 && order.getInt("PAY_STATE") != -1) {
 			renderText("支付状态错误:" + orderService.getCode("t_order.PAY_STATE", order.getInt("PAY_STATE")));
 			return;
 		}
-		if (order.getInt("CANCEL_STATE") != null) {
+		if (order.getInt("CANCEL_STATE") != null
+				&& (order.getInt("CANCEL_STATE") == 0 || order.getInt("CANCEL_STATE") == 2)) {
 			renderText("退款状态错误:" + orderService.getCode("t_order.CANCEL_STATE", order.getInt("CANCEL_STATE")));
 			return;
 		}
 		order.set("ORDER_STATE", 3);
+		order.set("TAKING_TIME", new Date());
 		order.update();
+		try {
+			WeiXinUtils.sendOrderVideoAndMess(order);
+		} catch (Exception exception) {
+			exception.printStackTrace();
+			int shopId = order.getInt("SHOP_ID");
+			String tel = Db.findFirst("SELECT TEL FROM T_SHOP WHERE ID=?", shopId).getStr("TEL");
+			renderText("接单成功啦~~~o(*￣▽￣*)ブ,<br>但是发送微信消息失败，<br>请电话通知：" + tel);
+			return;
+		}
 		renderText("接单成功啦~~~o(*￣▽￣*)ブ");
 	}
 

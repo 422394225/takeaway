@@ -1,5 +1,14 @@
 package core.utils;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -13,13 +22,39 @@ import java.util.Map.Entry;
 import java.util.Random;
 import java.util.Set;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.jfinal.kit.Kv;
 import com.jfinal.kit.PropKit;
 import com.jfinal.kit.StrKit;
+import com.jfinal.plugin.activerecord.Db;
+import com.jfinal.plugin.activerecord.Record;
+import com.jfinal.weixin.sdk.api.AccessTokenApi;
 import com.jfinal.weixin.sdk.api.ApiResult;
 import com.jfinal.weixin.sdk.api.TemplateData;
 import com.jfinal.weixin.sdk.api.TemplateMsgApi;
+import com.jfinal.weixin.sdk.utils.HttpUtils;
+
+import core.model.Order;
+import core.vo.RecevieMedia;
 
 public class WeiXinUtils {
+	private static final String voicePath = PropKit.get("voicePath");
+	public static Map<String, String> VOICE_CONTENT_TYPE = Kv.by("acp", "audio/x-mei-aac").set("aif", "audio/aiff")
+			.set("aiff", "audio/aiff").set("aifc", "audio/aiff").set("au", "audio/basic")
+			.set("la1", "audio/x-liquid-file").set("lavs", "audio/x-liquid-secure").set("lmsff", "audio/x-la-lms")
+			.set("m3u", "audio/mpegurl").set("midi", "audio/mid").set("mid", "audio/mid").set("mp2", "audio/mp2")
+			.set("mp3", "audio/mp3").set("mp4", "audio/mp4").set("mnd", "audio/x-musicnet-download")
+			.set("mp1", "audio/mp1").set("mns", "audio/x-musicnet-stream").set("mpga", "audio/rn-mpeg")
+			.set("pls", "audio/scpls").set("ram", "audio/x-pn-realaudio").set("rmi", "audio/mid")
+			.set("rmm", "audio/x-pn-realaudio").set("snd", "audio/basic").set("wav", "audio/wav")
+			.set("wax", "audio/x-ms-wax").set("wma", "audio/x-ms-wma");
+	static {
+		File file = new File(voicePath);
+		// System.out.println(voicePath);
+		if (!file.exists())
+			file.mkdirs();
+	}
 
 	public static String filterWeixinEmoji(String source) {
 		if (containsEmoji(source)) {
@@ -133,6 +168,153 @@ public class WeiXinUtils {
 						.add("keyword5", time, "#0000FF").add("remark", "\n 请点击详情直接看课程直播，祝生活愉快", "#008000").build());
 
 		return result;
+	}
+
+	public static void sendMessage(String openId, String mess) {
+		// {
+		// "touser":"OPENID",
+		// "msgtype":"text",
+		// "text":
+		// {
+		// "content":"Hello World"
+		// }
+		// }
+		JSONObject object = new JSONObject();
+		object.put("touser", openId);
+		object.put("msgtype", "text");
+		JSONObject contentObject = new JSONObject();
+		contentObject.put("content", mess);
+		object.put("text", contentObject);
+		// System.out.println(object.toString());
+		HttpUtils.post("https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token="
+				+ AccessTokenApi.getAccessTokenStr(), object.toString());
+	}
+
+	public static void sendVoice(String openId, String MEDIA_ID) {
+		// {
+		// "touser":"OPENID",
+		// "msgtype":"voice",
+		// "voice":
+		// {
+		// "media_id":"MEDIA_ID"
+		// }
+		// }
+		JSONObject object = new JSONObject();
+		object.put("touser", openId);
+		object.put("msgtype", "voice");
+		JSONObject voiceObject = new JSONObject();
+		voiceObject.put("media_id", MEDIA_ID);
+		object.put("voice", voiceObject);
+		HttpUtils.post("https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token="
+				+ AccessTokenApi.getAccessTokenStr(), object.toString());
+
+	}
+
+	public static RecevieMedia uploadVoice(String accessToken, byte[] sourceBytes, String fileExt) {
+		RecevieMedia recevieMedia = null;
+		// 拼装请求地址
+		String uploadMediaUrl = "http://file.api.weixin.qq.com/cgi-bin/media/upload?access_token=ACCESS_TOKEN&type=TYPE";
+		uploadMediaUrl = uploadMediaUrl.replace("ACCESS_TOKEN", accessToken).replace("TYPE", "voice");
+		// 定义数据分隔符
+		String boundary = "------------7da2e536604c8";
+		try {
+			URL uploadUrl = new URL(uploadMediaUrl);
+			java.net.HttpURLConnection uploadConn = (HttpURLConnection) uploadUrl.openConnection();
+			uploadConn.setDoOutput(true);
+			uploadConn.setDoInput(true);
+			uploadConn.setRequestMethod("POST");
+			// 设置请求头Content-Type
+			uploadConn.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
+			// 获取媒体文件上传的输出流（往微信服务器写数据）
+			OutputStream outputStream = uploadConn.getOutputStream();
+
+			// 从请求头中获取内容类型
+			String contentType = VOICE_CONTENT_TYPE.get(fileExt.toLowerCase());
+			// 请求体开始
+			outputStream.write(("--" + boundary + "\r\n").getBytes());
+			outputStream.write(
+					String.format("Content-Disposition: form-data; name=\"media\"; filename=\"file1%s\"\r\n", fileExt)
+							.getBytes());
+			outputStream.write(String.format("Content-Type: %s\r\n\r\n", contentType).getBytes());
+
+			// 获取媒体文件的输入流（读取文件）
+			BufferedInputStream bis = new BufferedInputStream(new ByteArrayInputStream(sourceBytes));
+			byte[] buf = new byte[8096];
+			int size = 0;
+			while ((size = bis.read(buf)) != -1) {
+				// 将媒体文件写到输出流（往微信服务器写数据）
+				outputStream.write(buf, 0, size);
+			}
+			// 请求体结束
+			outputStream.write(("\r\n--" + boundary + "--\r\n").getBytes());
+			outputStream.close();
+			bis.close();
+
+			// 获取媒体文件上传的输入流（从微信服务器读数据）
+			InputStream inputStream = uploadConn.getInputStream();
+			InputStreamReader inputStreamReader = new InputStreamReader(inputStream, "utf-8");
+			BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+			StringBuffer buffer = new StringBuffer();
+			String str = null;
+			while ((str = bufferedReader.readLine()) != null) {
+				buffer.append(str);
+			}
+			bufferedReader.close();
+			inputStreamReader.close();
+			// 释放资源
+			inputStream.close();
+			inputStream = null;
+			uploadConn.disconnect();
+
+			// 使用JSON-lib解析返回结果
+			JSONObject jsonObject = JSONObject.parseObject(buffer.toString());
+			recevieMedia = new RecevieMedia();
+			recevieMedia.setErrcode(jsonObject.getString("errcode"));
+			recevieMedia.setErrmsg(jsonObject.getString("errmsg"));
+			recevieMedia.setType(jsonObject.getString("type"));
+			// type等于thumb时的返回结果和其它类型不一样
+			if ("thumb".equals("voice")) {
+				recevieMedia.setMedia_id(jsonObject.getString("thumb_media_id"));
+			} else {
+				recevieMedia.setMedia_id(jsonObject.getString("media_id"));
+			}
+			recevieMedia.setCreated_at(jsonObject.getString("created_at"));
+		} catch (Exception e) {
+			e.printStackTrace();
+			recevieMedia = null;
+		}
+		return recevieMedia;
+	}
+
+	/**
+	 * 发送订单语音
+	 * 
+	 * @param hjk
+	 */
+	public static void sendOrderVideoAndMess(Order order) {
+		StringBuilder voiceString = new StringBuilder();
+		int shopId = order.getInt("SHOP_ID");
+		Record shop = Db.findFirst("SELECT `NAME`,OPENID FROM T_SHOP WHERE ID=?", shopId);
+		if (shop.get("OPENID") == null)
+			return;
+		voiceString.append(shop.getStr("NAME"));
+		voiceString.append("。");
+		JSONArray foodArray = JSONArray.parseArray(order.getStr("FOODS"));
+		for (Object tempObject : foodArray) {
+			JSONObject foodObject = (JSONObject) tempObject;
+			Record food = Db.findFirst("SELECT `NAME`,UNIT FROM T_FOOD WHERE ID=?", foodObject.get("id"));
+			voiceString.append(food.getStr("NAME"));
+			voiceString.append(foodObject.get("num"));
+			voiceString.append(food.getStr("UNIT"));
+			voiceString.append(",");
+		}
+		voiceString.append("以上就是全部商品。");
+		String fileName = order.get("ID").toString() + ".mp3";
+		BaiduSpeechUtil.synthesisToFile(voiceString.toString(), voicePath + fileName);
+		String mediaId = FileUploadUtil.postVedio(voicePath + fileName);
+		// System.out.println(recevieMedia.getMedia_id());
+		WeiXinUtils.sendMessage(shop.getStr("OPENID"), voiceString.toString());
+		WeiXinUtils.sendVoice(shop.getStr("OPENID"), mediaId);
 	}
 
 	public static ApiResult sendTemplateMessageByOpen(String orderId, String price, String couresName,

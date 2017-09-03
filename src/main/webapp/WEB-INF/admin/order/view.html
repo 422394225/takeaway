@@ -87,6 +87,14 @@
 			</div>
 		<div class="tab-pane" id="tab2">
 				<form action="#" class="form-horizontal" id="foodForm" enctype="multipart/form-data" >
+				  <div class="form-group form-group-md">
+					<label class="col-lg-3 control-label" for="formGroupInputLarge">
+					备注
+					</label>
+					<div class="col-lg-8 col-md-12">
+						<textarea name="description" class="form-control" rows="" cols="" style="height:100px"  disabled="disabled">${(REMARK)!}</textarea>
+				   </div>
+				</div>
 				</form>
 		</div>
 	</div>
@@ -129,7 +137,7 @@ $(function(){
 	    "<label class=\"col-sm-7\">分类："+n.TYPE+"</label>"+"<label class=\"col-sm-3\">"+n.COUNT+n.UNIT+"</label>"
 		"</div>"+
 		"</div>";
-		$("#foodForm").append(showDiv);
+		$("#foodForm").html(showDiv+$("#foodForm").html());
 	}
 	)
 })
