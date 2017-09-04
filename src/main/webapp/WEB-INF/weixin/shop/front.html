@@ -5,12 +5,13 @@
 <link href="${base}/resources/stylesheets/wx_front.css" rel="stylesheet" type="text/css" />
 </#assign>
 <#assign wxJavascript>
-	<script src="${base}/resources/javascripts/lay/laytpl.js" type="text/javascript"></script>
-	<script src="${base}/resources/jQuery/raty/jquery.raty.min.js" type="text/javascript"></script>
-	<script src="${base}/resources/javascripts/draggabilly.pkgd.min.js" type="text/javascript"></script>
+<script src="${base}/resources/javascripts/lay/laytpl.js" type="text/javascript"></script>
+<script src="${base}/resources/jQuery/raty/jquery.raty.min.js" type="text/javascript"></script>
+<script src="${base}/resources/javascripts/draggabilly.pkgd.min.js" type="text/javascript"></script>
 <script>
 $(function(){
     var foodTypes = new Object();
+    var imgList = new Array();
     $(".leftBar-item").each(function () {
         var typeInfo = new Object();
         typeInfo.id = $(this).attr("data-id");
@@ -21,12 +22,29 @@ $(function(){
         var offsetTop = $("#type"+typeId).position().top;
         foodTypes[typeId] = offsetTop;
         foodTypes["o-"+offsetTop] = typeId;
+
+        var imgUrl = $(this).find("img").attr("src")+"";
+        if(imgUrl.indexOf("?")>0){
+            imgUrl = imgUrl.substring(0,imgUrl.indexOf("?")-1)
+			imgList.push(imgUrl);
+        }
     })
     $(".leftBar-item").on("click",function (e) {
         setActive($(this));
         var typeId = $(this).attr("data-id");
 		$(".rightList").animate({scrollTop:foodTypes[typeId]},300);
         e.stopPropagation();
+    })
+    $(".item-content img").on("click",function (e) {
+        debugger
+        var imgUrl = $(this).attr("src")+"";
+        if(imgUrl.indexOf("?")>0){
+            imgUrl = imgUrl.substring(0,imgUrl.indexOf("?"))
+        }
+        wx.previewImage({
+            current: imgUrl, // 当前显示图片的http链接
+            urls: imgList // 需要预览的图片http链接列表
+        });
     })
 	//TODO 滚动联动分类
    /* $(".rightList").scroll(function(e) {
@@ -231,15 +249,15 @@ function showCart() {
 							<td colspan="2">
 								<span>已售${(shop.SALE_NUM)!}单</span>
 							</td>
-								<td>
-									<#assign n = 0 >
-									<#if shop.REDUCTION gt 0><#assign n+=1 ></#if>
-									<#if shop.DELIVERY_OFF gt 0><#assign n+=1 ></#if>
-									<#if shop.GIFT?? && shop.GIFT!=''><#assign n+=1 ></#if>
-									<div class="open-popover color-default" data-popup=".popover-activities" data-placement="bottom">
-										${n}个活动&nbsp;<#if n gt 0><i class="fa fa-chevron-down"></i></#if>
-									</div>
-								</td>
+							<td>
+								<#assign n = 0 >
+								<#if shop.REDUCTION gt 0><#assign n+=1 ></#if>
+								<#if shop.DELIVERY_OFF gt 0><#assign n+=1 ></#if>
+								<#if shop.GIFT?? && shop.GIFT!=''><#assign n+=1 ></#if>
+								<div class="open-popover color-default" data-popup=".popover-activities" data-placement="bottom">
+									${n}个活动&nbsp;<#if n gt 0><i class="fa fa-chevron-down"></i></#if>
+								</div>
+							</td>
 						</tr>
 					</table>
 					<div class="popover popover-activities">
@@ -287,6 +305,8 @@ function showCart() {
 			<div class="cartFoot"><button id="payCart" class="button button-danger bg-danger buy" style="padding: 0 7rem;margin-bottom: .5em">结账</button></div>
 		</div>
 	</div>
+	<!-- 用于显示组件的容器 -->
+	<div class="overlay" id="overlay"></div>
 </div>
 <script id="food-tpl" type="text/html">
 	<div class="content-block-title" id="type{{d.typeInfo.id}}" style="margin:.75rem .75rem .5rem">
