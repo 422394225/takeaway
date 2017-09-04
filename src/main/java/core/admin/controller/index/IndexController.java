@@ -1,10 +1,17 @@
 package core.admin.controller.index;
 
+import java.util.List;
+
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Clear;
 import com.jfinal.core.Controller;
+import com.jfinal.kit.PropKit;
 
 import core.interceptor.AdminLoginInterceptor;
 import core.interceptor.PowerInterceptor;
+import core.model.Delivery;
+import core.model.Shop;
 import core.utils.SecurityCodeTool;
 
 /**
@@ -16,58 +23,36 @@ import core.utils.SecurityCodeTool;
  */
 public class IndexController extends Controller {
 
+	public void getShopPlaceDot() {
+		JSONArray result = new JSONArray();
+		List<Delivery> shops = Delivery.dao.find("select ID,`NAME`,LONGITUDE,LATITUDE from t_shop where state>-1");
+		for (Delivery shop : shops) {
+			JSONObject jsonObject = new JSONObject();
+			jsonObject.put("NAME", shop.get("NAME"));
+			jsonObject.put("ID", shop.get("ID"));
+			JSONArray place = new JSONArray();
+			place.add(shop.get("LONGITUDE"));
+			place.add(shop.get("LATITUDE"));
+			jsonObject.put("PLACE", place);
+			result.add(jsonObject);
+		}
+		renderJson(result);
+
+	}
+
 	public void index() {
-		/*
-		 * String JsonData=""; //获取昨天的日期 Data data = new Data(); Calendar cal =
-		 * Calendar.getInstance(); cal.add(Calendar.DATE, -1); SimpleDateFormat
-		 * format = new SimpleDateFormat("yyyy-MM-dd"); String date
-		 * =format.format(cal.getTime()).toString(); //根据日期获取周几 周一到周日0-6 int w =
-		 * cal.get(Calendar.DAY_OF_WEEK)-2; if (w==-1) { w=6; }
-		 * 
-		 * InterfaceAnalysisApi iApi = new InterfaceAnalysisApi();
-		 * ApiConfigKit.setThreadLocalApiConfig(getApiConfig());
-		 * 
-		 * //用于存放七天数据 List<Data> list = new ArrayList<>();
-		 * 
-		 * //从数据库查询昨天数据，如果为空则从api获取 List<Data> yesterday =
-		 * Data.dao.find("select * from t_data where REF_DATE= ?",date); if
-		 * (yesterday.isEmpty()) { ApiResult apiResult =
-		 * iApi.getInterfaceSummaryHour();
-		 * 
-		 * 
-		 * List<Map<String, Object>> apiList = (List<Map<String, Object>>)
-		 * apiResult.get("list");
-		 * 
-		 * if (!apiList.isEmpty()) { for (Map<String, Object> map : apiList) {
-		 * data.set("ID", UUID.randomUUID().toString().replace("-", ""));
-		 * data.set("REF_DATE",(String)map.get("ref_date"));
-		 * data.set("REF_HOUR",(Integer)map.get("ref_hour")/100);
-		 * data.set("WEEK", w);
-		 * data.set("CALLBACK_COUNT",(Integer)map.get("callback_count"));
-		 * data.save(); } }else { data.set("ID",
-		 * UUID.randomUUID().toString().replace("-", "")); data.set("WEEK", w);
-		 * data.set("REF_DATE",date); data.save(); }
-		 * 
-		 * list.clear();
-		 * 
-		 * }
-		 * 
-		 * //根据数据库每条信息的创建时间查询前一周的数据 list = Data.dao.
-		 * find("SELECT * FROM t_data WHERE CREATE_TIME> DATE_ADD(NOW(),INTERVAL -6 DAY)"
-		 * ); //初始化数据 Map<String ,String> rs = new TreeMap<>(); for(int
-		 * i=0;i<7;i++){ for(int j=0;j<24;j++){
-		 * rs.put(""+i+j,"["+i+","+j+",0]"); } } //处理数据 for(Data d:list){ String
-		 * week =""+d.<Integer>get("WEEK"); String hour =
-		 * ""+d.<Integer>get("REF_HOUR");
-		 * rs.put(week+hour,"["+week+","+hour+","+d.<Integer>get(
-		 * "CALLBACK_COUNT")+"]");
-		 * 
-		 * 
-		 * } for(String key:rs.keySet()){ JsonData+=rs.get(key)+","; }
-		 * JsonData="["+JsonData+"]";
-		 * 
-		 * setAttr("data", JsonData);
-		 */
+		setAttr("amapKey", PropKit.get("amap.key"));
+		List<Shop> shops = Shop.dao.find("select LONGITUDE,LATITUDE from t_shop where state>-1");
+		double LONGITUDE = 0;
+		double LATITUDE = 0;
+		for (Shop shop : shops) {
+			LONGITUDE += shop.getDouble("LONGITUDE");
+			LATITUDE += shop.getDouble("LATITUDE");
+		}
+		LONGITUDE /= shops.size();
+		LATITUDE /= shops.size();
+		setAttr("LONGITUDE", LONGITUDE);
+		setAttr("LATITUDE", LATITUDE);
 		render("index.html");
 	}
 
