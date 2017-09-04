@@ -32,7 +32,7 @@ $(function(){
     $(".item-content img").each(function () {
         var imgUrl = $(this).attr("src")+"";
         if(imgUrl.indexOf("?")>0){
-            imgUrl = imgUrl.substring(0,imgUrl.indexOf("?")-1)
+            imgUrl = imgUrl.substring(0,imgUrl.indexOf("?"))
             imgList.push(imgUrl);
         }
     })
