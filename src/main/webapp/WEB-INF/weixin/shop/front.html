@@ -11,7 +11,6 @@
 <script>
 $(function(){
     var foodTypes = new Object();
-    var imgList = new Array();
     $(".leftBar-item").each(function () {
         var typeInfo = new Object();
         typeInfo.id = $(this).attr("data-id");
@@ -22,18 +21,20 @@ $(function(){
         var offsetTop = $("#type"+typeId).position().top;
         foodTypes[typeId] = offsetTop;
         foodTypes["o-"+offsetTop] = typeId;
-
-        var imgUrl = $(this).find("img").attr("src")+"";
-        if(imgUrl.indexOf("?")>0){
-            imgUrl = imgUrl.substring(0,imgUrl.indexOf("?")-1)
-			imgList.push(imgUrl);
-        }
     })
     $(".leftBar-item").on("click",function (e) {
         setActive($(this));
         var typeId = $(this).attr("data-id");
 		$(".rightList").animate({scrollTop:foodTypes[typeId]},300);
         e.stopPropagation();
+    })
+    var imgList = new Array();
+    $(".item-content img").each(function () {
+        var imgUrl = $(this).attr("src")+"";
+        if(imgUrl.indexOf("?")>0){
+            imgUrl = imgUrl.substring(0,imgUrl.indexOf("?")-1)
+            imgList.push(imgUrl);
+        }
     })
     $(".item-content img").on("click",function (e) {
         debugger
