@@ -6,6 +6,7 @@
 </#assign>
 <#assign wxJavascript>
 <script src="${base}/resources/javascripts/lay/laytpl.js" type="text/javascript"></script>
+<script src="${base}/resources/javascripts/lay/layer.js" type="text/javascript"></script>
 <script src="${base}/resources/jQuery/raty/jquery.raty.min.js" type="text/javascript"></script>
 <script src="${base}/resources/javascripts/draggabilly.pkgd.min.js" type="text/javascript"></script>
 <script>
@@ -115,6 +116,10 @@ $(function(){
     function closeCart() {
         $(".cartDetail").hide();
     }
+    layer.tips('选好后点我付款哦', '#cart', {
+        tips: [1, '#3595CC'],
+        time: 4000
+    });
 })
 function dealBtn(id,op) {
     var cartOp = $(".cartOp[data-id='"+id+"']");
@@ -172,7 +177,7 @@ function dealCart(){
     //餐盘数量显示
     $("#cart .count").text(totalCount);
     //餐盘价格显示
-    $("#cart .pay").text(totalPrize);
+    $("#cart .prize").text(totalPrize);
     //餐盘详情显示
 
     if(html==""){
@@ -211,6 +216,7 @@ function renderFood(info) {
 function showCart() {
 	$(".cartDetail").css("display","inline-block");
     $("#cart").animate({top:"1rem",left:"1rem"},300);
+    $(".layui-layer-tips").remove();
 }
 </script>
 </#assign>
@@ -293,9 +299,9 @@ function showCart() {
 			<div class="rightList"></div>
 		</div>
 	</div>
-	<div id="cart">
+	<div id="cart" title="点击结账">
 		<div class="color-primary count" onclick="showCart();">0</div>
-		<div class="color-warning amount" onclick="showCart();">￥<span class="pay">0</span></div>
+		<div class="color-warning amount" onclick="showCart();">￥<span class="prize">0</span></div>
 		<div class="cartDetail" style="display: none">
 			<div class="cartDetailTitle">
 				<span class="fa fa-cutlery color-primary" style="margin-right: 6rem">&nbsp;已选美食</span>

@@ -3,7 +3,7 @@
 	top:0;
 	left: 0;
 	right: 0;
-	bottom: 70%;
+	bottom: 75%;
 	background-image: url("../images/shop_bg.png");
 	background-size: cover;
 }
@@ -12,7 +12,7 @@
 	background-size: cover;
 }
 .topContainer {
-	padding: 3%;
+	padding: .5em;
 	text-align: left;
 	vertical-align: middle;
 	font-size: .6rem;
@@ -28,7 +28,7 @@
 }
 .leftBar{
 	position: absolute;
-	top: 30%;
+	top: 25%;
 	left: 0;
 	bottom: 0;
 	width: 25%;
@@ -57,7 +57,7 @@
 	position: absolute;
 	left: 25%;
 	right: 0;
-	top: 30%;
+	top: 25%;
 	bottom: 0;
 	overflow-y: scroll;
 }
@@ -147,4 +147,10 @@
 }
 .cartFoot{
 	text-align: center;
+}
+.pay{
+	position: relative;
+	width: 16rem;
+	padding: .3em;
+	line-height: 2em;
 }
