@@ -151,6 +151,9 @@ $(function(){
 		$("#"+currentTabId+"InfiniteScroll").html("<div class=\"preloader\"></div>");
 	})
 })
+function goto(url) {
+	window.location.href=url;
+}
 </script>
 </#assign>
 <@mainLayout wxTitle="首页"  wxMeta=wxMeta wxCss=wxCss wxJavascript=wxJavascript>
@@ -177,13 +180,18 @@ $(function(){
 			</div>
 			</div>
 		</div>
+		<#if banners??>
 		<div class="swiper-container" style="height: 30%;background-color: white;">
 		  <div class="swiper-wrapper">
-	    	<div class="swiper-slide"> <img src="http://lorempixel.com/1200/1200/nature/1"></div>
-	        <div class="swiper-slide"> <img src="http://lorempixel.com/1200/1200/nature/2"></div>
+			  <#list banners as banner>
+	    		<div class="swiper-slide">
+					<a href="javascript:void(0);" onclick="goto('${(banner.LINK)}')"><img src="${(banner.IMG_URL)}"></a>
+				</div>
+			  </#list>
 		  </div>
 		  <div class="swiper-pagination"></div>
 		</div>
+		</#if>
 		<div class="pageContent bg-default">
 		<table id="typeTable">
 		</table>

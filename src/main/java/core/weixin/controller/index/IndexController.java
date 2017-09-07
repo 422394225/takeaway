@@ -3,7 +3,11 @@ package core.weixin.controller.index;
 import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
 
+import com.jfinal.plugin.activerecord.Db;
 import core.interceptor.JSSDKInterceptor;
+import core.model.Banner;
+
+import java.util.List;
 
 /**
  * 
@@ -16,6 +20,8 @@ public class IndexController extends Controller {
 
 	@Before(JSSDKInterceptor.class)
 	public void index() {
+		List<Banner> banners = Banner.dao.find(Db.getSql("banner.getActive"));
+		setAttr("banners",banners);
 		render("index.html");
 	}
 

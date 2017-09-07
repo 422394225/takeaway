@@ -269,3 +269,9 @@
 		#end
 	#end
 #end
+
+#namespace("banner")
+	#sql("getActive")
+	  SELECT * FROM t_banner WHERE DELETED=0
+  #end
+#end
