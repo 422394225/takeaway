@@ -98,7 +98,6 @@ public class ShopController extends BaseController {
 
 	@Override
 	public void index() {
-		// TODO Auto-generated method stub
 		super.index();
 		String shopId = getCookie("shopId");
 		setAttr("shopId", shopId);

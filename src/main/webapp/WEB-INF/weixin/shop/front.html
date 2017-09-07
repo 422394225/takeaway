@@ -99,7 +99,7 @@ $(function(){
                 resetCart();
             });
         }else if(id=='payCart'){
-
+            window.location.href="${base}/wx/order/payList?openId="+WxStore.user.getParams("openId");
         }
 		else{
             showCart();
@@ -299,7 +299,7 @@ function showCart() {
 			<div class="rightList"></div>
 		</div>
 	</div>
-	<div id="cart" title="点击结账">
+	<div id="cart" title="点击结算">
 		<div class="color-primary count" onclick="showCart();">0</div>
 		<div class="color-warning amount" onclick="showCart();">￥<span class="prize">0</span></div>
 		<div class="cartDetail" style="display: none">
@@ -309,7 +309,9 @@ function showCart() {
 				<button id="closeDetail" class="close button button-light" style="display: inline-block;">关闭</button>
 			</div>
 			<div class="cartDetailContent"></div>
-			<div class="cartFoot"><button id="payCart" class="button button-danger bg-danger buy" style="padding: 0 7rem;margin-bottom: .5em">结账</button></div>
+			<div class="cartFoot">
+				<button id="payCart" class="button button-danger bg-danger buy" style="padding: 0 7rem;margin-bottom: .5em">结算</button>
+			</div>
 		</div>
 	</div>
 	<!-- 用于显示组件的容器 -->

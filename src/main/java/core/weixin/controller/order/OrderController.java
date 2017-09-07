@@ -5,11 +5,16 @@
 
 package core.weixin.controller.order;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.jfinal.kit.HttpKit;
+import com.jfinal.plugin.ehcache.CacheKit;
+import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
@@ -48,6 +53,84 @@ public class OrderController extends WeixinMsgController {
 		User user = User.dao.findById(openid);
 		setAttr("user", user);
 		render("index.html");
+	}
+
+	public void payList() throws UnsupportedEncodingException {
+		String id = getPara("openId");
+		if(StringUtils.isNotEmpty(id) && !"unndefined".equals(id)){
+			User user = User.dao.findById(id);
+			if(user!=null){
+				setAttr("user",user);
+				render("payList.html");
+				return;
+			}
+		}
+		redirect("/wx/tools/info?info="+ URLEncoder.encode("用户信息获取失败！","UTF-8"));
+	}
+
+	public void ajaxPreOrder(){
+		JSONObject request = JSONObject.parseObject(HttpKit.readData(getRequest()));
+		String openId = request.getString("openId");
+		JSONObject result = new JSONObject();
+		Order order = new Order();
+		order.set("USER_ID",openId);
+		if(StringUtils.isNotEmpty(openId)){
+			CacheKit.remove("preOrder",openId);//清空缓存
+			JSONObject foodInfo = request.getJSONObject("foods");
+			if(foodInfo.size()>0){
+				double totalPrice = 0;
+				Integer shopId = null;
+				JSONArray tmpArray = new JSONArray();
+				for(String key:foodInfo.keySet()){
+					int num;
+					if(StringUtils.isNumeric(key) && (num=Integer.valueOf(key))>0){
+						Food food = Food.dao.findById(key);
+						if(food!=null){
+							if(order.get("SHOP_ID")==null){//初始化shopID
+								order.set("SHOP_ID",shopId=food.get("SHOP_ID"));
+							}
+
+							double price = food.getDouble("PRICE");
+							totalPrice+=price*num;
+						}else{
+							renderJson(new JSONError("订单中含有已下架/删除的商品，请重新选购"));
+						}
+
+						JSONObject tmpJson = new JSONObject();
+						tmpJson.put("id",key);
+						tmpJson.put("num",num);
+						tmpArray.add(tmpJson);
+					}
+				}
+				Shop shop = Shop.dao.findById(shopId);
+				if(shop!=null){
+					totalPrice += shop.getDouble("DELIVERY_PRICE");
+					order.set("TOTAL_PRICE",totalPrice);
+					//优惠计算
+					if (shop.getDouble("DELIVERY_OFF_THRESHOLD") != null && shop.getDouble("DELIVERY_OFF_THRESHOLD") != 0
+							&& totalPrice > shop.getDouble("DELIVERY_OFF_THRESHOLD")) {
+						totalPrice -= shop.getDouble("DELIVERY_OFF");
+					}
+					if (shop.getDouble("REDUCTION_THRESHOLD") != null && shop.getDouble("REDUCTION_THRESHOLD") != 0
+							&& totalPrice > shop.getDouble("REDUCTION_THRESHOLD")) {
+						totalPrice -= shop.getDouble("REDUCTION");
+					}
+					order.set("PAY_PRICE", totalPrice);
+				}else{
+					renderJson(new JSONError("您选的商品所在的店铺不存在哦~"));
+				}
+				order.set("FOODS",tmpArray.toJSONString());
+				CacheKit.put("preOrder",openId,order);//更新缓存
+				result.put("SHOP_NAME",shop.getStr("NAME"));
+				result.put("SHOP_LOGO",shop.getStr("IMG"));
+				result.put("PRE_ORDER",JSONObject.parseObject(order.toJson()));
+				renderJson(new JSONSuccess(result));
+			}else{
+				renderJson(new JSONError("您还没有选择任何美食哦~"));
+			}
+		}else{
+			renderJson(new JSONError("没有获取到openId"));
+		}
 	}
 
 	//
@@ -94,41 +177,34 @@ public class OrderController extends WeixinMsgController {
 	public void createOrder() {
 		/** 返回的json */
 		JSONObject result = new JSONObject();
-		String userid = getPara("userid");
-		setAttr("userid", userid);
-		Integer shopid = getParaToInt("shopid");
+		String openId = getPara("openId");
+//		setAttr("userid", openId);
+//		Integer shopId = getParaToInt("shopid");
 		String userAddress = getPara("userAddress");
 		String userTel = getPara("userTel");
 		String userName = getPara("userName");
-		Shop shop = Shop.dao.findById(shopid);
-		JSONArray foodArray = JSONArray.parseArray(getPara("foods"));
+//		JSONArray foodArray = JSONArray.parseArray(getPara("foods"));
 		/** 计算价格 */
-		double totalPrice = 0;
-		for (Object object : foodArray) {
-			JSONObject foodObject = (JSONObject) object;
-			Food food = Food.dao.findById(foodObject.get("id"));
-			totalPrice += food.getDouble("PRICE") * foodObject.getIntValue("num");
-		}
-		double tempTotalPrice = totalPrice;
-		if (shop.getDouble("DELIVERY_OFF_THRESHOLD") != null && shop.getDouble("DELIVERY_OFF_THRESHOLD") != 0
-				&& tempTotalPrice > shop.getDouble("DELIVERY_OFF_THRESHOLD")) {
-			totalPrice -= shop.getDouble("DELIVERY_OFF");
-		}
-		if (shop.getDouble("REDUCTION_THRESHOLD") != null && shop.getDouble("REDUCTION_THRESHOLD") != 0
-				&& tempTotalPrice > shop.getDouble("REDUCTION_THRESHOLD")) {
-			totalPrice -= shop.getDouble("REDUCTION");
-		}
-		totalPrice += shop.getDouble("DELIVERY_PRICE");
+//		double totalPrice = 0;
+//		for (Object object : foodArray) {
+//			JSONObject foodObject = (JSONObject) object;
+//			Food food = Food.dao.findById(foodObject.get("id"));
+//			totalPrice += food.getDouble("PRICE") * foodObject.getIntValue("num");
+//		}
+//		Shop shop = Shop.dao.findById(shopId);
+//		double tempTotalPrice = totalPrice;
+//		if (shop.getDouble("DELIVERY_OFF_THRESHOLD") != null && shop.getDouble("DELIVERY_OFF_THRESHOLD") != 0
+//				&& tempTotalPrice > shop.getDouble("DELIVERY_OFF_THRESHOLD")) {
+//			totalPrice -= shop.getDouble("DELIVERY_OFF");
+//		}
+//		if (shop.getDouble("REDUCTION_THRESHOLD") != null && shop.getDouble("REDUCTION_THRESHOLD") != 0
+//				&& tempTotalPrice > shop.getDouble("REDUCTION_THRESHOLD")) {
+//			totalPrice -= shop.getDouble("REDUCTION");
+//		}
+//		totalPrice += shop.getDouble("DELIVERY_PRICE");
 		/** 新建订单 **/
-		Order order = new Order();
-		order.set("SHOP_ID", shopid);
-		order.set("USER_ID", userid);
+		Order order = CacheKit.get("preOrder",openId);
 		order.set("FOODS", getPara("foods"));
-		order.set("ORDER_STATE", 1);
-		order.set("PAY_STATE", 0);
-		order.set("TOTAL_PRICE", tempTotalPrice);
-		order.set("PAY_PRICE", totalPrice);
-		order.set("CREATE_TIME", new Date());
 		order.set("USER_ADDRESS", userAddress);
 		order.set("USER_TEL", userTel);
 		order.set("USER_NAME", userName);
@@ -144,11 +220,11 @@ public class OrderController extends WeixinMsgController {
 		keyMap.put("body", "订单支付");
 		keyMap.put("out_trade_no", order.getInt("ID") + "");
 		keyMap.put("fee_type", "CNY");
-		keyMap.put("total_fee", ((int) (totalPrice * 100)) + "");
+		keyMap.put("total_fee", order.getInt("PAY_PRICE")*100+"");
 		keyMap.put("spbill_create_ip", PropKit.get("spbill_create_ip"));
 		keyMap.put("notify_url", PropKit.get("server.address") + "/wx/orderRecieve/orderPayed");
 		keyMap.put("trade_type", "JSAPI");
-		keyMap.put("openid", userid);
+		keyMap.put("openid", openId);
 		keyMap.put("sign", WeiXinUtils.getSign(keyMap));
 		String paraXml = new String(WeiXinUtils.callMapToXML(keyMap));
 		System.out.println(paraXml);

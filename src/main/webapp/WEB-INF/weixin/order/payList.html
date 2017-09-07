@@ -1,0 +1,112 @@
+<#include "../base/main/_main.html"/>
+<#assign wxMeta>
+</#assign>
+<#assign wxCss>
+	<link href="${base}/resources/stylesheets/wx_payList.css" rel="stylesheet" type="text/css" />
+</#assign>
+<#assign wxJavascript>
+</#assign>
+<@mainLayout wxTitle="订单结算"  wxMeta=wxMeta wxCss=wxCss wxJavascript=wxJavascript>
+<div class="page page-current">
+	<header class="bar bar-nav">
+		<a class="icon icon-left pull-left color-default" href="javascript:void(0);" onclick="javascript:history.go(-1);"></a>
+		<img src="${base}/resources/images/logo-text.png" class="pull-right" style="width: 2rem;">
+		<h1 class="title  color-default">订单结算</h1>
+	</header>
+	<table class="infoTable">
+		<tr>
+			<td rowspan="2"><i class="fa fa-map-marker color-primary"></i></td>
+			<td>
+				<#if (user.NAME)! == ''>
+					姓名未填写
+					<#else>
+						${(user.NAME)!}
+				</#if>
+			</td>
+			<td>
+				<#if (user.SEX)! == 1>
+					先生
+					<#elseif (user.SEX)! == 2>
+						女士
+						<#else>
+				</#if>
+			</td>
+			<td>
+				<#if (user.PHONE)! == ''>
+					手机号未填写
+					<#else>
+						${(user.NAME)!}
+				</#if>
+			</td>
+			<td rowspan="2"><i class="fa fa-chevron-right color-primary"></i></td>
+		</tr>
+		<tr>
+			<td colspan="3">
+				<#if (user.PHONE)! == ''>
+					地址未填写
+					<#else>
+						${(user.NAME)!}
+				</#if>
+			</td>
+		</tr>
+	</table>
+	<div class="list-block" onclick="javascript:$.alert('暂不支持其他支付方式')">
+		<ul>
+			<li class="item-content item-link">
+				<div class="item-media"><i class="fa fa-wechat color-success"></i></div>
+				<div class="item-inner">
+					<div class="item-title">
+						支付方式
+					</div>
+					<div class="item-after">微信支付</div>
+				</div>
+			</li>
+		</ul>
+	</div>
+	<button onclick="createOrder()">提交预订单</button>
+</div>
+</@mainLayout>
+<script>
+$(function () {
+	Kit.post(
+		"${base}/wx/order/ajaxPreOrder",
+		JSON.stringify({openId:WxStore.user.getParams("openId"),foods:WxStore.cart.get()}),
+		function(msg,data){
+		    debugger
+		},function (msg,data) {
+			$.alert(msg)
+        }
+	);
+})
+if (typeof WeixinJSBridge == "undefined"){
+	   if( document.addEventListener ){
+	       document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
+	   }else if (document.attachEvent){
+	       document.attachEvent('WeixinJSBridgeReady', onBridgeReady); 
+	       document.attachEvent('onWeixinJSBridgeReady', onBridgeReady);
+	   }
+	}else{
+	   onBridgeReady();
+	}
+function createOrder(){
+$.post("wx/order/createOrder",{userid:"${user.ID}",shopid:"2",userAddress:"address",userTel:"tel",userName:"username",foods:"[{id:26,num:1},{id:32,num:2}]"},function(result){
+    $("#sss").html(result.error);
+	if(result.error==false){
+	    WeixinJSBridge.invoke(
+   	       'getBrandWCPayRequest', {
+   	           "appId":result.data.appId,     //公众号名称，由商户传入     
+   	           "timeStamp":result.data.timeStamp,         //时间戳，自1970年以来的秒数     
+   	           "nonceStr":result.data.nonceStr, //随机串     
+   	           "package":result.data.package1,     
+   	           "signType":result.data.signType,         //微信签名方式：     
+   	           "paySign":result.data.paySign //微信签名 
+   	       },
+   	       function(res){
+   	           if(res.err_msg == "get_brand_wcpay_request:ok" ) {}     // 使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回    ok，但并不保证它绝对可靠。 
+   	       }
+   	   ); 
+	}
+	}
+  );
+}
+</script>

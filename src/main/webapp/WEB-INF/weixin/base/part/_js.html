@@ -1,6 +1,7 @@
 <!-- Javascripts -->
 <script src="${base}/resources/jQuery/jquery-1.9.1.min.js" type="text/javascript"></script>
 <script src="${base}/resources/javascripts/Kit_Wx.js" type="text/javascript"></script>
+<script src="${base}/resources/javascripts/WxStore.js" type="text/javascript"></script>
 <script>
 $.config = {
 	autoInit: true 
@@ -9,7 +10,7 @@ function closeWxWin(){
 	try{
 		WeixinJSBridge.call('closeWindow');
 	}catch(e){
-		$.alert("WeixinJSBridge.call('closeWindow');执行失败！当前可能为非微信浏览器。")
+		$.alert("关闭窗口执行失败！当前可能为非微信浏览器。请手动关闭。")
 	}
 }
 function newWinInfo(info){
@@ -23,11 +24,6 @@ $(function(){
 			},400);
 		});
 })
-function openWin(url){
-	var APPID = 'wxa78f4c350a06e3c4';
-	var oauth = 'http://takeaway.ngrok.cc/oauth';
-	var target = "https://open.weixin.qq.com/connect/oauth2/authorize?appid="+APPID+"&redirect_uri="+encodeURI(oauth)+"&response_type=code&scope=snsapi_base&state="+encodeURI(url)+"#wechat_redirect";
-}
 initUser();
 //初始化用户信息
 function initUser(){

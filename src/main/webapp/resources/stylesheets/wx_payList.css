@@ -1,0 +1,18 @@
+header {
+    background-image: url("../images/shop_bg.png");
+    background-size: cover;
+}
+.list-block{
+    margin: 0.75rem 0;
+}
+.infoTable{
+    width: 100%;
+    margin-top: 2.2rem;
+    background: white;
+    min-height: 4em;
+    border-bottom: 1px solid #0894ec;
+}
+.infoTable td[rowspan='2']{
+    min-width: 1.5em;
+    text-align: center;
+}

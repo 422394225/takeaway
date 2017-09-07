@@ -19,7 +19,7 @@ import core.weixin.controller.WeixinMsgController;
 /**
  * Description:
  * 
- * @author weifaguo
+ * @author hongjk
  * @date 2017年7月24日下午10:03:40
  */
 
