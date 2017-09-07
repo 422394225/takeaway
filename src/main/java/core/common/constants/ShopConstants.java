@@ -17,6 +17,11 @@ public class ShopConstants {
     }
 
     public static String getValue(String key){
-        return map.get(key);
+        return getValue(key,"");
+    }
+
+    public static String getValue(String key,String defaultValue){
+        String value = map.get(key);
+        return value==null?defaultValue:value;
     }
 }

@@ -332,7 +332,7 @@ public class ShopController extends BaseController {
 				renderJson(new JSONSuccess(shops));
 			}
 		} else {
-			renderJson(new JSONError("暂时没有"+ShopConstants.getValue(flag)+"哦"));
+			renderJson(new JSONError("暂时没有找到"+ShopConstants.getValue(flag,"")+"哦"));
 		}
 	}
 
