@@ -299,8 +299,10 @@ public class ShopController extends BaseController {
 				Record collections = Db.findFirst(Db.getSql("user.getCollections"), openId);
 				if (collections != null) {
 					String collectionsStr = collections.getStr("COLLECTION");
-					String sqlParams = "'" + collectionsStr.replace(",", "','") + "'";
-					sqlPara = Db.getSqlPara("shop.inId", Kv.by("inParams", sqlParams));
+					if(StringUtils.isNotEmpty(collectionsStr)){
+						String sqlParams = "'" + collectionsStr.replace(",", "','") + "'";
+						sqlPara = Db.getSqlPara("shop.inId", Kv.by("inParams", sqlParams));
+					}
 				}
 				break;
 			}
@@ -330,7 +332,7 @@ public class ShopController extends BaseController {
 				renderJson(new JSONSuccess(shops));
 			}
 		} else {
-			renderJson(new JSONError(ShopConstants.getValue(flag) + "加载失败！"));
+			renderJson(new JSONError("暂时没有"+ShopConstants.getValue(flag)+"哦"));
 		}
 	}
 

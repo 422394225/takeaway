@@ -4,15 +4,11 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.kit.PropKit;
 import com.jfinal.log.Log;
-import com.jfinal.weixin.sdk.api.ApiConfig;
-import com.jfinal.weixin.sdk.api.ApiConfigKit;
-import com.jfinal.weixin.sdk.api.ApiResult;
-import com.jfinal.weixin.sdk.api.SnsAccessToken;
-import com.jfinal.weixin.sdk.api.SnsAccessTokenApi;
-import com.jfinal.weixin.sdk.api.SnsApi;
+import com.jfinal.weixin.sdk.api.*;
 import com.jfinal.weixin.sdk.jfinal.ApiController;
 
-import core.vo.JSONError;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 /**
  * @author Javen 2015年12月5日下午2:20:44
@@ -59,8 +55,17 @@ public class WeiXinOauthController extends ApiController {
 			JSONObject jsonObject = new JSONObject();
 			jsonObject.put("openId", openId);
 
-			if (openId == null) {
-				renderJson(new JSONError());
+			if (openId == null) {//没获取到重试
+				String oauthUrl = null;
+				String stateUrl = null;
+				try {
+					oauthUrl = URLEncoder.encode(PropKit.get("server.address")+"/oauth","UTF-8");
+					stateUrl = URLEncoder.encode(state,"UTF-8");
+				} catch (UnsupportedEncodingException e) {
+					e.printStackTrace();
+				}
+				String url = "https://open.weixin.qq.com/connect/oauth2/authorize?appid="+appId+"&redirect_uri="+oauthUrl+"&response_type=code&scope=snsapi_base&state="+stateUrl+"#wechat_redirect";
+				redirect(url);
 			} else {
 				getRequest().setAttribute("openId", openId);
 				forwardAction(state);

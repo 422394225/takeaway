@@ -70,21 +70,11 @@ public class WeixinMsgController extends MsgControllerAdapter {
 			String url = "http://wpa.qq.com/msgrd?v=3&uin=1472405080&site=qq&menu=yes";
 			String urlStr = "<a href=\"" + url + "\">点击咨询</a>";
 			renderOutTextMsg("QQ在线咨询" + urlStr);
-		} else if (msgContent.equals("微信支付")) {
-			String url = "http://javen.ngrok.natapp.cn/pay?openId=o_pncsidC-pRRfCP4zj98h6slREw";
-			String urlStr = "<a href=\"" + url + "\">微信支付测试</a>";
-			renderOutTextMsg(urlStr);
 		} else if (msgContent.equals("微信支付测试")) {
 			String url = "http://javen.ngrok.natapp.cn/paytest?openId=o_pncsidC-pRRfCP4zj98h6slREw";
 			String urlStr = "<a href=\"" + url + "\">微信支付测试</a>";
 			renderOutTextMsg(urlStr);
-		} else if (msgContent.equals("8")) {
-			String calbackUrl = PropKit.get("domain") + "/oauth";
-			String url = SnsAccessTokenApi.getAuthorizeURL(PropKit.get("appId"), calbackUrl, "111", false);
-			String urlStr = "<a href=\"" + url + "\">点击我授权</a>";
-			System.out.println("urlStr " + urlStr);
-			renderOutTextMsg("授权地址" + urlStr);
-		} else if ("jssdk".equalsIgnoreCase(msgContent)) {
+		}  else if ("jssdk".equalsIgnoreCase(msgContent)) {
 			String url = PropKit.get("domain") + "/jssdk";
 			String urlStr = "<a href=\"" + url + "\">JSSDK</a>";
 			renderOutTextMsg("地址" + urlStr);
