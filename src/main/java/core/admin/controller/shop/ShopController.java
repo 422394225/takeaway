@@ -5,6 +5,13 @@
 
 package core.admin.controller.shop;
 
+import java.io.File;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang3.StringUtils;
+
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Clear;
@@ -14,6 +21,7 @@ import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
+
 import core.admin.controller.base.BaseController;
 import core.admin.service.audit.AuditService;
 import core.admin.service.audit.impl.AuditServiceImpl;
@@ -32,12 +40,6 @@ import core.validate.ShopValidate;
 import core.vo.DTParams;
 import core.vo.JSONError;
 import core.vo.JSONSuccess;
-import org.apache.commons.lang3.StringUtils;
-
-import java.io.File;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Description:
@@ -89,6 +91,36 @@ public class ShopController extends BaseController {
 		result.put("data", list);
 		result.put("recordsFiltered", shopType.getTotalRow());
 		renderJson(result);
+	}
+
+	public void doBusiness() {
+		try {
+			Integer shopId = getParaToInt("shopId");
+			int result = Db.update("UPDATE T_SHOP SET STATE=2 WHERE ID=? AND STATE=0", shopId);
+			if (result == 0) {
+				renderText("不存在店家或店家状态错误");
+				return;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			renderText("操作失败");
+		}
+		renderText("success");
+	}
+
+	public void rest() {
+		try {
+			Integer shopId = getParaToInt("shopId");
+			int result = Db.update("UPDATE T_SHOP SET STATE=0 WHERE ID=? AND STATE=2", shopId);
+			if (result == 0) {
+				renderText("不存在店家或店家状态错误");
+				return;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			renderText("操作失败");
+		}
+		renderText("success");
 	}
 
 	public void add() {
@@ -179,7 +211,7 @@ public class ShopController extends BaseController {
 		shop.set("REDUCTION", getParaToDouble("redution"));
 		shop.set("GIFT_THRESHOLD", getParaToDouble("giftThreshold"));
 		shop.set("GIFT", getPara("gift"));
-		//先设置默认图片防止没上传的
+		// 先设置默认图片防止没上传的
 		String defaultImg = getPara("defaultImg");
 		if (StringUtils.isNotEmpty(defaultImg)) {
 			shop.set("IMG", defaultImg);
@@ -191,7 +223,7 @@ public class ShopController extends BaseController {
 			if (file != null) {
 				String localFilePath = file.getUploadPath() + File.separator + file.getFileName();
 				String path = QiniuUtils.upload(localFilePath);
-				String crop = getPara("crop");//截图参数
+				String crop = getPara("crop");// 截图参数
 				shop.set("IMG", path + (StringUtils.isNotEmpty(crop) ? crop : ""));
 			}
 		} catch (Exception e) {
@@ -246,7 +278,7 @@ public class ShopController extends BaseController {
 		renderJson(result);
 	}
 
-	//修改密码
+	// 修改密码
 	@Clear(PowerInterceptor.class)
 	@Before({ ModPassValidate.class })
 	public void modPass() {

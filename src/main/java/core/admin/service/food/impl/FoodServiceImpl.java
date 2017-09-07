@@ -53,14 +53,14 @@ public class FoodServiceImpl extends DataTableServiceImpl implements FoodService
 	@Override
 	public boolean existFoodType(int shopId, String type) {
 		FoodType foodType = FoodType.dao
-				.findFirst("select * from t_food_type where name=? and shop_id=? and a.deleted!=1", type, shopId);
+				.findFirst("select * from t_food_type where name=? and shop_id=? and deleted!=1", type, shopId);
 		return foodType != null;
 	}
 
 	@Override
 	public FoodType findFoodType(String shopId, String type) {
 		FoodType foodType = FoodType.dao
-				.findFirst("select * from t_food_type where name=? and shop_id=? and a.deleted!=1", type, shopId);
+				.findFirst("select * from t_food_type where name=? and shop_id=? and deleted!=1", type, shopId);
 		return foodType;
 	}
 
