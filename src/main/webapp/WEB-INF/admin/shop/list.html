@@ -79,7 +79,14 @@
 	            "targets": -1,
 	            "data": null,
 	            "render": function(data, type, row) {
-            		return "<button class='edit btn btn-info btn-xs' title='编辑'><i class='fa fa-edit'></i></button>"+
+	            	var stateIcon="";
+	            	if(row["STATE"]==0){
+	            		stateIcon="<button class='doBusiness btn btn-warning btn-xs' title='营业'><i class='fa fa-cutlery'></i></button>";
+	            	}
+	            	if(row["STATE"]==2){
+	            		stateIcon="<button class='rest btn btn-danger btn-xs' title='休息'><i class='fa fa-bed'></i></button>";
+	            	}
+            		return stateIcon+"<button class='edit btn btn-info btn-xs' title='编辑'><i class='fa fa-edit'></i></button>"+
 				  	"<button class='remove btn btn-danger btn-xs' title='删除'><i class='fa fa-trash-o'></i></button>";
 	            }
 	        },{
@@ -89,6 +96,82 @@
 	            }
 	        }]
 		});
+		table.on("click",'.doBusiness',function(){
+	        var data = table.row($(this).parents('tr')).data();
+			var shopId=data['ID'];
+			BootstrapDialog.show({
+			title: '确认开店',
+            message: '开错店会造成食客的困扰哦~',
+            buttons: [{
+                label: '是',
+                action: function(dialogItself){
+               	 $.ajax({
+               	        url: '/shop/doBusiness?shopId='+shopId, // /api/leds/1
+               	        async: true,
+               	        type: 'GET',
+               	        success: function(data , textStatus){
+               	          if(data=="success"){
+                   	          window.location.href='/shop';
+               	      	  }
+               	          else{
+               	        	  console.log("error to off shelf");
+               	        	  layer.msg(data);
+               	        	  dialogItself.close();
+               	          }
+               	        },
+               	       
+               	        error: function(jqXHR , textStatus , errorThrown){
+               	          console.log("error");
+               	        },
+               	       
+               	      });
+               }
+            }, {
+                label: '否',
+                action: function(dialogItself){
+                    dialogItself.close();
+                }
+            }]
+        });
+		})
+			table.on("click",'.rest',function(){
+		        var data = table.row($(this).parents('tr')).data();
+				var shopId=data['ID'];
+				BootstrapDialog.show({
+				title: '确认打烊',
+	            message: '关错店会造成别人损失哦~',
+	            buttons: [{
+	                label: '是',
+	                action: function(dialogItself){
+	                	 $.ajax({
+	                	        url: '/shop/rest?shopId='+shopId, // /api/leds/1
+	                	        async: true,
+	                	        type: 'GET',
+	                	        success: function(data , textStatus){
+	                	          if(data=="success"){
+	                    	          window.location.href='/shop';
+	                	      	  }
+	                	          else{
+	                	        	  console.log("error to off shelf");
+	                	        	  layer.msg(data);
+	                	        	  dialogItself.close();
+	                	          }
+	                	        },
+	                	       
+	                	        error: function(jqXHR , textStatus , errorThrown){
+	                	          console.log("error");
+	                	        },
+	                	       
+	                	      });
+	                }
+	            }, {
+	                label: '否',
+	                action: function(dialogItself){
+	                    dialogItself.close();
+	                }
+	            }]
+	        });
+			})
 		$(".add").on("click",function(){
 			BootstrapDialog.show({
 				title: '添加商家',
