@@ -99,12 +99,20 @@ function loadBanner(){
         		  $("#indexCarouselIndicators").append('<li data-target="#indexCarousel" data-slide-to="'+0+'" class="active"></li>');
         		  $("#indexCarouselInner").append("<div class=\"item active\"align=\"center\">"+
 							"<img src=\""+data['data'][0]['IMG_URL']+"\" style='width:70%;height:width*2'>"+
-							"<div class=\"carousel-caption\ onClick='troggleIndex("+data['data'][0]['ID']+")'">"+( data['data'][0]['INDEX']?'取消优先':'设置优先')+"</div></div>");
+							"<div class=\"carousel-caption\" >"+
+							"<button class=\"btn btn-light btn-big radius\"  onClick='troggleIndex("+data['data'][0]['ID']+")'>"+
+							( data['data'][0]['INDEX']?'取消优先':'设置优先')+"</button>"+
+							"<button class=\"btn btn-light btn-big radius\"  onClick='deleteBanner("+data['data'][0]['ID']+")'>删除</button>"+
+							"</div></div>");
 	        	  for(var i=1;i<data['data'].length;i++){
 	        		  $("#indexCarouselIndicators").append('<li data-target="#indexCarousel" data-slide-to="'+i+'"></li>');
 	        		  $("#indexCarouselInner").append("<div class=\"item \"align=\"center\">"+
-								"<img src=\""+data['data'][i]['IMG_URL']+"\" style='width:70%;height:width*2'>"+
-								"<div class=\"carousel-caption\" onClick='troggleIndex("+data['data'][i]['ID']+")'>"+( data['data'][i]['INDEX']?'取消优先':'设置优先')+"</div></div>");
+							"<img src=\""+data['data'][i]['IMG_URL']+"\" style='width:70%;height:width*2'>"+
+							"<div class=\"carousel-caption\" >"+
+							"<button class=\"btn btn-light btn-big radius\"  onClick='troggleIndex("+data['data'][i]['ID']+")'>"+
+							( data['data'][i]['INDEX']?'取消优先':'设置优先')+"</button>"+
+							"<button class=\"btn btn-light btn-big radius\"  onClick='deleteBanner("+data['data'][i]['ID']+")'>删除</button>"+
+							"</div></div>");
 	        	  }
 	      	  }
 	          else{
@@ -121,11 +129,19 @@ function loadBanner(){
 	      });
 }
 function troggleIndex(bannerId){
-	$.getJSON("${base}/resource/troggleIndex?type=",function(json){
+	$.getJSON("${base}/resource/troggleIndex?bannerId="+bannerId,function(json){
    		layer.msg(json.msg);
-			if(!json.error)
-		       	dialogRef.close();
-			onShopNameInput();
+			if(!json.error)layer.msg("转换成功");
+			else layer.msg(json.msg);
+			loadBanner();
+	    });
+}
+function deleteBanner(bannerId){
+	$.getJSON("${base}/resource/deleteBanner?bannerId="+bannerId,function(json){
+   		layer.msg(json.msg);
+			if(!json.error)layer.msg("删除成功");
+			else layer.msg(json.msg);
+			loadBanner();
 	    });
 }
 </script>

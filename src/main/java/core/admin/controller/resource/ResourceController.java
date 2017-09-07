@@ -37,6 +37,7 @@ public class ResourceController extends Controller {
 		JSONArray resultArray = new JSONArray();
 		for (Banner banner : indexList) {
 			JSONObject object = new JSONObject();
+			object.put("ID", banner.get("ID"));
 			object.put("IMG_URL", banner.get("IMG_URL"));
 			object.put("INDEX", banner.getInt("INDEX") == 1);
 			resultArray.add(object);
@@ -44,9 +45,11 @@ public class ResourceController extends Controller {
 		for (Banner banner : normalList) {
 			JSONObject object = new JSONObject();
 			object.put("IMG_URL", banner.get("IMG_URL"));
+			object.put("ID", banner.get("ID"));
 			object.put("INDEX", banner.getInt("INDEX") == 1);
 			resultArray.add(object);
 		}
+		System.out.println(resultArray);
 		renderJson(new JSONSuccess(resultArray));
 	}
 
@@ -100,8 +103,20 @@ public class ResourceController extends Controller {
 			banner.update();
 			renderJson(new JSONSuccess());
 		} catch (Exception e) {
+			e.printStackTrace();
 			renderJson(new JSONError("发生错误"));
 		}
+	}
 
+	public void deleteBanner() {
+		try {
+			Integer bannerId = getParaToInt("bannerId");
+			Banner banner = Banner.dao.findById(bannerId);
+			banner.delete();
+			renderJson(new JSONSuccess());
+		} catch (Exception e) {
+			e.printStackTrace();
+			renderJson(new JSONError("发生错误"));
+		}
 	}
 }
