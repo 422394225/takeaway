@@ -4,6 +4,7 @@ import com.jfinal.plugin.activerecord.ActiveRecordPlugin;
 
 import core.model.Admin;
 import core.model.Audit;
+import core.model.Banner;
 import core.model.Data;
 import core.model.Delivery;
 import core.model.DictCode;
@@ -42,5 +43,6 @@ public class _MappingKit {
 		arp.addMapping("t_order", "ID", Order.class);
 		arp.addMapping("t_delivery", "ID", Delivery.class);
 		arp.addMapping("t_audit", "ID", Audit.class);
+		arp.addMapping("t_banner", "ID", Banner.class);
 	}
 }

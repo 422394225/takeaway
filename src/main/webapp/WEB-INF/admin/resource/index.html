@@ -1,0 +1,131 @@
+<#include "../base/main/_dashboard.html"/>
+<#assign pageMeta> </#assign>
+<#assign pageCss>
+<link href="${base}/resources/jQuery/dataTables.bootstrap.min.css"
+	rel="stylesheet" type="text/css" />
+</#assign>
+<#assign pageJavascript> <script
+	src="${base}/resources/jQuery/jquery.dataTables.min.js"
+	type="text/javascript"></script> <script
+	src="${base}/resources/jQuery/dataTables.bootstrap.min.js"
+	type="text/javascript"></script>
+<link href="${base}/resources/javascripts/cropper/cropper.min.css"
+	rel="stylesheet" type="text/css" />
+<script src="${base}/resources/javascripts/cropper/cropper.min.js"
+	type="text/javascript"></script> </#assign>
+<@dashboard pageTitle="资源管理" currentMenu="resource" pageMeta=pageMeta
+pageCss=pageCss pageJavascript=pageJavascript> <@tool map="资源管理">
+
+</@tool>
+<div id='content'>
+	<section class="panel">
+		<header class="panel-heading custom-tab ">
+			<ul class="nav nav-tabs">
+				<li class="active"><a href="#bannerManage" data-toggle="tab">轮播图管理</a>
+				</li>
+				<li class=""><a href="#deliceryApp" data-toggle="tab">配送员APP</a>
+				</li>
+
+			</ul>
+		</header>
+		<div class="panel-body">
+			<div class="tab-content">
+				<div class="tab-pane active" id="bannerManage">
+				<button class="btn btn-light btn-big radius" onclick="addBanner()">添加轮播图</button>
+					<!-- 首页轮播图 -->
+					<div id="indexCarousel" class="carousel slide">
+						<!-- 轮播（Carousel）指标 -->
+						<ol class="carousel-indicators" id="indexCarouselIndicators">
+						</ol>
+						<!-- 轮播（Carousel）项目 -->
+						<div class="carousel-inner " id="indexCarouselInner">
+						
+						</div>
+						<!-- 轮播（Carousel）导航 -->
+						<a class="carousel-control left" href="#indexCarousel"
+							data-slide="prev">&lsaquo; </a> <a class="carousel-control right"
+							href="#indexCarousel" data-slide="next">&rsaquo; </a>
+					</div>
+				</div>
+				<div class="tab-pane" id="deliceryApp">
+					<div>
+						<img src="/delivery/getAppAddr" />
+					</div>
+					<div>配送员定位助手二维码</div>
+					<div>
+						<a href="${base}/api/v1/delivery/download" />点这里下载</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+</div>
+</@dashboard>
+<script>
+$(function(){
+	loadBanner();
+})
+function addBanner(){
+	BootstrapDialog.show({
+		title: '上传图片',
+		draggable: true,
+	    message: $('<div></div>').load('${base}/resource/addBannerHtml'),
+	    buttons: [{
+	    	id:'submitBtn',
+	        label: '提交',
+	        cssClass: 'btn btn-primary', 
+	        action: function(dialogRef){    
+	           
+	        }
+	    },{
+	        label: '取消',
+	        cssClass: 'btn btn-link', 
+	        action: function(dialogRef){    
+	            dialogRef.close();
+	        }
+	    }]
+    });
+}
+function loadBanner(){
+	 $.ajax({
+	        url: '/resource/getBannerList', 
+	        async: true,
+	        type: 'GET',
+	        success: function(data , textStatus){
+	          if(!data['error']){
+	        	  
+	        	  $("#indexCarouselIndicators").html('');
+        		  $("#indexCarouselInner").html('');
+        		  $("#indexCarouselIndicators").append('<li data-target="#indexCarousel" data-slide-to="'+0+'" class="active"></li>');
+        		  $("#indexCarouselInner").append("<div class=\"item active\"align=\"center\">"+
+							"<img src=\""+data['data'][0]['IMG_URL']+"\" style='width:70%;height:width*2'>"+
+							"<div class=\"carousel-caption\ onClick='troggleIndex("+data['data'][0]['ID']+")'">"+( data['data'][0]['INDEX']?'取消优先':'设置优先')+"</div></div>");
+	        	  for(var i=1;i<data['data'].length;i++){
+	        		  $("#indexCarouselIndicators").append('<li data-target="#indexCarousel" data-slide-to="'+i+'"></li>');
+	        		  $("#indexCarouselInner").append("<div class=\"item \"align=\"center\">"+
+								"<img src=\""+data['data'][i]['IMG_URL']+"\" style='width:70%;height:width*2'>"+
+								"<div class=\"carousel-caption\" onClick='troggleIndex("+data['data'][i]['ID']+")'>"+( data['data'][i]['INDEX']?'取消优先':'设置优先')+"</div></div>");
+	        	  }
+	      	  }
+	          else{
+	        	  console.log("error");
+	        	  layer.msg("获取数据失败");
+	        	  dialogItself.close();
+	          }
+	        },
+	       
+	        error: function(jqXHR , textStatus , errorThrown){
+	          console.log("error");
+	        },
+	       
+	      });
+}
+function troggleIndex(bannerId){
+	$.getJSON("${base}/resource/troggleIndex?type=",function(json){
+   		layer.msg(json.msg);
+			if(!json.error)
+		       	dialogRef.close();
+			onShopNameInput();
+	    });
+}
+</script>
