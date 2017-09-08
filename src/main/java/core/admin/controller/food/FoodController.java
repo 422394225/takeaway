@@ -1,5 +1,12 @@
 package core.admin.controller.food;
 
+import java.io.File;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang3.StringUtils;
+
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.core.Controller;
@@ -8,6 +15,7 @@ import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
+
 import core.admin.service.food.FoodService;
 import core.admin.service.food.impl.FoodServiceImpl;
 import core.common.utils.QiniuUtils;
@@ -17,12 +25,6 @@ import core.model.Shop;
 import core.vo.DTParams;
 import core.vo.JSONError;
 import core.vo.JSONSuccess;
-import org.apache.commons.lang3.StringUtils;
-
-import java.io.File;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * 
@@ -133,7 +135,8 @@ public class FoodController extends Controller {
 			food.set("NAME", name);
 			food.set("PRICE", price);
 			food.set("TYPE_ID", TYPE);
-			food.set("ORIGN_PRICE", ORIGN_PRICE == null || ORIGN_PRICE.equals("") ? 0 : Double.valueOf(ORIGN_PRICE));
+			food.set("ORIGN_PRICE",
+					ORIGN_PRICE == null || ORIGN_PRICE.equals("") ? price : Double.valueOf(ORIGN_PRICE));
 			food.set("UNIT", UNIT);
 			food.set("SALE_LIMIT", SALE_LIMIT == null ? 0 : Integer.valueOf(SALE_LIMIT));
 			food.set("DESCRIPTION", DESCRIPTION);
@@ -199,7 +202,8 @@ public class FoodController extends Controller {
 			food.set("PRICE", price);
 			food.set("TYPE_ID", TYPE);
 			food.set("SALE_LIMIT", SALE_LIMIT == null ? 0 : Integer.valueOf(SALE_LIMIT));
-			food.set("ORIGN_PRICE", ORIGN_PRICE == null || ORIGN_PRICE.equals("") ? 0 : Double.valueOf(ORIGN_PRICE));
+			food.set("ORIGN_PRICE",
+					ORIGN_PRICE == null || ORIGN_PRICE.equals("") ? price : Double.valueOf(ORIGN_PRICE));
 			food.set("UNIT", UNIT);
 			food.set("DESCRIPTION", DESCRIPTION);
 			food.set("CREATE_TIME", null);
@@ -295,7 +299,7 @@ public class FoodController extends Controller {
 			renderJson(new JSONSuccess("下架成功！"));
 		} catch (Exception e) {
 			renderJson(new JSONError("下架失败"));
-			log.info("error in offShelf",e);
+			log.info("error in offShelf", e);
 		}
 	}
 
@@ -308,7 +312,7 @@ public class FoodController extends Controller {
 			renderJson(new JSONSuccess("上架成功！"));
 		} catch (Exception e) {
 			renderJson(new JSONError("上架失败"));
-			log.info("error in offShelf",e);
+			log.info("error in offShelf", e);
 		}
 	}
 

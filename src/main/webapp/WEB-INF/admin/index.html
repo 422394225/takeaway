@@ -1,98 +1,109 @@
 <#include "./base/main/_dashboard.html"/>
-<#assign pageMeta>
-</#assign>
+<#assign pageMeta> </#assign>
 <#assign pageCss>
-<link href="${base}/resources/jQuery/dataTables.bootstrap.min.css" rel="stylesheet" type="text/css" />
+<link href="${base}/resources/jQuery/dataTables.bootstrap.min.css"
+	rel="stylesheet" type="text/css" />
 <style>
-	.circle{
-      	border-radius: 6px;
-      	border: solid 1px silver;
-       	height: 17px;
-       	padding: 3px;
-       	text-align: center;
-      	line-height: 10px;
-      	min-width: 50px;
-        color:white;
-        background-color:#09f;
-      }
-	#content{
-		padding: 0;
-	}
+.circle {
+	border-radius: 6px;
+	border: solid 1px silver;
+	height: 17px;
+	padding: 3px;
+	text-align: center;
+	line-height: 10px;
+	min-width: 50px;
+	color: white;
+	background-color: #09f;
+}
+
+#content {
+	padding: 0;
+}
 </style>
 </#assign>
-<script src="http://webapi.amap.com/maps?v=1.3&key=${amapKey}&plugin=AMap.Geocoder&callback=init"></script>
+<script
+	src="http://webapi.amap.com/maps?v=1.3&key=${amapKey}&plugin=AMap.Geocoder"></script>
 <script src="${base}/resources/javascripts/main-async.js"></script>
-<@dashboard pageTitle="首页" pageMeta=pageMeta pageCss=pageCss pageJavascript=pageJavascript currentMenu="index">
-<@tool map="首页">
-   
+<@dashboard pageTitle="首页" pageMeta=pageMeta pageCss=pageCss
+pageJavascript=pageJavascript currentMenu="index"> <@tool map="首页">
+
 </@tool>
 <div id='content'>
-<div id="containerMap" style="height:100%"></div>
+	<div id="containerMap" style="height: 100%"></div>
 </div>
 </@dashboard>
 <script>
-function showShop(shopId){
-	 BootstrapDialog.show({
-			title: '编辑',
-			draggable: true,
-			closeByBackdrop: false,
-		    message: $('<div></div>').load('${base}/shop/edit?id='+shopId)
-     });
-}
-$(function(){
-	var map;
-	map = new AMap.Map('containerMap', {
-		zoom: 10
- 	});
-	//定位到所在地
-    map.plugin('AMap.Geolocation', function() {
-        geolocation = new AMap.Geolocation({
-            enableHighAccuracy: true,//是否使用高精度定位，默认:true
-            timeout: 10000,          //超过10秒后停止定位，默认：无穷大
-            buttonOffset: new AMap.Pixel(10, 20),//定位按钮与设置的停靠位置的偏移量，默认：Pixel(10, 20)
-            zoomToAccuracy: true,      //定位成功后调整地图视野范围使定位位置及精度范围视野内可见，默认：false
-            buttonPosition:'LB'
-        });
-        map.addControl(geolocation);
-        geolocation.getCurrentPosition();
-    });
+	function showShop(shopId) {
+		BootstrapDialog.show({
+			title : '编辑',
+			draggable : true,
+			closeByBackdrop : false,
+			message : $('<div></div>').load('${base}/shop/edit?id=' + shopId)
+		});
+	}
+	$(function() {
 
- map.plugin(["AMap.ToolBar"], function() {
-     map.addControl(new AMap.ToolBar());
- });
-	 $.ajax({
-         url:'${base}/getShopPlaceDot', // /api/leds/1
-         async: true,
-         type: 'GET',
-         success: function(arrList){
-        	 var totalLongitude=0;
-        	 var totalLatidute=0;
-        	 for (var intTmp = 0; intTmp < arrList.length; intTmp++){
-        		 totalLongitude+=arrList[intTmp].PLACE[0];
-        		 totalLatidute+=arrList[intTmp].PLACE[1];
-        		 var marker = new AMap.Marker({
-        			position:arrList[intTmp].PLACE,
-        			content: "<div class='placeDot' onclick='showShop("+arrList[intTmp].ID+")'><a class='fa fa-globe'></a><div class='circle'>"+arrList[intTmp].NAME+"</div></div>",
-        			offset: new AMap.Pixel(0, 0),
-        			title:arrList[intTmp].NAME,
-        			map: map
-        			});
-        		 /* var infoWindow = new AMap.InfoWindow({
-        	         offset: new AMap.Pixel(0, -20)
-        	     });
-        		 console.log(parseFloat(arrList[intTmp].PLACE[0]))
-        		 console.log(parseFloat(arrList[intTmp].PLACE[1]))
-        		 var lnglat=new AMap.LngLat(parseFloat(arrList[intTmp].PLACE[0]), parseFloat(arrList[intTmp].PLACE[1]));
-        		 infoWindow.setPosition(lnglat);
-        		 infoWindow.setContent( arrList[intTmp].NAME);
-        		 infoWindow.open(map, lnglat); */
-        	 }
-        	 totalLongitude=totalLongitude/arrList.length;
-        	 totalLatidute=totalLatidute/arrList.length;
-         },
-         error: function(jqXHR , textStatus , errorThrown){
-           console.log("获取数据错误");
-         },
-  });
-})
+		$
+				.ajax({
+					url : '${base}/getShopPlaceDot', // /api/leds/1
+					async : true,
+					type : 'GET',
+					success : function(arrList) {
+
+						var totalLongitude = 0;
+						var totalLatidute = 0;
+						for (var intTmp = 0; intTmp < arrList.length; intTmp++) {
+							totalLongitude += arrList[intTmp].PLACE[0];
+							totalLatidute += arrList[intTmp].PLACE[1];
+
+							/* var infoWindow = new AMap.InfoWindow({
+							    offset: new AMap.Pixel(0, -20)
+							});
+							console.log(parseFloat(arrList[intTmp].PLACE[0]))
+							console.log(parseFloat(arrList[intTmp].PLACE[1]))
+							var lnglat=new AMap.LngLat(parseFloat(arrList[intTmp].PLACE[0]), parseFloat(arrList[intTmp].PLACE[1]));
+							infoWindow.setPosition(lnglat);
+							infoWindow.setContent( arrList[intTmp].NAME);
+							infoWindow.open(map, lnglat); */
+						}
+						totalLongitude = totalLongitude / arrList.length;
+						totalLatidute = totalLatidute / arrList.length;
+						var map;
+						map = new AMap.Map('containerMap', {
+							zoom : 15,
+							center : [ totalLongitude, totalLatidute ]
+						});
+						map.plugin([ "AMap.ToolBar" ], function() {
+							var toolBar =new AMap.ToolBar({position:'RT',ruler:true,direction:false});
+							map.addControl(toolBar);
+						});
+						map.plugin([ "AMap.OverView" ], function() { //在地图中添加鹰眼插件
+							//加载鹰眼
+							overView = new AMap.OverView({
+								visible : true
+							//初始化显示鹰眼
+							});
+							map.addControl(overView);
+							overView.open(); //展开鹰眼
+						});
+						for (var intTmp = 0; intTmp < arrList.length; intTmp++) {
+							var marker = new AMap.Marker(
+									{
+										position : arrList[intTmp].PLACE,
+										content : "<div class='placeDot' onclick='showShop("
+												+ arrList[intTmp].ID
+												+ ")'><a class='fa fa-globe'></a><div class='circle'>"
+												+ arrList[intTmp].NAME
+												+ "</div></div>",
+										offset : new AMap.Pixel(0, 0),
+										title : arrList[intTmp].NAME,
+										map : map
+									});
+						}
+					},
+					error : function(jqXHR, textStatus, errorThrown) {
+						console.log("获取数据错误");
+					},
+				});
+	})
 </script>

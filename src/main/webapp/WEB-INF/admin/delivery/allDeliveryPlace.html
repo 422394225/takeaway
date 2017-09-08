@@ -35,7 +35,8 @@ function init(){
       zoom: 20
    });
    map.plugin(["AMap.ToolBar"], function() {
-       map.addControl(new AMap.ToolBar());
+		var toolBar =new AMap.ToolBar({position:'RT',ruler:true});
+		map.addControl(toolBar);
    });
 }
 $(function(){

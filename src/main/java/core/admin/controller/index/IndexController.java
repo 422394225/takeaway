@@ -25,7 +25,7 @@ public class IndexController extends Controller {
 
 	public void getShopPlaceDot() {
 		JSONArray result = new JSONArray();
-		List<Delivery> shops = Delivery.dao.find("select ID,`NAME`,LONGITUDE,LATITUDE from t_shop where state>-1");
+		List<Delivery> shops = Delivery.dao.find("select ID,`NAME`,LONGITUDE,LATITUDE from t_shop where state>-2");
 		for (Delivery shop : shops) {
 			JSONObject jsonObject = new JSONObject();
 			jsonObject.put("NAME", shop.get("NAME"));
