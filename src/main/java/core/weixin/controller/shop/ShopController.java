@@ -278,8 +278,8 @@ public class ShopController extends BaseController {
 			switch (flag) {
 			case "hotShop": {
 				Map<String, Object> order = new LinkedHashMap<>();
-				order.put("RATE_AVG", "DESC");
 				order.put("SALE_NUM", "DESC");
+				order.put("RATE_AVG", "DESC");
 				conditionsVO.getOrderbyCond().putAll(order);
 				sqlPara = Db.getSqlPara("shop.list", conditionsVO.getConditions());
 				break;

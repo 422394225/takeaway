@@ -2,22 +2,22 @@
 	#sql("search")
 		SELECT * FROM t_shop AS s
 		WHERE s.`NAME` LIKE '%#(keyword)%'
-		ORDER BY s.RATE_AVG
+		ORDER BY s.SALE_NUM DESC
 	#end
 	#sql("getByType")
 		SELECT s.* FROM 
 		t_shop_type_relation AS str
 		JOIN t_shop AS s ON str.SHOPID = s.ID
 		WHERE str.TYPEID = ?
-        ORDER BY s.RATE_AVG
+        ORDER BY s.SALE_NUM DESC
 	#end
 	#sql("inId")
-	    SELECT * FROM t_shop WHERE ID IN (#(inParams))
+	    SELECT * FROM t_shop WHERE ID IN (#(inParams)) ORDER BY s.SALE_NUM DESC
 	#end
 	#sql("groupByDistant")
         SELECT s.*,((LONGITUDE-#(lng))*(LONGITUDE-#(lng))+ (LATITUDE-#(lat))* (LATITUDE-#(lat))) AS dst
         FROM t_shop AS s
-        ORDER BY dst ASC
+        ORDER BY dst ASC,s.SALE_NUM DESC
     #end
 #end
 
