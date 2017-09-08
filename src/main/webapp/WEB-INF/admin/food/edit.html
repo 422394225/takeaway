@@ -6,109 +6,109 @@
 <form action="${base}/food/saveEdit" class="form-horizontal" id="add-form" enctype="multipart/form-data" method="post">
 </head>
 <div class="form-group form-group-md" style="display:none">
-	    <label class="col-sm-3 control-label" for="formGroupInputLarge">
+	    <label class="col-sm-3 control-label" >
 	    	id<span style="color:red">*</span>
 	    </label>
 	    <div class="col-sm-6">
-			<input class="form-control" type="text" name="foodId" oninput='onShopNameInput()' id="formGroupInputLarge" value="${foodId}">
+			<input class="form-control" type="text" name="foodId" oninput='onShopNameInput()'  value="${foodId}">
 	    </div>
 		<label id="checkShopName"></label>
 	</div>
 	<div class="form-group form-group-md">
-	    <label class="col-sm-3 control-label" for="formGroupInputLarge">
+	    <label class="col-sm-3 control-label" >
 	    	所属商家名<span style="color:red">*</span>
 	    </label>
 	    <div class="col-sm-6">
-			<input class="form-control" type="text" name="shopName" oninput='onShopNameInput()' id="formGroupInputLarge" readonly= "true" value="${shopName}">
+			<input class="form-control" type="text" name="shopName" oninput='onShopNameInput()'  readonly= "true" value="${shopName}">
 	    </div>
 		<label id="checkShopName"></label>
 	</div>
 	<div class="form-group form-group-md">
-	    <label class="col-sm-3 control-label" for="formGroupInputLarge">
+	    <label class="col-sm-3 control-label" >
 	    	商品名称<span style="color:red">*</span>
 	    </label>
 	    <div class="col-sm-6">
-			<input class="form-control" type="text" name="NAME"  oninput='onFoodNameInput(event)' id="formGroupInputLarge" value="${NAME}">
+			<input class="form-control" type="text" name="NAME"  oninput='onFoodNameInput(event)'  value="${NAME}">
 	    </div>
 		<label id="checkFoodName"value=""></label>
 	</div>
 	<div class="form-group form-group-md">
-	    <label class="col-sm-3 control-label" for="formGroupInputLarge">
+	    <label class="col-sm-3 control-label" >
 	    	商品分类<span style="color:red">*</span>
 	    </label>
 		<div class="col-sm-4">
-		    <select id="formGroupInputLarge" name="TYPE" class="selectpicker show-tick form-control" data-live-search="false">
+		    <select  name="TYPE" class="selectpicker show-tick form-control" data-live-search="false">
 		    </select>
 		</div>
 	    <input type="button" class="btn btn-primary" id="addTypeBtn" value="添加" onclick="addType()"/>
 
 	</div>
 	<div class="form-group form-group-md">
-		<label class="col-lg-3 control-label" for="formGroupInputLarge">
+		<label class="col-lg-3 col-md-3 control-label" >
 		商品图片
 		</label>
-		<div class="col-lg-6 col-md-12">
+		<div class="col-lg-6 col-md-6">
 			<input type="file" name="IMG" id="imgInput" value="" />
 			<input type="hidden" name="crop" id="crop">
 			<input type="hidden" name="defaultImg" value=""/>
 		</div>
 	</div>
 	<div class="form-group form-group-md">
-	    <label class="col-sm-3 control-label" for="formGroupInputLarge">
+	    <label class="col-sm-3 control-label" >
 	    	价格<span style="color:red">*</span>
 	    </label>
 	    <div class="col-sm-6">
-			<input class="form-control" type="text" name="price" id="formGroupInputLarge" value="${price}">
+			<input class="form-control" type="text" name="price"  value="${price}">
 	    </div>
 	</div>
 	<div class="form-group form-group-md">
-	    <label class="col-sm-3 control-label" for="formGroupInputLarge">
+	    <label class="col-sm-3 control-label" >
 	    	原价
 	    </label>
 	    <div class="col-sm-6">
-			<input class="form-control" type="text" name="ORIGN_PRICE" id="formGroupInputLarge" value="${ORIGN_PRICE}">
+			<input class="form-control" type="text" name="ORIGN_PRICE"  value="${ORIGN_PRICE}">
 	    </div>
 	</div>
 	<div class="form-group form-group-md">
-	    <label class="col-sm-3 control-label" for="formGroupInputLarge">
+	    <label class="col-sm-3 control-label" >
 	    	单位<span style="color:red">*</span>
 	    </label>
 	    <div class="col-sm-6">
-			<input class="form-control" type="text" name="UNIT" id="formGroupInputLarge" value="${UNIT}">
+			<input class="form-control" type="text" name="UNIT"  value="${UNIT}">
 	    </div>
 	</div>
 	<div class="form-group form-group-md">
-	    <label class="col-sm-3 control-label" for="formGroupInputLarge">
+	    <label class="col-sm-3 control-label" >
 	    	描述
 	    </label>
 	    <div class="col-sm-6">
-			<textarea class="form-control" name="DESCRIPTION" id="formGroupInputLarge" value="${DESCRIPTION}"/>
+			<textarea class="form-control" name="DESCRIPTION"  value="${DESCRIPTION}"/>
 	    </div>
 	</div>
 	<div class="form-group form-group-md">
-	    <label class="col-sm-3 control-label" for="formGroupInputLarge">
+	    <label class="col-sm-3 control-label" >
 	    	单订单限制(0为不限制)
 	    </label>
 	    <div class="col-sm-6">
-			<input class="form-control" type="text" name="SALE_LIMIT" id="formGroupInputLarge" value="${SALE_LIMIT}">
+			<input class="form-control" type="text" name="SALE_LIMIT"  value="${SALE_LIMIT}">
 	    </div>
 	</div>
 	<div class="form-group form-group-md">
-	    <label class="col-sm-3 control-label" for="formGroupInputLarge">
+	    <label class="col-sm-3 control-label" >
 	    	使用库存
 	    </label>
 	    <div class="col-sm-6">
-			<input class="form-control" type="checkbox" name="USE_STOCK" id="formGroupInputLarge" value="false">
+			<input class="form-control" type="checkbox" name="USE_STOCK"  value="false">
 			<div class="icheckbox_square-green checked" style="position: relative;">
 			</div>
 	    </div>
 	</div>
 	<div class="form-group form-group-md" style="display:none" id="STOCK_DIV">
-	    <label class="col-sm-3 control-label" for="formGroupInputLarge">
+	    <label class="col-sm-3 control-label" >
 	    	库存
 	    </label>
 	    <div class="col-sm-6">
-			<input class="form-control show" type="text" name="STOCK" id="formGroupInputLarge" value="${STOCK}">
+			<input class="form-control show" type="text" name="STOCK"  value="${STOCK}">
 			</div>
 	    </div>
 	</div>
