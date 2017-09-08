@@ -34,11 +34,10 @@ $(function(){
         var imgUrl = $(this).attr("src")+"";
         if(imgUrl.indexOf("?")>0){
             imgUrl = imgUrl.substring(0,imgUrl.indexOf("?"))
-            imgList.push(imgUrl);
         }
+        imgList.push(imgUrl);
     })
     $(".item-content img").on("click",function (e) {
-        debugger
         var imgUrl = $(this).attr("src")+"";
         if(imgUrl.indexOf("?")>0){
             imgUrl = imgUrl.substring(0,imgUrl.indexOf("?"))
@@ -328,7 +327,9 @@ function showCart() {
 				<ul>
 					<li class="item-content">
 						<div class="item-media">
+							{{# if(d.data[i].IMG!=null){ }}
 							<img src="{{d.data[i].IMG}}" width="60">
+							{{# } }}
 						</div>
 						<div class="item-inner">
 							<div class="item-title-row">
