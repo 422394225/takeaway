@@ -160,7 +160,15 @@ function dealCart(){
     var tpl = $('#cart-tpl').html();
     var html = "";
     for(var id in cart){
+        debugger
         var p = Number($(".cartOp[data-id='"+id+"']").attr("data-price"));
+        if(isNaN(p)){
+            WxStore.cart.set(new Object());
+            $(".amountOfFood").text(0);
+            $(".amountOfFood").hide();
+            $(".minus2cart").hide();
+            return;
+		}
         var c = cart[id];
         //餐盘熟知、、数值计算
         totalCount += cart[id];
