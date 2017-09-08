@@ -281,6 +281,9 @@ public class ShopController extends BaseController {
 				order.put("SALE_NUM", "DESC");
 				order.put("RATE_AVG", "DESC");
 				conditionsVO.getOrderbyCond().putAll(order);
+				Map<String, Object> limit = new LinkedHashMap<>();
+				limit.put("STATE", "!=-2");
+				conditionsVO.getLimitCond().putAll(limit);
 				sqlPara = Db.getSqlPara("shop.list", conditionsVO.getConditions());
 				break;
 			}

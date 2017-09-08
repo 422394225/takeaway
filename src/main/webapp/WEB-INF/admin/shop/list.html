@@ -80,14 +80,18 @@
 	            "data": null,
 	            "render": function(data, type, row) {
 	            	var stateIcon="";
-	            	if(row["STATE"]==0){
-	            		stateIcon="<button class='doBusiness btn btn-warning btn-xs' title='营业'><i class='fa fa-cutlery'></i></button>";
+	            	if (row["STATE"]==-2){
+                        return "<button class='unremove btn btn-light btn-xs' title='恢复'><i class='fa fa-reply'></i></button>";
+					}
+	            	else if(row["STATE"]<=0){
+	            		stateIcon="<button class='doBusiness btn btn-success btn-xs' title='营业'><i class='fa fa-cutlery'></i></button>";
 	            	}
-	            	if(row["STATE"]==2){
-	            		stateIcon="<button class='rest btn btn-danger btn-xs' title='休息'><i class='fa fa-bed'></i></button>";
+	            	else if(row["STATE"]==2){
+	            		stateIcon="<button class='rest btn btn-warning btn-xs' title='休息'><i class='fa fa-bed'></i></button>";
 	            	}
             		return stateIcon+"<button class='edit btn btn-info btn-xs' title='编辑'><i class='fa fa-edit'></i></button>"+
-				  	"<button class='remove btn btn-danger btn-xs' title='删除'><i class='fa fa-trash-o'></i></button>";
+				  	"<button class='delete btn btn-danger btn-xs' title='删除'><i class='fa fa-trash-o'></i></button>"+
+					"<button class='remove btn btn-primary btn-xs' title='移除'><i class='fa fa-minus-circle'></i></button>";
 	            }
 	        },{
 	        	"targets": 1,
@@ -96,82 +100,66 @@
 	            }
 	        }]
 		});
-		table.on("click",'.doBusiness',function(){
-	        var data = table.row($(this).parents('tr')).data();
-			var shopId=data['ID'];
-			BootstrapDialog.show({
-			title: '确认开店',
-            message: '开错店会造成食客的困扰哦~',
-            buttons: [{
-                label: '是',
-                action: function(dialogItself){
-               	 $.ajax({
-               	        url: '/shop/doBusiness?shopId='+shopId, // /api/leds/1
-               	        async: true,
-               	        type: 'GET',
-               	        success: function(data , textStatus){
-               	          if(data=="success"){
-                   	          window.location.href='/shop';
-               	      	  }
-               	          else{
-               	        	  console.log("error to off shelf");
-               	        	  layer.msg(data);
-               	        	  dialogItself.close();
-               	          }
-               	        },
-               	       
-               	        error: function(jqXHR , textStatus , errorThrown){
-               	          console.log("error");
-               	        },
-               	       
-               	      });
-               }
-            }, {
-                label: '否',
-                action: function(dialogItself){
-                    dialogItself.close();
+		table.on("click",'.doBusiness',function() {
+            var d = table.row($(this).parents('tr')).data();
+            var shopId = d["ID"];
+            var html = "确认店铺\"" + d["NAME"] + '\"<font class="text-success">开始营业</font>吗?(<font class=\"text-danger\">请确保已获得商家同意</font>)';
+            layer.confirm(html, {
+                icon: {icon: 1},
+                btn: ['确认', '取消'],
+                yes: function (index, layero) {
+                    $.ajax({
+                        url: '/shop/doBusiness?shopId=' + shopId, // /api/leds/1
+                        async: true,
+                        type: 'GET',
+                        success: function (data, textStatus) {
+                            if (data == "success") {
+                                window.location.href = '/shop';
+                            }
+                            else {
+                                console.log("error to off shelf");
+                                layer.msg(data);
+                            }
+                        },
+
+                        error: function (jqXHR, textStatus, errorThrown) {
+                            console.log("error");
+                        },
+
+                    });
                 }
-            }]
+            })
         });
+		table.on("click",'.rest',function(){
+			var d = table.row($(this).parents('tr')).data();
+			var shopId = d["ID"];
+			var html = "确认将店铺\""+d["NAME"]+'\"<font class="text-warning">打烊</font>吗?(<font class=\"text-danger\">请确保已获得商家同意</font>)';
+			layer.confirm(html, {
+				icon:{icon: 1},
+				btn: ['确认','取消'],
+				yes: function(index, layero){
+					$.ajax({
+						url: '/shop/rest?shopId='+shopId, // /api/leds/1
+						async: true,
+						type: 'GET',
+						success: function(data , textStatus){
+							if(data=="success"){
+								window.location.href='/shop';
+							}
+							else{
+								console.log("error to off shelf");
+								layer.msg(data);
+							}
+						},
+
+						error: function(jqXHR , textStatus , errorThrown){
+							console.log("error");
+						},
+
+					});
+				}
+			});
 		})
-			table.on("click",'.rest',function(){
-		        var data = table.row($(this).parents('tr')).data();
-				var shopId=data['ID'];
-				BootstrapDialog.show({
-				title: '确认打烊',
-	            message: '关错店会造成别人损失哦~',
-	            buttons: [{
-	                label: '是',
-	                action: function(dialogItself){
-	                	 $.ajax({
-	                	        url: '/shop/rest?shopId='+shopId, // /api/leds/1
-	                	        async: true,
-	                	        type: 'GET',
-	                	        success: function(data , textStatus){
-	                	          if(data=="success"){
-	                    	          window.location.href='/shop';
-	                	      	  }
-	                	          else{
-	                	        	  console.log("error to off shelf");
-	                	        	  layer.msg(data);
-	                	        	  dialogItself.close();
-	                	          }
-	                	        },
-	                	       
-	                	        error: function(jqXHR , textStatus , errorThrown){
-	                	          console.log("error");
-	                	        },
-	                	       
-	                	      });
-	                }
-	            }, {
-	                label: '否',
-	                action: function(dialogItself){
-	                    dialogItself.close();
-	                }
-	            }]
-	        });
-			})
 		$(".add").on("click",function(){
 			BootstrapDialog.show({
 				title: '添加商家',
@@ -190,15 +178,16 @@
 	        });
 	   
 	    });
-		table.on('click', '.disable', function(){
+
+		table.on('click', '.delete', function(){
 			var d = table.row($(this).parents('tr')).data();
-			layer.confirm('确认停用此商家吗?', {
+			layer.confirm('确认删除店铺\"'+d["NAME"]+'\"吗?(该操作不可撤销)', {
 				icon:{icon: 1},
 				btn: ['确认','取消'],
 				yes: function(index, layero){
 					layer.close(index);
 					layer.load(1, {shade: [0.3,'#000']});
-					Kit.post("${base}/shop/disable",{id:d["ID"]},function(msg){
+					Kit.post("${base}/shop/delete",{id:d["ID"]},function(msg){
 						layer.closeAll('loading');
 						layer.msg(msg,{time: 1000});
 						table.ajax.reload(null, false);
@@ -210,47 +199,47 @@
 		  		}
 			})
 		});
-		
-		table.on('click', '.enable', function(){
-			var d = table.row($(this).parents('tr')).data();
-			layer.confirm('确认恢复此商家吗?', {
-				icon:{icon: 1},
-				btn: ['确认','取消'],
-				yes: function(index, layero){
-					layer.close(index);
-					layer.load(1, {shade: [0.3,'#000']});
-					Kit.post("${base}/shop/enable",{id:d["ID"]},function(msg){
-						layer.closeAll('loading');
-						layer.msg(msg,{time: 1000});
-						table.ajax.reload(null, false);
-					},
-					function(msg){
-						layer.closeAll('loading');
-						layer.alert(msg,{icon:5});
-					});
-		  		}
-			})
-		});
-		table.on('click', '.remove', function(){
-			var d = table.row($(this).parents('tr')).data();
-			layer.confirm('确认删除店铺\"'+d["NAME"]+'\"吗?', {
-				icon:{icon: 1},
-				btn: ['确认','取消'],
-				yes: function(index, layero){
-					layer.close(index);
-					layer.load(1, {shade: [0.3,'#000']});
-					Kit.post("${base}/shop/remove",{id:d["ID"]},function(msg){
-						layer.closeAll('loading');
-						layer.msg(msg,{time: 1000});
-						table.ajax.reload(null, false);
-					},
-					function(msg){
-						layer.closeAll('loading');
-						layer.alert(msg,{icon:5});
-					});
-		  		}
-			})
-		});
+        table.on('click', '.remove', function(){
+            var d = table.row($(this).parents('tr')).data();
+            layer.confirm('确认移除店铺\"'+d["NAME"]+'\"吗?(该操作不会删除店铺数据)', {
+                icon:{icon: 1},
+                btn: ['确认','取消'],
+                yes: function(index, layero){
+                    layer.close(index);
+                    layer.load(1, {shade: [0.3,'#000']});
+                    Kit.post("${base}/shop/remove",{id:d["ID"]},function(msg){
+                            layer.closeAll('loading');
+                            layer.msg(msg,{time: 1000});
+                            table.ajax.reload(null, false);
+                        },
+                        function(msg){
+                            layer.closeAll('loading');
+                            layer.alert(msg,{icon:5});
+                        });
+                }
+            })
+        });
+
+        table.on('click', '.unremove', function(){
+            var d = table.row($(this).parents('tr')).data();
+            layer.confirm('确认恢复店铺\"'+d["NAME"]+'\"吗?', {
+                icon:{icon: 1},
+                btn: ['确认','取消'],
+                yes: function(index, layero){
+                    layer.close(index);
+                    layer.load(1, {shade: [0.3,'#000']});
+                    Kit.post("${base}/shop/unremove",{id:d["ID"]},function(msg){
+                            layer.closeAll('loading');
+                            layer.msg(msg,{time: 1000});
+                            table.ajax.reload(null, false);
+                        },
+                        function(msg){
+                            layer.closeAll('loading');
+                            layer.alert(msg,{icon:5});
+                        });
+                }
+            })
+        });
 		$(".reload").on("click",function(){
 			table.ajax.reload(null, false);// 刷新表格数据，分页信息不会重置
 		})

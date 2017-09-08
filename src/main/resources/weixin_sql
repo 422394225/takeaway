@@ -1,22 +1,26 @@
 #namespace("shop")
 	#sql("search")
 		SELECT * FROM t_shop AS s
-		WHERE s.`NAME` LIKE '%#(keyword)%'
+		WHERE s.`NAME` LIKE '%#(keyword)%' AND s.`STATE`!=-2
 		ORDER BY s.SALE_NUM DESC
 	#end
 	#sql("getByType")
 		SELECT s.* FROM 
 		t_shop_type_relation AS str
 		JOIN t_shop AS s ON str.SHOPID = s.ID
-		WHERE str.TYPEID = ?
+		WHERE str.TYPEID = ? AND s.`STATE`!=-2
         ORDER BY s.SALE_NUM DESC
 	#end
 	#sql("inId")
-	    SELECT * FROM t_shop WHERE ID IN (#(inParams)) ORDER BY s.SALE_NUM DESC
+	    SELECT * FROM t_shop
+	    WHERE ID IN (#(inParams))
+	    AND STATE!=-2
+	    ORDER BY SALE_NUM DESC
 	#end
 	#sql("groupByDistant")
         SELECT s.*,((LONGITUDE-#(lng))*(LONGITUDE-#(lng))+ (LATITUDE-#(lat))* (LATITUDE-#(lat))) AS dst
         FROM t_shop AS s
+        WHERE s.`STATE`!=-2
         ORDER BY dst ASC,s.SALE_NUM DESC
     #end
 #end
