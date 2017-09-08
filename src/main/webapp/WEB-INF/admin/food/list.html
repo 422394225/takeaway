@@ -42,7 +42,7 @@
 	        	"targets": 2,
 	            "render": function(data, type, row) {
 	            	if(data==null)
-	              	  return "没有图片";
+	              	  return "<img src='${base}/resources/images/no-image.png' style='width:50px;height:50px'/>";
 	            	else
 	              	  return "<img src='"+data+"' style='width:50px;height:50px'/>";
 	            }
@@ -90,81 +90,45 @@
 	        });
 		});
 		table.on("click",'.offShelf',function(){
-	        var data = table.row($(this).parents('tr')).data();
-			var foodId=data['ID'];
-			BootstrapDialog.show({
-			title: '是否下架商品',
-            message: '下架了要记得提醒商家~n(*≧▽≦*)n',
-            buttons: [{
-                label: '是',
-                action: function(dialogItself){
-                	 $.ajax({
-                	        url: '/food/offShelf?foodId='+foodId, // /api/leds/1
-                	        async: true,
-                	        type: 'GET',
-                	        success: function(data , textStatus){
-                	          if(data=="success"){
-                    	          window.location.href='/food';
-                	      	  }
-                	          else{
-                	        	  console.log("error to off shelf");
-                	        	  layer.msg("操作失败");
-                	        	  dialogItself.close();
-                	          }
-                	        },
-                	       
-                	        error: function(jqXHR , textStatus , errorThrown){
-                	          console.log("error");
-                	        },
-                	       
-                	      });
+            var d = table.row($(this).parents('tr')).data();
+            layer.confirm('是否下架商品\"'+d["NAME"]+'\"吗?(下架了要记得提醒商家~n(*≧▽≦*)n)', {
+                icon:{icon: 1},
+                btn: ['确认','取消'],
+                yes: function(index, layero){
+                    layer.close(index);
+                    layer.load(1, {shade: [0.3,'#000']});
+                    Kit.post('${base}/food/offShelf',{foodId:d["ID"]},function(msg){
+                            layer.closeAll('loading');
+                            layer.msg(msg,{time: 1000});
+                            table.ajax.reload(null, false);
+                        },
+                        function(msg){
+                            layer.closeAll('loading');
+                            layer.alert(msg,{icon:5});
+                        });
                 }
-            }, {
-                label: '否',
-                action: function(dialogItself){
-                    dialogItself.close();
-                }
-            }]
-        });
-		})
+            });
+		});
 		table.on("click",'.onShelf',function(){
-	        var data = table.row($(this).parents('tr')).data();
-			var foodId=data['ID'];
-			BootstrapDialog.show({
-			title: '是否上架商品',
-            message: '上架了要记得提醒商家~n(*≧▽≦*)n',
-            buttons: [{
-                label: '是',
-                action: function(dialogItself){
-                	 $.ajax({
-                	        url: '/food/onShelf?foodId='+foodId, // /api/leds/1
-                	        async: true,
-                	        type: 'GET',
-                	        success: function(data , textStatus){
-                	          if(data=="success"){
-                    	          window.location.href='/food';
-                	      	  }
-                	          else{
-                	        	  console.log("error to off shelf");
-                	        	  layer.msg("操作失败");
-                	        	  dialogItself.close();
-                	          }
-                	        },
-                	       
-                	        error: function(jqXHR , textStatus , errorThrown){
-                	          console.log("error");
-                	        },
-                	       
-                	      });
-                }
-            }, {
-                label: '否',
-                action: function(dialogItself){
-                    dialogItself.close();
-                }
-            }]
-        });
-		})
+			var d = table.row($(this).parents('tr')).data();
+			layer.confirm('是否上架商品\"'+d["NAME"]+'\"吗?(上架了要记得提醒商家~n(*≧▽≦*)n)', {
+				icon:{icon: 1},
+				btn: ['确认','取消'],
+				yes: function(index, layero){
+					layer.close(index);
+					layer.load(1, {shade: [0.3,'#000']});
+					Kit.post('${base}/food/onShelf',{foodId:d["ID"]},function(msg){
+							layer.closeAll('loading');
+							layer.msg(msg,{time: 1000});
+							table.ajax.reload(null, false);
+						},
+						function(msg){
+							layer.closeAll('loading');
+							layer.alert(msg,{icon:5});
+						});
+				}
+            });
+		});
 		table.on("click",'.edit',function(){
 	        var data = table.row($(this).parents('tr')).data();
 			var foodId=data['ID'];
