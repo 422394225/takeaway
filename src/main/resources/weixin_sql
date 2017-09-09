@@ -25,6 +25,17 @@
     #end
 #end
 
+#namespace("shopType_wx")
+    #sql("list")
+        SELECT * FROM t_shop_type
+        WHERE DELETED=0
+        ORDER BY ORDER_NUM ASC,CREATE_TIME DESC
+        #if( only )
+            limit #(only)
+        #end
+    #end
+#end
+
 #namespace("food")
 	#sql("search")
 		SELECT f.*,s.`NAME` AS SHOP_NAME,s.`RATE_AVG`,s.`ID` AS SHOP_ID,f.`ID` AS FOOD_ID

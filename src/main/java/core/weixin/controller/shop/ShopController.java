@@ -257,13 +257,10 @@ public class ShopController extends BaseController {
 
 	public void ajaxShopTypes() {
 		Map<String, Object> map = new HashMap<>();
-		Map<String, Object> where = new HashMap<>();
-		where.put("DELETED", " == 1");
-		map.put("limitCond", where);
 		if (getPara("type") == null) {
 			map.put("only", 7);
 		}
-		List<ShopType> shopTypes = ShopType.dao.find(Db.getSqlPara("shopType.list", map));
+		List<ShopType> shopTypes = ShopType.dao.find(Db.getSqlPara("shopType_wx.list", map));
 		renderJson(new JSONSuccess(shopTypes));
 	}
 

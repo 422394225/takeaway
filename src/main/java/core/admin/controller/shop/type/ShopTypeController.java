@@ -13,14 +13,6 @@ import com.jfinal.log.Log;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
-
-import java.io.File;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.lang3.StringUtils;
-
 import core.admin.service.shop.type.ShopTypeService;
 import core.admin.service.shop.type.impl.ShopTypeServiceImpl;
 import core.common.utils.QiniuUtils;
@@ -29,6 +21,12 @@ import core.validate.ShopTypeValidate;
 import core.vo.DTParams;
 import core.vo.JSONError;
 import core.vo.JSONSuccess;
+import org.apache.commons.lang3.StringUtils;
+
+import java.io.File;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Description:
@@ -116,6 +114,7 @@ public class ShopTypeController extends Controller {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		shopType.set("ORDER_NUM", getParaToInt("orderNum"));
 		if (StringUtils.isNotEmpty(id)) {
 			shopType.set("ID", id);
 			shopType.update();

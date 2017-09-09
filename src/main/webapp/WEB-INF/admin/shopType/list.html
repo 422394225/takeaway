@@ -16,9 +16,10 @@
 	            { "data": "NAME" },
 	            { "data": "ICON" },
 	            { "data": "DELETED" },
+	            { "data": "ORDER_NUM" },
 	            { "data": "CREATE_TIME" }
 	        ],
-	        "order": [[ 4, "desc" ]],
+	        "order": [[ 4, "asc" ]],
 	        "columnDefs": [{
 	            "targets": -1,
 	            "data": null,
@@ -29,7 +30,7 @@
             					  "<button class='remove btn btn-danger btn-xs' title='删除'><i class='fa fa-trash-o'></i></button>";
 	            	}else{
 	            		return "<button class='edit btn btn-info btn-xs' title='编辑'><i class='fa fa-edit'></i></button>"+
-  					  	"<button class='enable btn btn-warning btn-xs' title='恢复'><i class='fa fa-reply'></i></button>"+
+  					  	"<button class='enable btn btn-success btn-xs' title='恢复'><i class='fa fa-reply'></i></button>"+
   					  "<button class='remove btn btn-danger btn-xs' title='删除'><i class='fa fa-trash-o'></i></button>";
 	            	}
 	            }
@@ -198,6 +199,7 @@
         <th>类别名称</th>
         <th>图标</th>
         <th>是否启用</th>
+        <th>排序值</th>
         <th>创建时间</th>
         <th class='operation'>
           	操作
