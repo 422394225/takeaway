@@ -335,8 +335,9 @@ public class WeiXinUtils {
 	public static byte[] callMapToXML(Map map) {
 		StringBuffer sb = new StringBuffer();
 		sb.append("<xml>");
-		mapToXMLTest2(map, sb);
+		mapToXML(map, sb);
 		sb.append("</xml>");
+		// System.out.println(sb.toString());
 		try {
 			return sb.toString().getBytes("UTF-8");
 		} catch (Exception e) {
@@ -344,7 +345,7 @@ public class WeiXinUtils {
 		return null;
 	}
 
-	private static void mapToXMLTest2(Map map, StringBuffer sb) {
+	private static void mapToXML(Map map, StringBuffer sb) {
 		Set set = map.keySet();
 		for (Iterator it = set.iterator(); it.hasNext();) {
 			String key = (String) it.next();
@@ -356,14 +357,14 @@ public class WeiXinUtils {
 				sb.append("<" + key + ">");
 				for (int i = 0; i < list.size(); i++) {
 					HashMap hm = (HashMap) list.get(i);
-					mapToXMLTest2(hm, sb);
+					mapToXML(hm, sb);
 				}
 				sb.append("</" + key + ">");
 
 			} else {
 				if (value instanceof HashMap) {
 					sb.append("<" + key + ">");
-					mapToXMLTest2((HashMap) value, sb);
+					mapToXML((HashMap) value, sb);
 					sb.append("</" + key + ">");
 				} else {
 					sb.append("<" + key + ">" + value + "</" + key + ">");
