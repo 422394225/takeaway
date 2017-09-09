@@ -1,5 +1,9 @@
 package core.admin.controller.food;
 
+import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
+
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.core.Controller;
@@ -7,6 +11,7 @@ import com.jfinal.log.Log;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
+
 import core.admin.service.foodType.FoodTypeService;
 import core.admin.service.foodType.impl.FoodTypeServiceImpl;
 import core.model.FoodType;
@@ -14,9 +19,6 @@ import core.model.Shop;
 import core.vo.DTParams;
 import core.vo.JSONError;
 import core.vo.JSONSuccess;
-import org.apache.commons.lang3.StringUtils;
-
-import java.util.List;
 
 /**
  * 
@@ -49,7 +51,7 @@ public class FoodTypeController extends Controller {
 	public void edit() {
 		String id = getPara("id");
 		FoodType foodType = FoodType.dao.findById(id);
-		setAttr("foodType",foodType);
+		setAttr("foodType", foodType);
 		render("add.html");
 	}
 
@@ -59,12 +61,12 @@ public class FoodTypeController extends Controller {
 			foodType.set("SHOP_ID", getPara("shopId"));
 			foodType.set("NAME", getPara("name"));
 			Integer orderNum = getParaToInt("orderNum");
-			foodType.set("ORDER_NUM",orderNum);
+			foodType.set("ORDER_NUM", orderNum);
 			String id = getPara("id");
-			if(StringUtils.isNotEmpty(id)){
-				foodType.set("ID",id);
+			if (StringUtils.isNotEmpty(id)) {
+				foodType.set("ID", id);
 				foodType.update();
-			}else{
+			} else {
 				foodType.save();
 			}
 			renderJson(new JSONSuccess("保存成功(｡◕ˇ∀ˇ◕)"));
@@ -75,11 +77,27 @@ public class FoodTypeController extends Controller {
 		}
 	}
 
+	public void delete() {
+		try {
+			int typeId = getParaToInt("foodTypeId");
+			int dstTypeId = getParaToInt("dstTypeId");
+			FoodType foodType = FoodType.dao.findById(typeId);
+			foodType.set("DELETED", 1);
+			Db.update("update t_food set TYPE_ID=? WHERE TYPE_ID=?", dstTypeId, typeId);
+			foodType.update();
+			renderText("success");
+		} catch (Exception e) {
+			log.info("error in delete");
+			e.printStackTrace();
+			renderText("error");
+		}
+	}
+
 	public void add() {
 		render("add.html");
 	}
 
-	public void ajaxShopList(){
+	public void ajaxShopList() {
 		List<Shop> shops = Shop.dao.find(Db.getSql("foodType.shopList"));
 		renderJson(new JSONSuccess(shops));
 	}
