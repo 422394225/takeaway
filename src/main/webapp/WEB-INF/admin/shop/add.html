@@ -159,6 +159,17 @@
 				    </label>
 				    <div class="col-sm-3">
 				    	<div class="input-group">
+				    		<input class="form-control" type="text" name="deliveryThreshold" value="${(shop.DELIVERY_THRESHOLD)!}">
+				    		<span class="input-group-addon">元</span>
+				    	</div>
+				    </div>
+			  </div>
+		       <div class="form-group form-group-md">
+				    <label class="col-sm-3 control-label" for="formGroupInputLarge">
+				    	配送费<span style="color:red">(必填)</span>
+				    </label>
+				    <div class="col-sm-3">
+				    	<div class="input-group">
 				    		<input class="form-control" type="text" name="deliveryPrice" value="${(shop.DELIVERY_PRICE)!}">
 				    		<span class="input-group-addon">元</span>
 				    	</div>
@@ -234,6 +245,7 @@ $(function(){
 			adminName: {validators: {notEmpty: {}}},
 			shopTypeId: {validators: {notEmpty: {}}},
 			address: {validators: {notEmpty: {}}},
+			deliveryThreshold:{validators: {notEmpty: {}}},
 			username: {validators: {
 				notEmpty: {},
 				remote:{
