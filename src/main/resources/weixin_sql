@@ -50,6 +50,6 @@
     #sql("getByShopId")
         SELECT * FROM t_food_type
         WHERE SHOP_ID =#(id) AND DELETED = 0
-        ORDER BY CREATE_TIME
+        ORDER BY ORDER_NUM ASC,CREATE_TIME DESC
     #end
 #end

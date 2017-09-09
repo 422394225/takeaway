@@ -1,22 +1,15 @@
 package core.admin.controller.rate;
 
-import java.util.List;
-
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.core.Controller;
 import com.jfinal.log.Log;
-import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
-
 import core.admin.service.foodType.FoodTypeService;
 import core.admin.service.foodType.impl.FoodTypeServiceImpl;
-import core.model.FoodType;
-import core.model.Shop;
 import core.vo.DTParams;
-import core.vo.JSONError;
-import core.vo.JSONSuccess;
+
+import java.util.List;
 
 /**
  * 
@@ -46,7 +39,7 @@ public class RateController extends Controller {
 		renderJson(result);
 	}
 
-	public void edit() {
+	/*public void edit() {
 		String foodId = getPara("foodId");
 		Record record = Db.findFirst(
 				"select a.*,b.name as SHOP_NAME from t_food a left join t_shop b on a.shop_id=b.id where a.id=?",
@@ -189,5 +182,5 @@ public class RateController extends Controller {
 		}
 		System.out.println(array);
 		renderJson(array);
-	}
+	}*/
 }

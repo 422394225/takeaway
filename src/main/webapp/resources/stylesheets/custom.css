@@ -3304,3 +3304,7 @@ table.dataTable tbody td {
 	-webkit-box-shadow: 0px;
 	box-shadow: 0px;
 }
+.label-tip{
+	size:10px;
+	color:#6d6d6d;
+}

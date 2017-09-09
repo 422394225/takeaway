@@ -39,6 +39,7 @@
         <th>所属商店</th>
         <th>名称</th>
         <th>下属商品</th>
+	    <th>排序值</th>
         <th>创建时间</th>
         <th>操作</th>
       </tr>
@@ -56,6 +57,7 @@
 	            { "data": "SHOP_NAME"},
 	            { "data": "NAME" },
 	            { "data": "FOOD_COUNT"},
+	            { "data": "ORDER_NUM"},
 	            { "data": "CREATE_TIME"}
 	        ],
 	        "columnDefs":[{
@@ -63,12 +65,12 @@
 	            "data": null,
 	            "render": function(data,type,row){
 	            	var stateIcon;
-	            		stateIcon= "</button><button class='rename btn btn-success btn-xs' title='重命名'><i class='fa fa-edit'></i></button>"+
-	            		"<button class='delete btn btn-warning btn-xs' title='删除'><i class='fa fa-trash-o'></i></button>";
+	            		stateIcon= "</button><button class='edit btn btn-info btn-xs' title='编辑'><i class='fa fa-edit'></i></button>"+
+	            		"<button class='delete btn btn-danger btn-xs' title='删除'><i class='fa fa-trash-o'></i></button>";
   				  return stateIcon;
 	            }
 	        }],
-	        "order": [[ 4, "desc" ]]
+	        "order": [[ 5, "desc" ]]
 		});
 		$(".reload").on("click",function(){
 			table.ajax.reload(null, false);// 刷新表格数据，分页信息不会重置
@@ -141,63 +143,24 @@
 			    });
 			
 		})
-		table.on("click",'.rename',function(){
-		    var data = table.row($(this).parents('tr')).data();
-			var foodTypeId=data['ID'];
-				BootstrapDialog.show({
-					title: '重命名分类',
-		            message: "<input class=\"form-control\" type=\"text\" id=\"newTypeName\" value=\"\">",
-		            buttons: [{
-		                label: '是',
-		                action: function(dialogItself){
-		                	 $.ajax({
-		                	        url: '/foodType/rename?foodTypeId='+foodTypeId+"&name="+$("#newTypeName").val(),
-		                	        async: true,
-		                	        type: 'GET',
-		                	        success: function(data , textStatus){
-		                	          if(data=="success"){
-		                    	          window.location.href='/foodType';
-		                	      	  }
-		                	          else{
-		                	        	  console.log("error to off shelf");
-		                	        	  layer.msg("操作失败");
-		                	        	  dialogItself.close();
-		                	          }
-		                	        },
-		                	       
-		                	        error: function(jqXHR , textStatus , errorThrown){
-		                	          console.log("error");
-		                	        },
-		                	       
-		                	      });
-		                }
-		            }, {
-		                label: '否',
-		                action: function(dialogItself){
-		                    dialogItself.close();
-		                }
-		            }]
-		        });
-			
-		})
 		table.on("click",'.edit',function(){
 	        var data = table.row($(this).parents('tr')).data();
 			var foodId=data['ID'];
 			BootstrapDialog.show({
-				title: '编辑商品',
+				title: '编辑商品分类',
 				draggable: true,
-			    message: $('<div></div>').load('${base}/food/edit?foodId='+foodId),
+			    message: $('<div></div>').load('${base}/foodType/edit?id='+foodId),
 			    buttons: [{
 			    	id:'submitBtn',
 			        label: '提交',
-			        cssClass: 'btn btn-primary', 
-			        action: function(dialogRef){    
-			           
+			        cssClass: 'btn btn-primary',
+			        action: function(dialogRef){
+
 			        }
 			    },{
 			        label: '取消',
-			        cssClass: 'btn btn-link', 
-			        action: function(dialogRef){    
+			        cssClass: 'btn btn-link',
+			        action: function(dialogRef){
 			            dialogRef.close();
 			        }
 			    }]

@@ -144,13 +144,19 @@
 	#sql("list")
 		#set(aliasMap = {"SHOP_NAME":"t.`NAME`"})
 		SELECT
-	d.*, t. NAME AS SHOP_NAME , ifnull(f.FOOD_COUNT,'0') AS FOOD_COUNT
-	FROM
-	T_FOOD_TYPE AS d
-	LEFT JOIN t_shop t ON d.SHOP_ID = t.ID
-	LEFT JOIN (SELECT COUNT(1) FOOD_COUNT,TYPE_ID FROM T_FOOD GROUP BY TYPE_ID) f ON d.ID = f.TYPE_ID
-	WHERE 1=1 AND d.DELETED=0
+    d.*, t. NAME AS SHOP_NAME , ifnull(f.FOOD_COUNT,'0') AS FOOD_COUNT
+    FROM
+    T_FOOD_TYPE AS d
+    LEFT JOIN t_shop t ON d.SHOP_ID = t.ID
+    LEFT JOIN (SELECT COUNT(1) FOOD_COUNT,TYPE_ID FROM T_FOOD GROUP BY TYPE_ID) f ON d.ID = f.TYPE_ID
+    WHERE 1=1 AND d.DELETED=0
 		#@dbCondition_alias(conditions,mainAlias,aliasMap)
+	#end
+	#sql("shopList")
+	  SELECT ID,NAME
+    FROM t_shop
+    WHERE STATE>-2
+    ORDER BY CREATE_TIME DESC
 	#end
 #end
 #namespace("order")

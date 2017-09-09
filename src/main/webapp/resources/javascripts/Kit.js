@@ -37,9 +37,9 @@
 			url: u,
 			success:function(data){
 				if(data.error){
-					params.failFunc(data.msg,data.data);
+					failFunc(data.msg,data.data);
 				}else{
-					params.successFunc(data.msg,data.data);
+					successFunc(data.msg,data.data);
 				}
 			},
 			error:function(XMLHttpRequest, textStatus, errorThrown){
