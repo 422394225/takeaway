@@ -1,13 +1,13 @@
 
 package core.admin.service.foodType.impl;
 
-import java.util.List;
-
 import core.admin.service.base.impl.DataTableServiceImpl;
 import core.admin.service.foodType.FoodTypeService;
 import core.model.Food;
 import core.model.FoodType;
 import core.model.Shop;
+
+import java.util.List;
 
 public class FoodTypeServiceImpl extends DataTableServiceImpl implements FoodTypeService {
 

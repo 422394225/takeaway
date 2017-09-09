@@ -101,7 +101,12 @@
 			var shopName=data['SHOP_NAME'];
 			var foodTypeId=data['ID'];
 			$.getJSON("${base}/foodType/getTransferType?shopName="+shopName+"&typeId="+foodTypeId,function(json){
-				var selectDiv="<div><label class=\"control-label\">要转移的商品分类</label></div><select id=\"deleteTypeSelect\" class=\"form-control\">";
+                var selectDiv="";
+				if(json.type.length>0){
+                   selectDiv="<div><label class=\"control-label\">要转移的商品分类</label></div><select id=\"deleteTypeSelect\" class=\"form-control\">";
+                }else{
+                    selectDiv="该分类下无商品可直接删除";
+				}
 			    $.each(json.type, function(i, field){
 			    	selectDiv=selectDiv+"<option value='"+field.id+"'>"+field.name+"</option>";
 			      });
@@ -118,13 +123,13 @@
 		                	        type: 'GET',
 		                	        success: function(data , textStatus){
 		                	          if(data=="success"){
-		                    	          window.location.href='/foodType';
+                                          table.ajax.reload(null, false);
 		                	      	  }
 		                	          else{
 		                	        	  console.log("error to off shelf");
 		                	        	  layer.msg("操作失败");
-		                	        	  dialogItself.close();
 		                	          }
+		                	          dialogItself.close();
 		                	        },
 		                	       
 		                	        error: function(jqXHR , textStatus , errorThrown){

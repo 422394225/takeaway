@@ -1,9 +1,5 @@
 package core.admin.controller.food;
 
-import java.util.List;
-
-import org.apache.commons.lang3.StringUtils;
-
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.core.Controller;
@@ -11,14 +7,17 @@ import com.jfinal.log.Log;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
-
 import core.admin.service.foodType.FoodTypeService;
 import core.admin.service.foodType.impl.FoodTypeServiceImpl;
+import core.model.Food;
 import core.model.FoodType;
 import core.model.Shop;
 import core.vo.DTParams;
 import core.vo.JSONError;
 import core.vo.JSONSuccess;
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.List;
 
 /**
  * 
@@ -79,12 +78,19 @@ public class FoodTypeController extends Controller {
 
 	public void delete() {
 		try {
+			//删除分类
 			int typeId = getParaToInt("foodTypeId");
-			int dstTypeId = getParaToInt("dstTypeId");
 			FoodType foodType = FoodType.dao.findById(typeId);
 			foodType.set("DELETED", 1);
-			Db.update("update t_food set TYPE_ID=? WHERE TYPE_ID=?", dstTypeId, typeId);
 			foodType.update();
+			//分类转移
+			int dstTypeId = -1;
+			try {
+				dstTypeId = getParaToInt("dstTypeId");
+			}catch (Exception e){}
+			if(dstTypeId!=-1){
+				Db.update("update t_food set TYPE_ID=? WHERE TYPE_ID=?", dstTypeId, typeId);
+			}
 			renderText("success");
 		} catch (Exception e) {
 			log.info("error in delete");
@@ -109,15 +115,19 @@ public class FoodTypeController extends Controller {
 		JSONArray typeArray = new JSONArray();
 		if (foodTypeService.findByShopName(shopName) != null) {
 			resultObject.put("mess", "存在商家");
-			List<FoodType> foodTypes = foodTypeService.findFoodTypeByShopName(shopName, typeId);
-			for (FoodType foodType : foodTypes) {
-				JSONObject typeObject = new JSONObject();
-				typeObject.put("id", foodType.get("ID"));
-				typeObject.put("name", foodType.get("NAME"));
-				typeArray.add(typeObject);
+			Food food = Food.dao.findFirst(Db.getSql("foodType.exitsFood"),typeId);
+			if(food!=null){
+				List<FoodType> foodTypes = foodTypeService.findFoodTypeByShopName(shopName, typeId);
+				for (FoodType foodType : foodTypes) {
+					JSONObject typeObject = new JSONObject();
+					typeObject.put("id", foodType.get("ID"));
+					typeObject.put("name", foodType.get("NAME"));
+					typeArray.add(typeObject);
+				}
 			}
-		} else
+		} else{
 			resultObject.put("mess", "不存在商家");
+		}
 		resultObject.put("type", typeArray);
 		renderJson(resultObject);
 	}

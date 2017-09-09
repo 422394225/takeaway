@@ -158,6 +158,9 @@
     WHERE STATE>-2
     ORDER BY CREATE_TIME DESC
 	#end
+	#sql("exitsFood")
+  SELECT ID FROM t_food WHERE TYPE_ID =?
+  #end
 #end
 #namespace("order")
 	#sql("listActive")
