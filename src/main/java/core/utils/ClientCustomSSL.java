@@ -65,7 +65,7 @@ public class ClientCustomSSL {
 				SSLConnectionSocketFactory.BROWSER_COMPATIBLE_HOSTNAME_VERIFIER);
 		CloseableHttpClient httpclient = HttpClients.custom().setSSLSocketFactory(sslsf).build();
 		try {
-			HttpPost httppost = new HttpPost("https://api.mch.weixin.qq.com/secapi/pay/refund");
+			HttpPost httppost = new HttpPost(url);
 			httppost.setEntity(new StringEntity(para));
 			System.out.println("executing request" + httppost.getRequestLine());
 

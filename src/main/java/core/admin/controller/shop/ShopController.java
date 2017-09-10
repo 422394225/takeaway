@@ -5,6 +5,13 @@
 
 package core.admin.controller.shop;
 
+import java.io.File;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang3.StringUtils;
+
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Clear;
@@ -14,6 +21,7 @@ import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
+
 import core.admin.controller.base.BaseController;
 import core.admin.service.audit.AuditService;
 import core.admin.service.audit.impl.AuditServiceImpl;
@@ -32,12 +40,6 @@ import core.validate.ShopValidate;
 import core.vo.DTParams;
 import core.vo.JSONError;
 import core.vo.JSONSuccess;
-import org.apache.commons.lang3.StringUtils;
-
-import java.io.File;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Description:
@@ -203,6 +205,7 @@ public class ShopController extends BaseController {
 		}
 		shop.set("AUTO_OPEN", on);
 		shop.set("DELIVERY_PRICE", getParaToDouble("deliveryPrice"));
+		shop.set("DELIVERY_THRESHOLD", getParaToDouble("deliveryThreshold"));
 		shop.set("DELIVERY_OFF_THRESHOLD", getParaToDouble("deliveryOffThreshold"));
 		shop.set("DELIVERY_OFF", getParaToDouble("deliveryOff"));
 		shop.set("REDUCTION_THRESHOLD", getParaToDouble("redutionThreshold"));
@@ -269,7 +272,7 @@ public class ShopController extends BaseController {
 		String shopId = getPara("id");
 		if (StringUtils.isNotEmpty(shopId)) {
 			Shop shop = Shop.dao.findById(shopId);
-			shop.set("STATE",-2);
+			shop.set("STATE", -2);
 			shop.update();
 			renderJson(new JSONSuccess("移除商家成功！"));
 		} else {
@@ -281,7 +284,7 @@ public class ShopController extends BaseController {
 		String shopId = getPara("id");
 		if (StringUtils.isNotEmpty(shopId)) {
 			Shop shop = Shop.dao.findById(shopId);
-			shop.set("STATE",-1);
+			shop.set("STATE", -1);
 			shop.update();
 			renderJson(new JSONSuccess("恢复商家成功！"));
 		} else {
