@@ -8,6 +8,7 @@ package core.weixin.controller.order;
 import java.awt.*;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
@@ -69,7 +70,7 @@ public class OrderController extends WeixinMsgController {
 			CacheKit.remove("preOrder",openId);//清空缓存
 			JSONObject foodInfo = request.getJSONObject("foods");
 			if(foodInfo.size()>0){
-				double totalPrice = 0;
+				Double totalPrice = 0D;
 				Integer shopId = null;
 				JSONArray tmpArray = new JSONArray();
 				List<Food> foods = new ArrayList<>();
@@ -101,15 +102,13 @@ public class OrderController extends WeixinMsgController {
 					totalPrice += shop.getDouble("DELIVERY_PRICE");
 					order.set("TOTAL_PRICE",totalPrice);
 					//优惠计算
-					if (shop.getDouble("DELIVERY_OFF_THRESHOLD") != null && shop.getDouble("DELIVERY_OFF_THRESHOLD") != 0
-							&& totalPrice > shop.getDouble("DELIVERY_OFF_THRESHOLD")) {
+					if (shop.getDouble("DELIVERY_OFF_THRESHOLD") != null && totalPrice > shop.getDouble("DELIVERY_OFF_THRESHOLD")) {
 						totalPrice -= shop.getDouble("DELIVERY_OFF");
 					}
-					if (shop.getDouble("REDUCTION_THRESHOLD") != null && shop.getDouble("REDUCTION_THRESHOLD") != 0
-							&& totalPrice > shop.getDouble("REDUCTION_THRESHOLD")) {
+					if (shop.getDouble("REDUCTION_THRESHOLD") != null && totalPrice > shop.getDouble("REDUCTION_THRESHOLD")) {
 						totalPrice -= shop.getDouble("REDUCTION");
 					}
-					order.set("PAY_PRICE", totalPrice);
+					order.set("PAY_PRICE",Double.parseDouble(String.format("%.2f",totalPrice)));
 				}else{
 					renderJson(new JSONError("您选的商品所在的店铺不存在哦~"));
 				}
