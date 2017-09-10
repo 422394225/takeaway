@@ -50,8 +50,10 @@ public class ShopWXValidate extends ShortCircuitValidate {
 		}
 		validateRequired("phone", "msg", "请输入手机号");
 		validatePhone("phone", "msg", "请输入正确的手机号");
-		validateRequired("deliveryPrice", "msg", "请输入起送价");
-		validateDouble("deliveryPrice", "msg", "请输入正确的起送价(数字)");
+		validateRequired("deliveryThreshold", "msg", "请输入起送价");
+		validateDouble("deliveryThreshold", "msg", "请输入正确的起送价(数字)");
+		validateRequired("deliveryPrice", "msg", "请输入配送费");
+		validateDouble("deliveryPrice", "msg", "请输入正确的配送费(数字)");
 		if (StringUtils.isNotEmpty(c.getPara("deliveryOffThreshold"))) {
 			validateDouble("deliveryOffThreshold", "msg", "请输入正确的配送满减起价(数字)");
 		}

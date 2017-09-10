@@ -213,6 +213,8 @@ public class ShopController extends BaseController {
 		shop.set("QQ", getPara("qq"));
 		shop.set("OPEN_TIME", getPara("openTime"));
 		shop.set("CLOSE_TIME", getPara("closeTime"));
+		shop.set("DELIVERY_THRESHOLD", getPara("deliveryThreshold"));
+		shop.set("DELIVERY_PRICE", getPara("deliveryPrice"));
 		int on = 0;
 		String onStr = getPara("autoOpen");
 		if ("on".equals(onStr)) {

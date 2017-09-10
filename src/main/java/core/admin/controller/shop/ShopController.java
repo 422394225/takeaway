@@ -5,13 +5,6 @@
 
 package core.admin.controller.shop;
 
-import java.io.File;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.lang3.StringUtils;
-
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Clear;
@@ -21,7 +14,6 @@ import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
-
 import core.admin.controller.base.BaseController;
 import core.admin.service.audit.AuditService;
 import core.admin.service.audit.impl.AuditServiceImpl;
@@ -40,6 +32,12 @@ import core.validate.ShopValidate;
 import core.vo.DTParams;
 import core.vo.JSONError;
 import core.vo.JSONSuccess;
+import org.apache.commons.lang3.StringUtils;
+
+import java.io.File;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Description:
@@ -74,6 +72,7 @@ public class ShopController extends BaseController {
 		Map<String, Map<String, Object>> map = new HashMap<>();
 		Map<String, Object> order = new HashMap<>();
 		order.put("AUDIT_STATE", "ASC");
+		order.put("CREATE_TIME", "DESC");
 		map.put("orderbyCond", order);
 		getData(map, "shop.audit");
 	}
