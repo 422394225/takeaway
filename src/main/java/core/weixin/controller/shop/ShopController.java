@@ -373,4 +373,11 @@ public class ShopController extends BaseController {
 		render("front.html");
 	}
 
+	public void mapMobile() {
+		setAttr("key", PropKit.get("amap.key"));
+		setAttr("lng", getPara("lng"));
+		setAttr("lat", getPara("lat"));
+		render("map-mobile.html");
+	}
+
 }

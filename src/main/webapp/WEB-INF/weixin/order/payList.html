@@ -5,18 +5,19 @@
 	<link href="${base}/resources/stylesheets/wx_payList.css" rel="stylesheet" type="text/css" />
 </#assign>
 <#assign wxJavascript>
+	<script src="${base}/resources/javascripts/lay/laytpl.js" type="text/javascript"></script>
 </#assign>
 <@mainLayout wxTitle="订单结算"  wxMeta=wxMeta wxCss=wxCss wxJavascript=wxJavascript>
-<div class="page page-current">
+<div class="page page-current" id="mainPage">
 	<header class="bar bar-nav">
 		<a class="icon icon-left pull-left color-default" href="javascript:void(0);" onclick="javascript:history.go(-1);"></a>
 		<img src="${base}/resources/images/logo-text.png" class="pull-right" style="width: 2rem;">
 		<h1 class="title  color-default">订单结算</h1>
 	</header>
-	<table class="infoTable">
+	<table class="infoTable" onclick="javascript:$.router.loadPage('#recivePage');">
 		<tr>
 			<td rowspan="2"><i class="fa fa-map-marker color-primary"></i></td>
-			<td>
+			<td data="${(user.NAME)!}">
 				<#if (user.NAME)! == ''>
 					姓名未填写
 					<#else>
@@ -31,7 +32,7 @@
 						<#else>
 				</#if>
 			</td>
-			<td>
+			<td data="${(user.PHONE)!}">
 				<#if (user.PHONE)! == ''>
 					手机号未填写
 					<#else>
@@ -41,11 +42,11 @@
 			<td rowspan="2"><i class="fa fa-chevron-right color-primary"></i></td>
 		</tr>
 		<tr>
-			<td colspan="3">
-				<#if (user.PHONE)! == ''>
+			<td colspan="3" data="${(user.ADDRESS)!}">
+				<#if (user.ADDRESS)! == ''>
 					地址未填写
 					<#else>
-						${(user.NAME)!}
+						${(user.ADDRESS)!}
 				</#if>
 			</td>
 		</tr>
@@ -63,50 +64,133 @@
 			</li>
 		</ul>
 	</div>
-	<button onclick="createOrder()">提交预订单</button>
+	<div id="paymentContainer">
+
+	</div>
+	<div onclick="javascript:createOrder();" class="payBtn">
+		<font class="fa fa-check"></font>&nbsp;确认支付
+	</div>
 </div>
 </@mainLayout>
 <script>
-$(function () {
-	Kit.post(
-		"${base}/wx/order/ajaxPreOrder",
-		JSON.stringify({openId:WxStore.user.getParams("openId"),foods:WxStore.cart.get()}),
-		function(msg,data){
-		    debugger
-		},function (msg,data) {
-			$.alert(msg)
-        }
-	);
-})
-if (typeof WeixinJSBridge == "undefined"){
-	   if( document.addEventListener ){
-	       document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
-	   }else if (document.attachEvent){
-	       document.attachEvent('WeixinJSBridgeReady', onBridgeReady); 
-	       document.attachEvent('onWeixinJSBridgeReady', onBridgeReady);
-	   }
-	}else{
-	   onBridgeReady();
+    var orderData;
+	$(function () {
+		Kit.post(
+			"${base}/wx/order/ajaxPreOrder",
+			JSON.stringify({openId:WxStore.user.getParams("openId"),foods:WxStore.cart.get()}),
+			function(msg,data){
+                orderData = data;
+				var tpl = $('#payment-tpl').html();
+				laytpl(tpl).render(data, function(html){
+					$("#paymentContainer").html(html);
+				});
+			},function (msg,data) {
+				$.alert(msg)
+			}
+		);
+	})
+	function createOrder() {
+	    var address = $("#address").attr("data");
+	    var phone = $("#phone").attr("data");
+	    var name = $("#name").attr("data");
+	    if(address==undefined || phone==undefined || name==undefined){
+            $.toast("请先完善您的收货信息");
+            $.router.loadPage('#recivePage');
+            return;
+		}
+		$.post("${base}/wx/order/pay", {
+				orderId: data.PRE_ORDER.USER_ID,
+				address: address,
+				phone: phone,
+				name: name
+			}, function (result) {
+				if (result.error == false) {
+					WeixinJSBridge.invoke(
+						'getBrandWCPayRequest', {
+							"appId": result.data.appId,     //公众号名称，由商户传入
+							"timeStamp": result.data.timeStamp,         //时间戳，自1970年以来的秒数
+							"nonceStr": result.data.nonceStr, //随机串
+							"package": result.data.package1,
+							"signType": result.data.signType,         //微信签名方式：
+							"paySign": result.data.paySign //微信签名
+						},
+						function (res) {
+							if (res.err_msg == "get_brand_wcpay_request:ok") {
+							}     // 使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回    ok，但并不保证它绝对可靠。
+						}
+					);
+				}
+            	newWinInfo(result.error)
+			}
+		);
 	}
-function createOrder(){
-$.post("wx/order/createOrder",{userid:"${user.ID}",shopid:"2",userAddress:"address",userTel:"tel",userName:"username",foods:"[{id:26,num:1},{id:32,num:2}]"},function(result){
-    $("#sss").html(result.error);
-	if(result.error==false){
-	    WeixinJSBridge.invoke(
-   	       'getBrandWCPayRequest', {
-   	           "appId":result.data.appId,     //公众号名称，由商户传入     
-   	           "timeStamp":result.data.timeStamp,         //时间戳，自1970年以来的秒数     
-   	           "nonceStr":result.data.nonceStr, //随机串     
-   	           "package":result.data.package1,     
-   	           "signType":result.data.signType,         //微信签名方式：     
-   	           "paySign":result.data.paySign //微信签名 
-   	       },
-   	       function(res){
-   	           if(res.err_msg == "get_brand_wcpay_request:ok" ) {}     // 使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回    ok，但并不保证它绝对可靠。 
-   	       }
-   	   ); 
-	}
-	}
-  );
-}
 </script>
+<script id="payment-tpl" type="text/html">
+	<div  class="list-block">
+		<div class="card no-margin">
+			<div class="card-header" style="display: block;">
+				<img src="{{d.SHOP.IMG}}" width="30" style="vertical-align: middle;">
+				<span>{{d.SHOP.NAME}}</span>
+			</div>
+			<div class="card-content">
+				<table class="card-content-inner order-table" width="100%" style="text-align: center;">
+					{{# for(var i = 0, len = d.FOODS.length; i < len; i++){ }}
+						{{# var am = WxStore.cart.getParams(d.FOODS[i].ID) }}
+						{{# if(am>0){ }}
+						<tr>
+							<td><img src="{{d.FOODS[i].IMG}}" width="30" height="30"></td>
+							<td><span>{{d.FOODS[i].NAME}}</span></td>
+							<td>
+								<span>x{{am}}</span>
+							</td>
+							<td><font class="color-danger">{{d.FOODS[i].PRICE*am}}元</font></td>
+						</tr>
+						{{# } }}
+					{{# } }}
+					<tr>
+						<td colspan="3" style="text-align: left;padding-left: 1em">
+							配送费
+						</td>
+						<td>
+							<font class="color-danger">{{d.SHOP.DELIVERY_PRICE}}元</font>
+						</td>
+					</tr>
+					{{# if(d.SHOP.DELIVERY_OFF>0){ }}
+					<tr>
+						<td colspan="3" style="text-align: left;padding-left: 1em">
+							满{{d.SHOP.DELIVERY_OFF_THRESHOLD}}元,减配送费<font class="color-warning">{{d.SHOP.DELIVERY_OFF}}</font>元
+						</td>
+						<td>
+							<font class="color-success">-{{d.SHOP.DELIVERY_OFF}}元</font>
+						</td>
+					</tr>
+					{{# } }}
+					{{# if(d.SHOP.REDUCTION>0){ }}
+						<tr>
+							<td colspan="3" style="text-align: left;padding-left: 1em">
+								满{{d.SHOP.REDUCTION_THRESHOLD}}元,优惠<font class="color-primary">{{d.SHOP.REDUCTION}}</font>元
+							</td>
+							<td>
+								<font class="color-success">-{{d.SHOP.REDUCTION}}元</font>
+							</td>
+						</tr>
+					{{# } }}
+					{{# if(d.SHOP.GIFT!=undefined && d.SHOP.GIFT!=''){ }}
+						<tr>
+							<td colspan="3" style="text-align: left;padding-left: 1em">
+								满{{d.SHOP.GIFT_THRESHOLD}}元,送<font class="color-danger">{{d.SHOP.GIFT}}</font>
+							</td>
+							<td></td>
+						</tr>
+					{{# } }}
+				</table>
+			</div>
+			<div class="card-footer">
+				<span>订单:{{d.PRE_ORDER.TOTAL_PRICE}}元</span>
+				<span>优惠：{{d.PRE_ORDER.TOTAL_PRICE-d.PRE_ORDER.PAY_PRICE}}元</span>
+				<span>需支付：{{d.PRE_ORDER.PAY_PRICE}}元</span>
+			</div>
+		</div>
+	</div>
+</script>
+<#include "../user/receiveInfo.html"/>

@@ -5,15 +5,17 @@
 
 package core.weixin.controller.order;
 
+import java.awt.*;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.List;
 
 import com.jfinal.kit.HttpKit;
+import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.ehcache.CacheKit;
+import core.model.*;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -26,10 +28,6 @@ import com.jfinal.log.Log;
 import com.jfinal.weixin.sdk.jfinal.MsgInterceptor;
 import com.jfinal.weixin.sdk.utils.HttpUtils;
 
-import core.model.Food;
-import core.model.Order;
-import core.model.Shop;
-import core.model.User;
 import core.utils.WeiXinUtils;
 import core.vo.JSONError;
 import core.vo.JSONSuccess;
@@ -56,16 +54,8 @@ public class OrderController extends WeixinMsgController {
 	}
 
 	public void payList() throws UnsupportedEncodingException {
-		String id = getPara("openId");
-		if(StringUtils.isNotEmpty(id) && !"unndefined".equals(id)){
-			User user = User.dao.findById(id);
-			if(user!=null){
-				setAttr("user",user);
-				render("payList.html");
-				return;
-			}
-		}
-		redirect("/wx/tools/info?info="+ URLEncoder.encode("用户信息获取失败！","UTF-8"));
+		UserAddress userAddress = UserAddress.dao.findFirst(Db.getSql(""));
+		render("payList.html");
 	}
 
 	public void ajaxPreOrder(){
@@ -81,9 +71,10 @@ public class OrderController extends WeixinMsgController {
 				double totalPrice = 0;
 				Integer shopId = null;
 				JSONArray tmpArray = new JSONArray();
+				List<Food> foods = new ArrayList<>();
 				for(String key:foodInfo.keySet()){
-					int num;
-					if(StringUtils.isNumeric(key) && (num=Integer.valueOf(key))>0){
+					Integer num = foodInfo.getIntValue(key);
+					if(num!=null && num>0){
 						Food food = Food.dao.findById(key);
 						if(food!=null){
 							if(order.get("SHOP_ID")==null){//初始化shopID
@@ -91,7 +82,9 @@ public class OrderController extends WeixinMsgController {
 							}
 
 							double price = food.getDouble("PRICE");
-							totalPrice+=price*num;
+							totalPrice+=(price*num);
+
+							foods.add(food);
 						}else{
 							renderJson(new JSONError("订单中含有已下架/删除的商品，请重新选购"));
 						}
@@ -121,9 +114,9 @@ public class OrderController extends WeixinMsgController {
 				}
 				order.set("FOODS",tmpArray.toJSONString());
 				CacheKit.put("preOrder",openId,order);//更新缓存
-				result.put("SHOP_NAME",shop.getStr("NAME"));
-				result.put("SHOP_LOGO",shop.getStr("IMG"));
+				result.put("SHOP",shop);
 				result.put("PRE_ORDER",JSONObject.parseObject(order.toJson()));
+				result.put("FOODS",foods);
 				renderJson(new JSONSuccess(result));
 			}else{
 				renderJson(new JSONError("您还没有选择任何美食哦~"));
@@ -174,41 +167,19 @@ public class OrderController extends WeixinMsgController {
 	 * prepay_id<br>
 	 * 
 	 */
-	public void createOrder() {
+	public void pay() {
 		/** 返回的json */
 		JSONObject result = new JSONObject();
 		String openId = getPara("openId");
-//		setAttr("userid", openId);
-//		Integer shopId = getParaToInt("shopid");
-		String userAddress = getPara("userAddress");
-		String userTel = getPara("userTel");
-		String userName = getPara("userName");
-//		JSONArray foodArray = JSONArray.parseArray(getPara("foods"));
-		/** 计算价格 */
-//		double totalPrice = 0;
-//		for (Object object : foodArray) {
-//			JSONObject foodObject = (JSONObject) object;
-//			Food food = Food.dao.findById(foodObject.get("id"));
-//			totalPrice += food.getDouble("PRICE") * foodObject.getIntValue("num");
-//		}
-//		Shop shop = Shop.dao.findById(shopId);
-//		double tempTotalPrice = totalPrice;
-//		if (shop.getDouble("DELIVERY_OFF_THRESHOLD") != null && shop.getDouble("DELIVERY_OFF_THRESHOLD") != 0
-//				&& tempTotalPrice > shop.getDouble("DELIVERY_OFF_THRESHOLD")) {
-//			totalPrice -= shop.getDouble("DELIVERY_OFF");
-//		}
-//		if (shop.getDouble("REDUCTION_THRESHOLD") != null && shop.getDouble("REDUCTION_THRESHOLD") != 0
-//				&& tempTotalPrice > shop.getDouble("REDUCTION_THRESHOLD")) {
-//			totalPrice -= shop.getDouble("REDUCTION");
-//		}
-//		totalPrice += shop.getDouble("DELIVERY_PRICE");
-		/** 新建订单 **/
+		String address = getPara("address");
+		String phone = getPara("phone");
+		String name = getPara("name");
+		/** 更新订单 **/
 		Order order = CacheKit.get("preOrder",openId);
-		order.set("FOODS", getPara("foods"));
-		order.set("USER_ADDRESS", userAddress);
-		order.set("USER_TEL", userTel);
-		order.set("USER_NAME", userName);
-		order.save();
+		order.set("USER_ADDRESS", address);
+		order.set("USER_TEL", phone);
+		order.set("USER_NAME", name);
+		order.update();
 		result.put("orderid", order.getInt("ID"));
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
 		java.util.Map<String, String> keyMap = new HashMap<>();

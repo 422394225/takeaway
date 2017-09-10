@@ -57,6 +57,19 @@
 	#end
 #end
 
+#namespace("userAddress")
+	#sql("getByUid")
+		SELECT *
+        FROM t_user_address
+        WHERE DELETED=0 AND USERID =?
+	#end
+	#sql("getDefault")
+    		SELECT *
+            FROM t_user_address
+            WHERE DELETED=0 AND USERID =?
+    	#end
+#end
+
 #namespace("foodType")
     #sql("getByShopId")
         SELECT * FROM t_food_type
