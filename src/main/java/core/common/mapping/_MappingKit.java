@@ -2,25 +2,7 @@ package core.common.mapping;
 
 import com.jfinal.plugin.activerecord.ActiveRecordPlugin;
 
-import core.model.Admin;
-import core.model.Audit;
-import core.model.Banner;
-import core.model.Data;
-import core.model.Delivery;
-import core.model.DictCode;
-import core.model.Discount;
-import core.model.Feedback;
-import core.model.Food;
-import core.model.FoodHistroy;
-import core.model.FoodType;
-import core.model.Log;
-import core.model.Menu;
-import core.model.Order;
-import core.model.Role;
-import core.model.Shop;
-import core.model.ShopType;
-import core.model.ShopTypeRelation;
-import core.model.User;
+import core.model.*;
 
 public class _MappingKit {
 
@@ -44,5 +26,7 @@ public class _MappingKit {
 		arp.addMapping("t_delivery", "ID", Delivery.class);
 		arp.addMapping("t_audit", "ID", Audit.class);
 		arp.addMapping("t_banner", "ID", Banner.class);
+		arp.addMapping("t_user_address", "ID", UserAddress.class);
+		arp.addMapping("t_rate", "ID", Rate.class);
 	}
 }
