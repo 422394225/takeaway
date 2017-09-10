@@ -39,7 +39,7 @@ import core.model.Order;
 import core.vo.RecevieMedia;
 
 public class WeiXinUtils {
-	private static final String voicePath = PropKit.get("voicePath");
+	private static final String voicePath = PropKit.get("voicePath","c:\\\\tempVoice\\\\");
 	public static Map<String, String> VOICE_CONTENT_TYPE = Kv.by("acp", "audio/x-mei-aac").set("aif", "audio/aiff")
 			.set("aiff", "audio/aiff").set("aifc", "audio/aiff").set("au", "audio/basic")
 			.set("la1", "audio/x-liquid-file").set("lavs", "audio/x-liquid-secure").set("lmsff", "audio/x-la-lms")
