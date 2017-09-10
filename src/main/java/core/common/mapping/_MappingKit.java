@@ -27,5 +27,6 @@ public class _MappingKit {
 		arp.addMapping("t_audit", "ID", Audit.class);
 		arp.addMapping("t_banner", "ID", Banner.class);
 		arp.addMapping("t_user_address", "ID", UserAddress.class);
+		arp.addMapping("t_rate", "ID", Rate.class);
 	}
 }

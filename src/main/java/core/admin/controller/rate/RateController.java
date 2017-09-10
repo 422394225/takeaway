@@ -8,21 +8,21 @@ import com.jfinal.log.Log;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 
-import core.admin.service.foodType.FoodTypeService;
-import core.admin.service.foodType.impl.FoodTypeServiceImpl;
+import core.admin.service.rate.RateService;
+import core.admin.service.rate.impl.RateServiceImpl;
 import core.vo.DTParams;
 
 /**
  * 
  * Description:
  * 
- * @author weifaguo
+ * @author hjk
  * @date 2017年1月30日下午2:40:27
  */
 public class RateController extends Controller {
 
 	private Log log = Log.getLog(RateController.class);
-	private FoodTypeService foodTypeService = new FoodTypeServiceImpl();
+	private RateService rateService = new RateServiceImpl();
 
 	public void index() {
 		render("list.html");
@@ -30,13 +30,13 @@ public class RateController extends Controller {
 
 	public void getData() {
 		DTParams params = new DTParams(getParaMap());
-		Page<Record> foods = foodTypeService.getDTPage(params, "rate.list");
+		Page<Record> rate = rateService.getDTPage(params, "rate.list");
 		JSONObject result = new JSONObject();
 		result.put("draw", params.getDraw());
-		result.put("recordsTotal", foods.getTotalRow());
-		List<Record> list = foods.getList();
+		result.put("recordsTotal", rate.getTotalRow());
+		List<Record> list = rate.getList();
 		result.put("data", list);
-		result.put("recordsFiltered", foods.getTotalRow());
+		result.put("recordsFiltered", rate.getTotalRow());
 		renderJson(result);
 	}
 

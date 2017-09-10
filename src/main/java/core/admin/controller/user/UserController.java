@@ -5,16 +5,17 @@
 
 package core.admin.controller.user;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.core.Controller;
 import com.jfinal.log.Log;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import core.admin.service.user.UserService;
 import core.admin.service.user.impl.UserServiceImpl;
@@ -55,6 +56,18 @@ public class UserController extends Controller {
 		where.put("SUBSCRIBE", "= 0");
 		map.put("limitCond", where);
 		getData(map);
+	}
+
+	public void lookAddress() {
+		String userId = getPara("userId");
+		List<Record> records = Db
+				.find("SELECT ADDRESS,`NAME`,TEL,`DEFAULT` FROM T_USER_ADDRESS WHERE USERID=? AND DELETED=0", userId);
+		JSONArray resultArray = new JSONArray();
+		for (Record record : records) {
+			resultArray.add(JSONObject.parse(record.toJson()));
+		}
+		setAttr("addr", resultArray);
+		render("lookAddress.html");
 	}
 
 	private void getData(Map<String, Map<String, Object>> map) {

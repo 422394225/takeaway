@@ -27,13 +27,27 @@
 	            "render": function(data, type, row) {
 	                return "<img src='"+data+"' style='width:50px;height:50px'/>";
 	            }
-	        }],
+	        },{
+				"targets": -1,
+				"data": null,  
+				"render": function(data,type,row){
+					return "<button class='lookAddress btn btn-info btn-xs' title='查看配送地址'><i class='fa fa-map-marker'></i></button>";
+				}}],
 	        "lColumnNull":false
 		});
-		
+		table.on('click', '.lookAddress', function(){
+		    var data = table.row($(this).parents('tr')).data();
+		    BootstrapDialog.show({
+				title: '配送地址',
+				draggable: true,
+			    message: $('<div></div>').load('${base}/user/lookAddress?userId='+data['ID']),
+			    buttons:[]
+		    });
+		});
 		$(".reload").on("click",function(){
 			table.ajax.reload(null, false);// 刷新表格数据，分页信息不会重置
 		})
+
 	})
 </script>
 </#assign>
