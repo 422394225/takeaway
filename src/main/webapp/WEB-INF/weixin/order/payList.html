@@ -8,16 +8,16 @@
 	<script src="${base}/resources/javascripts/lay/laytpl.js" type="text/javascript"></script>
 </#assign>
 <@mainLayout wxTitle="订单结算"  wxMeta=wxMeta wxCss=wxCss wxJavascript=wxJavascript>
-<div class="page page-current" id="mainPage">
+<div class="page page-current" id="mainPage" style="overflow-y: scroll">
 	<header class="bar bar-nav">
 		<a class="icon icon-left pull-left color-default" href="javascript:void(0);" onclick="javascript:history.go(-1);"></a>
 		<img src="${base}/resources/images/logo-text.png" class="pull-right" style="width: 2rem;">
 		<h1 class="title  color-default">订单结算</h1>
 	</header>
-	<table class="infoTable" onclick="javascript:$.router.loadPage('#recivePage');">
+	<table class="infoTable" onclick="manageAddress();">
 		<tr>
 			<td rowspan="2"><i class="fa fa-map-marker color-primary"></i></td>
-			<td data="${(userAddress.NAME)!}">
+			<td data="${(userAddress.NAME)!}" data-type="name">
 				<#if (userAddress.NAME)! == ''>
 					姓名未填写
 					<#else>
@@ -25,24 +25,24 @@
 				</#if>
 			</td>
 			<td>
-				<#if (userAddress.SEX)! == '1'>
+				<#if (userAddress.SEX+'')! == '1'>
 					先生
-				<#elseif (userAddress.SEX)! == '2'>
+				<#elseif (userAddress.SEX+'')! == '2'>
 						女士
 				<#else>
 				</#if>
 			</td>
-			<td data="${(userAddress.PHONE)!}">
-				<#if (userAddress.PHONE)! == ''>
-					手机号未填写
+			<td data="${(userAddress.TEL)!}" data-type="phone">
+				<#if (userAddress.TEL)! == ''>
+					联系电话未填写
 					<#else>
-						${(userAddress.NAME)!}
+						${(userAddress.TEL)!}
 				</#if>
 			</td>
 			<td rowspan="2"><i class="fa fa-chevron-right color-primary"></i></td>
 		</tr>
 		<tr>
-			<td colspan="3" data="${(userAddress.ADDRESS)!}">
+			<td colspan="3" data="${(userAddress.ADDRESS)!}" data-type="address">
 				<#if (userAddress.ADDRESS)! == ''>
 					地址未填写
 					<#else>
@@ -67,6 +67,23 @@
 	<div id="paymentContainer">
 
 	</div>
+	<div class="list-block">
+		<ul>
+			<li class="item-content">
+				<div class="item-media"><i class="fa fa-sticky-note-o color-warning"></i></div>
+				<div class="item-inner">
+					<div class="item-title">
+						备注
+					</div>
+				</div>
+			</li>
+		</ul>
+		<ul>
+			<li>
+				<textarea placeholder="给卖家一些提醒" id="remark"></textarea>
+			</li>
+		</ul>
+	</div>
 	<div onclick="javascript:createOrder();" class="payBtn">
 		<font class="fa fa-check"></font>&nbsp;确认支付
 	</div>
@@ -90,20 +107,20 @@
 		);
 	})
 	function createOrder() {
-	    var address = $("#address").attr("data");
-	    var phone = $("#phone").attr("data");
-	    var name = $("#name").attr("data");
-	    if(address==undefined || phone==undefined || name==undefined){
+        var name = $("[data-type='name']").attr("data");
+        var phone = $("[data-type='phone']").attr("data");
+        var address = $("[data-type='address']").attr("data");
+        if(address==undefined || phone==undefined || name==undefined){
             $.toast("请先完善您的收货信息");
-            $.router.loadPage('#recivePage');
+            manageAddress();
             return;
 		}
-		$.post("${base}/wx/order/pay", {
-				orderId: data.PRE_ORDER.USER_ID,
-				address: address,
-				phone: phone,
-				name: name
-			}, function (result) {
+		$.post("${base}/wx/order/pay",
+			{
+			    openId:WxStore.user.getParams("openId"),
+                remark:$("#remark").val()
+			},
+			function (result) {
 				if (result.error == false) {
 					WeixinJSBridge.invoke(
 						'getBrandWCPayRequest', {
@@ -124,6 +141,9 @@
 			}
 		);
 	}
+	function manageAddress() {
+        window.location.href = "${base}/wx/user/addressList";
+    }
 </script>
 <script id="payment-tpl" type="text/html">
 	<div  class="list-block">
@@ -193,4 +213,3 @@
 		</div>
 	</div>
 </script>
-<#include "../user/receiveInfo.html"/>

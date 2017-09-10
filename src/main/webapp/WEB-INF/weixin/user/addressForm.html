@@ -6,13 +6,13 @@
 *{
 	font-family: "Microsoft YaHei";
 }
-#recivePage .bar h1,.bar .button-link{
+#addressFormPage .bar h1,.bar .button-link{
 	color: white;
 }
-#recivePage .list-block{
+#addressFormPage .list-block{
 	margin-top: 0px
 }
-#recivePage #address{
+#addressFormPage #address{
 	position: relative;
     display: inline;
     left: 0;
@@ -26,7 +26,7 @@
 	display: inline;
 	width: 49%;
 }
-#recivePage .list-block{
+#addressFormPage .list-block{
 	margin:0px;
 }
 </style>
@@ -35,9 +35,9 @@
 <script src="${base}/resources/jQuery/jquery.form.min.js" type="text/javascript"></script>
 </#assign>
 <@mainLayout wxTitle="收货信息"  wxMeta=wxMeta wxCss=wxCss wxJavascript=wxJavascript>
-<div class="page" id='recivePage'>
+<div class="page" id='addressFormPage'>
 <header class="bar bar-nav bg-primary">
-  <a class="icon icon-left pull-left color-default" href="javascript:void(0);" onclick="javascript:$.router.loadPage('#mainPage');"></a>
+  <a class="icon icon-left pull-left color-default" href="javascript:void(0);" onclick="javascript:$.router.loadPage('#addressPage');"></a>
   <img src="${base}/resources/images/logo-text.png" style="width: 2rem;position: absolute;right:10px;">
   <h1 class='title'>收货信息编辑</h1>
 </header>
@@ -51,7 +51,21 @@
           <div class="item-inner">
             <div class="item-title label">收货人</div>
             <div class="item-input">
-              <input type="text" placeholder="填入真实姓名方便联系您..." name="realName">
+              <input type="text" placeholder="填入真实姓名方便联系您..." name="realName" value="${(userAddress.NAME)!}">
+            </div>
+          </div>
+        </div>
+      </li>
+      <li>
+        <div class="item-content">
+          <div class="item-media"><i class="fa fa-venus-mars"></i></div>
+          <div class="item-inner">
+            <div class="item-title label">性别</div>
+            <div class="item-input chooseSex" style="text-align: right">
+              <div id="sexText">
+                <font class="fa fa-chevron-right"></font>
+              </div>
+              <input type="hidden" name="sex">
             </div>
           </div>
         </div>
@@ -67,9 +81,9 @@
             </div>
            </div>
         </div>
-        <input name="latitude" id="latitude" type="hidden" value="${(shop.LATITUDE)!}">
-		<input name="longitude" id="longitude" type="hidden" value="${(shop.LONGITUDE)!}">
-		<input name="addressCode" id="addressCode" type="hidden" value="${(shop.PTCODE)!}">
+        <input name="latitude" id="latitude" type="hidden" value="${(userAddress.LATITUDE)!}">
+		<input name="longitude" id="longitude" type="hidden" value="${(userAddress.LONGITUDE)!}">
+		<input name="addressCode" id="addressCode" type="hidden" value="${(userAddress.PTCODE)!}">
       </li>
       <li>
         <div class="item-content">
@@ -77,14 +91,14 @@
           <div class="item-inner">
             <div class="item-title label">联系电话</div>
             <div class="item-input">
-              <input type="text" name="phone" placeholder="手机或电话(请加区号)">
+              <input type="text" name="phone" placeholder="手机或电话(请加区号)" value="${(userAddress.TEL)!}">
             </div>
           </div>
         </div>
       </li>
       </form>
       <li>
-	      <button onclick="javascript: $.router.loadPage('#mainPage');" class="button button-big button-fill button-danger cancelBtn">取消</button>
+	      <button onclick="javascript: $.router.loadPage('#addressPage');" class="button button-big button-fill button-danger cancelBtn">取消</button>
 	      <button onclick="javascript:submit();" class="button button-big button-fill button-success submitBtn">保存</button>
       </li>
     </ul>
@@ -93,42 +107,54 @@
 </div>
 <#include "map-recive.html"/>
 <script>
-function chooseImage(){
-	wx.chooseImage({
-	    count: 1,
-	    success: function (res) {
-	        if(res.errMsg=="chooseImage:ok"){
-	        	$("#preview").attr("src",res.localIds[0])
-	        	$("#preview").css("display","block");
-	        	$.showPreloader();
-	        	wx.uploadImage({
-				    localId: res.localIds[0], // 需要上传的图片的本地ID，由chooseImage接口获得
-				    isShowProgressTips: 1, // 默认为1，显示进度提示
-				    success: function (res) {
-				        var serverId = res.serverId; // 返回图片的服务器端ID
-				        $("#logo").val(serverId);
-				        $.hidePreloader();
-				    }
-				});
-	        }else{
-	        	$.alert("拉起图片选择接口失败！");
-	        }
-	    }
-	});
-}
+  $(function () {
+      $(document).on('click','.chooseSex', function () {
+          var chooseBtn = [
+              {
+                  text: '请选择',
+                  label: true
+              },
+              {
+                  text: '男',
+                  bold: true,
+                  color: 'primary',
+                  onClick: function() {
+                    $("input[name='sex']").val(1);
+                      $("#sexText").html("男")
+                  }
+              },
+              {
+                  text: '女',
+                  color: 'danger',
+                  onClick: function() {
+                      $("input[name='sex']").val(2);
+                      $("#sexText").html("女")
+                  }
+              }
+          ];
+          var cancelBtn = [
+              {
+                  text: '取消',
+                  bg: 'danger'
+              }
+          ];
+          var groups = [chooseBtn, cancelBtn];
+          $.actions(groups);
+      });
+  })
 function submit(){
 	$("#add-form").ajaxSubmit({
 		type:'POST',
-		url: '${base}/wx/user/saveRecive',
+		url: '${base}/wx/user/saveAddress?openId='+WxStore.user.getParams("openId"),
 		dataType:'json',
 		success:function(data){
 			$.hidePreloader();
-//			console.log(data)
 			if(data){
 				if(data.error){
 					$.toast(data.msg);
 				}else{
-					newWinInfo("申请成功！请等待管理员审核");
+                    $.router.loadPage('#addressPage');
+                    loadUserAddress();
 				}
 			}
 		},

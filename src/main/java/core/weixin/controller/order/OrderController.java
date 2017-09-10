@@ -53,7 +53,7 @@ public class OrderController extends WeixinMsgController {
 		render("index.html");
 	}
 
-	public void payList() throws UnsupportedEncodingException {
+	public void payList() {
 		UserAddress userAddress = UserAddress.dao.findFirst(Db.getSql("userAddress.getDefault"),getPara("openId"));
 		setAttr("userAddress",userAddress);
 		render("payList.html");
@@ -172,15 +172,19 @@ public class OrderController extends WeixinMsgController {
 		/** 返回的json */
 		JSONObject result = new JSONObject();
 		String openId = getPara("openId");
-		String address = getPara("address");
-		String phone = getPara("phone");
-		String name = getPara("name");
+		if(StringUtils.isEmpty(openId)){
+			renderJson(new JSONError("无法获取用户信息"));
+		}
 		/** 更新订单 **/
+		UserAddress defaultAddress = UserAddress.dao.findFirst(Db.getSql("userAddress.getDefault"),getPara("openId"));
 		Order order = CacheKit.get("preOrder",openId);
-		order.set("USER_ADDRESS", address);
-		order.set("USER_TEL", phone);
-		order.set("USER_NAME", name);
-		order.update();
+		order.set("REMARK",getPara("remark"));
+		order.set("ORDER_STATE",1);
+		order.set("PAY_STATE",0);
+		order.set("USER_ADDRESS",defaultAddress.getStr("ADDRESS"));
+		order.set("USER_TEL",defaultAddress.getStr("TEL"));
+		order.set("USER_NAME",defaultAddress.getStr("NAME"));
+		order.save();
 		result.put("orderid", order.getInt("ID"));
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
 		java.util.Map<String, String> keyMap = new HashMap<>();

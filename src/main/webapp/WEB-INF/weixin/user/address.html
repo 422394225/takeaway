@@ -3,16 +3,122 @@
 </#assign>
 <#assign wxCss>
 	<style>
+		header {
+			background-image: url("${base}/resources/images/shop_bg.png");
+			background-size: cover;
+		}
+		.infoTable:nth-child(1){
+			margin-top: 2.2rem;
+		}
+		.infoTable{
+			width: 100%;
+			background: white;
+			min-height: 4em;
+			border-bottom: 1px solid #0894ec;
+		}
+		.infoTable td[rowspan='2']{
+			width: 3em;
+			text-align: center;
+		}
+		.addAddressBtn{
+			position: absolute;
+			bottom: 0;
+			left: 0;
+			right: 0;
+			height: 2rem;
+			color: white;
+			text-align: center;
+			line-height: 2rem;
+		}
 	</style>
 </#assign>
 <#assign wxJavascript>
+	<script src="${base}/resources/javascripts/lay/laytpl.js" type="text/javascript"></script>
 	<script>
         $(function(){
+            loadUserAddress();
         });
+        function loadUserAddress() {
+            Kit.post(
+                "${base}/wx/user/ajaxUserAddress?openId="+WxStore.user.getParams("openId"),
+                JSON.stringify({openId:WxStore.user.getParams("openId")}),
+                function(msg,data){
+                    var tpl = $('#address-tpl').html();
+                    laytpl(tpl).render(data, function(html){
+                        $("#addressContainer").html(html);
+                    });
+                },function (msg,data) {
+                    $.alert(msg)
+                }
+            );
+        }
+        function back2payList() {
+            window.location.href="${base}/wx/order/payList?openId="+WxStore.user.getParams("openId");
+        }
+        function editAddress(id) {
+            window.location.href="${base}/wx/user/addressForm?id="+id;
+        }
+        function setDefault(id){
+            Kit.post(
+                "${base}/wx/user/setDefault?id="+id,
+				{},
+                function(msg,data){
+                    loadUserAddress();
+                    $.confirm('是否返回结算？',msg, function () {
+                        back2payList();
+                    });
+                },function (msg,data) {
+                    $.toast(msg)
+                }
+			)
+		}
 	</script>
 </#assign>
 <@mainLayout wxTitle="收货地址管理"  wxMeta=wxMeta wxCss=wxCss wxJavascript=wxJavascript>
 <div class="page" id="addressPage">
-
+	<header class="bar bar-nav">
+		<a class="icon icon-left pull-left color-default" href="javascript:void(0);" onclick="back2payList();"></a>
+		<img src="${base}/resources/images/logo-text.png" class="pull-right" style="width: 2rem;">
+		<h1 class="title  color-default">收货地址管理</h1>
+	</header>
+	<div id="addressContainer"></div>
+	<div class="bg-default addAddressBtn" onclick="javascript:$.router.loadPage('#addressFormPage');">
+		<font class="fa fa-plus-circle color-primary">&nbsp;添加收货地址</font>
+	</div>
 </div>
+<script id="address-tpl" type="text/html">
+	{{# for(var i=0;i<d.length;i++){ }}
+	<table class="infoTable" onclick="setDefault('{{d[i].ID}}');">
+		<tr>
+			<td rowspan="2">
+				{{# if(d[i].DEFAULT==1){ }}
+				<i class="fa fa-map-marker color-warning">&nbsp;默认</i>
+				{{# } }}
+			</td>
+			<td data="{{d[i].NAME}}">
+				{{d[i].NAME}}
+			</td>
+			<td>
+				{{# if(d[i].SEX==1){ }}
+					先生
+				{{# }else if(d[i].SEX==2){ }}
+						女士
+				{{# } }}
+			</td>
+			<td data="{{d[i].TEL}}">
+				{{d[i].TEL}}
+			</td>
+			<!--<td rowspan="2" width="2em" onclick="editAddress('{{d[i].ID}}')">
+				<i class="fa fa-edit color-primary"></i>
+			</td>-->
+		</tr>
+		<tr>
+			<td colspan="3" data="{{d[i].ADDRESS}}">
+				{{d[i].ADDRESS}}
+			</td>
+		</tr>
+	</table>
+	{{# } }}
+</script>
+<#include "addressForm.html" />
 </@mainLayout>
