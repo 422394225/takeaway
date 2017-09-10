@@ -6,16 +6,14 @@
 package core.weixin.controller.user;
 
 import com.alibaba.fastjson.JSONObject;
-import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
-
-import org.apache.commons.lang3.StringUtils;
-
+import com.jfinal.plugin.activerecord.Db;
 import core.model.User;
-import core.utils.SMSUtils;
-import core.validate.UserWXValidate;
+import core.model.UserAddress;
 import core.vo.JSONError;
 import core.vo.JSONSuccess;
+
+import java.util.List;
 
 /**
  * Description:
@@ -39,33 +37,10 @@ public class UserController extends Controller {
 		}
 	}
 
-	@Before(UserWXValidate.class)
-	public void save() {
-		JSONObject jsonObject = getAttr("validate");
-		User user = new User();
-		user.set("NAME", jsonObject.get("name"));
-		user.set("SEX", jsonObject.get("sex"));
-		user.set("AGE", jsonObject.get("age"));
-		String phone = jsonObject.getString("phone");
-		user.set("PHONE", jsonObject.get("phone"));
-		String code = jsonObject.getString("code");
-		JSONObject smsResult = SMSUtils.validate(phone, code);
-		if (smsResult.size() > 0 && smsResult.getBoolean("error")) {
-			renderJson(new JSONError(smsResult.get("msg").toString()));
-			return;
-		}
-		user.set("ID_NUM", jsonObject.get("idNum"));
-		user.set("ROLE", jsonObject.get("role"));
-		user.set("SCHOOL", jsonObject.get("school"));
-		user.set("ACADEMY", jsonObject.get("academy"));
-		user.set("MAJOR", jsonObject.get("major"));
-		String openId = (String) jsonObject.get("openId");
-		if (StringUtils.isNotEmpty(openId)) {
-			user.set("ID", openId);
-			user.update();
-		} else {
-			user.save();
-		}
-		renderJson(new JSONSuccess("修改成功!", null));
+	public void ajaxUserAdress(){
+		String openId = getPara("openId");
+		List<UserAddress> userAddresses = UserAddress.dao.find(Db.getSql("userAddress.getByUid"),openId);
+		renderJson(new JSONSuccess(userAddresses));
 	}
+
 }

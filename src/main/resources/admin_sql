@@ -229,7 +229,18 @@
 		#@dbCondition_alias(conditions,mainAlias,aliasMap)
 	#end
 #end
-
+#namespace("rate")
+	#sql("list")
+		#set(mainAlias = "s")
+		#set(aliasMap = {"STATE_NAME":"d.`NAME`"})
+		SELECT s.*,d.`NAME` AS STATE_NAME 
+		FROM t_rate AS s
+		LEFT JOIN t_dict_code AS d
+		ON s.STATE = d.`CODE` 
+		WHERE d.FIELD = 't_shop.STATE' 
+		#@dbCondition_alias(conditions,mainAlias,aliasMap)
+	#end
+#end
 #namespace("shopType")
 	#sql("list")
 		SELECT *

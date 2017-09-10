@@ -1,0 +1,159 @@
+<#include "../base/main/_main.html"/>
+<#assign wxMeta>
+</#assign>
+<#assign wxCss>
+<style>
+*{
+	font-family: "Microsoft YaHei";
+}
+#recivePage .bar h1,.bar .button-link{
+	color: white;
+}
+#recivePage .list-block{
+	margin-top: 0px
+}
+#recivePage #address{
+	position: relative;
+    display: inline;
+    left: 0;
+    width: 90%;
+}
+.submitBtn{
+	display: inline;
+	width: 49%;
+}
+.cancelBtn{
+	display: inline;
+	width: 49%;
+}
+#recivePage .list-block{
+	margin:0px;
+}
+</style>
+</#assign>
+<#assign wxJavascript>
+<script src="${base}/resources/jQuery/jquery.form.min.js" type="text/javascript"></script>
+</#assign>
+<@mainLayout wxTitle="收货信息"  wxMeta=wxMeta wxCss=wxCss wxJavascript=wxJavascript>
+<div class="page" id='recivePage'>
+<header class="bar bar-nav bg-primary">
+  <a class="icon icon-left pull-left color-default" href="javascript:void(0);" onclick="javascript:$.router.loadPage('#mainPage');"></a>
+  <img src="${base}/resources/images/logo-text.png" style="width: 2rem;position: absolute;right:10px;">
+  <h1 class='title'>收货信息编辑</h1>
+</header>
+<div class="content">
+  <div class="list-block">
+    <ul>
+    <form method="POST" id="add-form">
+      <li>
+        <div class="item-content">
+          <div class="item-media"><i class="fa fa-user"></i></div>
+          <div class="item-inner">
+            <div class="item-title label">收货人</div>
+            <div class="item-input">
+              <input type="text" placeholder="填入真实姓名方便联系您..." name="realName">
+            </div>
+          </div>
+        </div>
+      </li>
+      <li>
+        <div class="item-content">
+          <div class="item-media"><i class="fa fa-map-signs"></i></div>
+          <div class="item-inner">
+            <div class="item-title label">地址</div>
+            <div class="item-input">
+            	<input id="address" name="address" type="text" placeholder="选择位置" readonly="readonly" onchange="addressChange();"/>
+            	<i class="fa fa-lg fa-map-marker"  onclick="javascript:$.router.loadPage('#map-mobile');"></i>
+            </div>
+           </div>
+        </div>
+        <input name="latitude" id="latitude" type="hidden" value="${(shop.LATITUDE)!}">
+		<input name="longitude" id="longitude" type="hidden" value="${(shop.LONGITUDE)!}">
+		<input name="addressCode" id="addressCode" type="hidden" value="${(shop.PTCODE)!}">
+      </li>
+      <li>
+        <div class="item-content">
+          <div class="item-media"><i class="fa fa-mobile"></i></div>
+          <div class="item-inner">
+            <div class="item-title label">联系电话</div>
+            <div class="item-input">
+              <input type="text" name="phone" placeholder="手机或电话(请加区号)">
+            </div>
+          </div>
+        </div>
+      </li>
+      </form>
+      <li>
+	      <button onclick="javascript: $.router.loadPage('#mainPage');" class="button button-big button-fill button-danger cancelBtn">取消</button>
+	      <button onclick="javascript:submit();" class="button button-big button-fill button-success submitBtn">保存</button>
+      </li>
+    </ul>
+  </div>
+</div>
+</div>
+<#include "map-recive.html"/>
+<script>
+function chooseImage(){
+	wx.chooseImage({
+	    count: 1,
+	    success: function (res) {
+	        if(res.errMsg=="chooseImage:ok"){
+	        	$("#preview").attr("src",res.localIds[0])
+	        	$("#preview").css("display","block");
+	        	$.showPreloader();
+	        	wx.uploadImage({
+				    localId: res.localIds[0], // 需要上传的图片的本地ID，由chooseImage接口获得
+				    isShowProgressTips: 1, // 默认为1，显示进度提示
+				    success: function (res) {
+				        var serverId = res.serverId; // 返回图片的服务器端ID
+				        $("#logo").val(serverId);
+				        $.hidePreloader();
+				    }
+				});
+	        }else{
+	        	$.alert("拉起图片选择接口失败！");
+	        }
+	    }
+	});
+}
+function submit(){
+	$("#add-form").ajaxSubmit({
+		type:'POST',
+		url: '${base}/wx/user/saveRecive',
+		dataType:'json',
+		success:function(data){
+			$.hidePreloader();
+//			console.log(data)
+			if(data){
+				if(data.error){
+					$.toast(data.msg);
+				}else{
+					newWinInfo("申请成功！请等待管理员审核");
+				}
+			}
+		},
+		error:function(XMLHttpRequest, textStatus, errorThrown){
+			$.hidePreloader();
+			try{
+				$.toast("服务器响应失败！");
+			}catch(e){
+				alert("服务器响应失败！");
+			}
+			console.log("XMLHttpRequest：\t");
+			console.log(XMLHttpRequest);
+			console.log("textStatus：\t"+textStatus);
+			console.log("errorThrown：\t");
+			console.log(errorThrown);
+		}
+	});
+}
+function addressChange(){
+	var value = $("#address").val();
+	if(value!=undefined && value!=""){
+		$("#address").removeAttr("readOnly");
+	}else{
+		$("#address").attr("readOnly","readOnly");
+	}
+}
+</script>
+</@mainLayout>

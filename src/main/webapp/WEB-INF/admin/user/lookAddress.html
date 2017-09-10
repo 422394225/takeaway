@@ -1,0 +1,22 @@
+<link href="${base}/resources/bootstrap/css/bootstrap-theme.min.css"rel="stylesheet" type="text/css" />
+<link href="${base}/resources/bootstrap/css/bootstrap.min.css"rel="stylesheet" type="text/css" />
+<div id="addrDiv">
+
+</div>
+<script>
+$(function(){
+		var data = ${addr};
+		$.each(data, function (i, n){
+			$("#addrDiv").append(
+					(n.DEFAULT=='1'?"<div class=\"panel panel panel-success\">":"<div class=\"panel panel panel-info\">")
+					+ "<div class=\"panel-heading\">"
+					+ "<h3 class=\"panel-title\">"
+					+(n.DEFAULT=='1'?"（默认）":"")
+					+n.NAME+"</h3>"
+					+ "</div>"
+					+ "<div class=\"panel-body\">"+n.TEL+"<br>"+n.ADDRESS+"</div>"
+					+ "</div>");
+				}
+		)
+})
+</script>

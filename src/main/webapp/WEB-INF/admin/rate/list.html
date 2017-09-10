@@ -1,0 +1,220 @@
+<#include "../base/main/_dashboard.html"/>
+<#assign pageMeta>
+</#assign>
+<#assign pageCss>
+<link href="${base}/resources/jQuery/dataTables.bootstrap.min.css" rel="stylesheet" type="text/css" />
+</#assign>
+<#assign pageJavascript>
+<script src="${base}/resources/jQuery/jquery.dataTables.min.js" type="text/javascript"></script>
+<script src="${base}/resources/jQuery/dataTables.bootstrap.min.js" type="text/javascript"></script>
+<link href="${base}/resources/javascripts/cropper/cropper.min.css" rel="stylesheet" type="text/css" />
+<script src="${base}/resources/javascripts/cropper/cropper.min.js" type="text/javascript"></script>
+</#assign>
+<@dashboard pageTitle="评论" currentMenu="order" pageMeta=pageMeta pageCss=pageCss pageJavascript=pageJavascript>
+<@tool map="评论">
+   <div class='btn-group'>
+     <button class="reload btn btn-light btn-sm radius" title="刷新" data-toggle="tooltip" data-placement="bottom">
+     	<i class="fa fa-refresh"></i>
+     </button>
+   </div>
+</@tool>
+<div id='content'>
+	<form id="filterForm" action="javascript:void(0);">
+	   <table class="filterTable">
+	  	<tr>
+	  		<td><label>商家名称</label></td>
+	  		<td><input name="t.NAME" class="form-control"></td>
+	  		<td><label>正常状态</label></td>
+	  		<td>
+	  			<select name="cc2.name" class="form-control">
+	  				<option value="">请选择</option>
+	  				<option value="未付款">未付款</option>
+					<option value="已付款，未接单">已付款，未接单</option>
+					<option value="正在准备商品">正在准备商品</option>
+					<option value="正在配送">正在配送</option>
+					<option value="买家已收货，未评价">买家已收货，未评价</option>
+					<option value="已评价">已评价</option>
+	  			</select>
+	  		</td>
+	  		<td><label>退款状态</label></td>
+	  		<td>
+	  			<select name="cc1.name" class="form-control">
+	  				<option value="">请选择</option>
+					<option value="发起退款">发起退款</option>
+					<option value="退款失败">退款失败</option>
+					<option value="已退款">已退款</option>
+					<option value="已取消退款">已取消退款</option>
+	  			</select>
+	  		</td>
+	  		<td><button class="btn btn-success dataTableSortBtn">筛选</button></td>
+	  		<td><button class="btn btn-default dataTableResetBtn">重置</button></td>
+	  	</tr>
+	  </table>
+  </form>
+  <table class='table table-bordered' id="table">
+    <thead>
+      <tr>
+        <th>序号</th>
+        <th>订单号</th>
+        <th>买家</th>
+        <th>卖家</th>
+        <th>配送员</th>
+        <th>状态</th>
+        <th class='operation'>
+          	操作
+        </th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+</div>
+</@dashboard>
+<script>
+$("select[name='cc1.name']").change(function () {
+	$("select[name='cc2.name']").val('0');
+})
+$("select[name='cc2.name']").change(function () {
+	$("select[name='cc1.name']").val('0');
+})
+$(function(){
+	var showType="${showType}";
+	var table = Kit.table("#table",
+	{
+		"ajax": "${base}/order/getData?showType="+showType,
+			"columns": [
+				{ "data": "ID" },
+				{ "data": "USER_NAME" },
+				{ "data": "SHOP_NAME" },
+				{ "data": "DELIVERY_NAME" },
+				{ "data": "STATESTRING" }
+			],
+			"order": [[ 2, "desc" ]],
+			"columnDefs": [{
+				"targets": -1,
+				"data": null,  
+				"render": function(data,type,row){
+					var returnDiv='';
+					if(row["CANCEL_STATE"]==null||row["CANCEL_STATE"]==1||row["CANCEL_STATE"]==3){
+		            	if(row["ORDER_STATE"]==2){
+		            		returnDiv=returnDiv+ "<button class='accept btn btn-info btn-xs' title='接单'><i class='fa fa-check-square'></i></button>"+
+		            		"<button class='refund btn btn-info btn-xs' title='退款'><i class='fa fa-window-close'></i></button>";
+		            	}
+	            	}
+					else{
+						if(row["CANCEL_STATE"]==0)
+							returnDiv=returnDiv+ "<button class='refund btn btn-info btn-xs' title='接受退款'><i class='fa fa-check-square'></i></button>"+
+							"<button class='rejectRefund btn btn-info btn-xs' title='拒绝退款'><i class='fa fa-window-close'></i></button>";				           	
+					}
+					returnDiv=returnDiv+ "<button class='view btn btn-info btn-xs' title='查看'><i class='fa fa-search-plus'></i></button>";
+		            return returnDiv;
+	            }
+		     },{
+		        	"targets": 4,
+		            "render": function(data, type, row) {
+		            	if(data==null)
+		              	  return "";
+		            	else
+		              	  return data+"<button class='place btn btn-info btn-xs' title='查看位置'><i class='fa fa-globe'></i>";
+		            }
+		        }]
+	});
+
+	table.on('click', '.view', function(){
+	    var data = table.row($(this).parents('tr')).data();
+	    BootstrapDialog.show({
+			title: '查看订单',
+			draggable: true,
+			closeByBackdrop: false,
+		    message: $('<div id="viewDiv"></div>').load('${base}/order/view?id='+data["ID"]),
+		    buttons: []
+        });
+	});
+	table.on('click', '.rejectRefund', function(){
+	    var data = table.row($(this).parents('tr')).data();
+		BootstrapDialog.show({
+			type:BootstrapDialog.TYPE_DEFAULT,
+			size: BootstrapDialog.SIZE_SMALL,
+			closeByBackdrop: false,
+			closable:false,
+			title: '拒绝退款',
+			draggable: true,
+		    message: $('<div><textarea id="rejectReason" type="text" class="form-control"/></div>'),
+		    buttons: [{
+		    	id:'addBtn',
+		    	cssClass: 'btn btn-default btn-small btn-block',
+		        label: '拒绝退款',
+		        icon: 'fa fa-check-circle',  
+		        action: function(dialogRef){
+		       		$.getJSON("${base}/order/rejectRefund?id="+data["ID"]+"&rejectReason="+$("#rejectReason").val(),function(json){
+	    	       		layer.msg(json.msg);
+		       			if(!json.error)
+		       		       	dialogRef.close();
+			       	});
+		        }
+		    },{
+		    	id:'closeBtn',
+		    	cssClass: 'btn btn-default btn-small btn-block',
+		        label: '取消',
+		        icon: 'fa fa-ban',  
+		        action: function(dialogRef){    
+		        	dialogRef.close();
+		        }
+		    }]
+		})
+	});
+	table.on('click', '.accept', function(){
+	    var data = table.row($(this).parents('tr')).data();
+	    BootstrapDialog.show({
+			title: '操作结果',
+			draggable: true,
+			closeByBackdrop: false,
+		    message: $('<div></div>').load('${base}/order/accept?id='+data["ID"]),
+		    buttons: [{
+		        label: '关闭',
+		        cssClass: 'btn btn-link', 
+		        action: function(dialogRef){    
+		            dialogRef.close();
+		        	$(".reload").click();
+		        }
+		    }]
+        });
+	});
+	$(".reload").on("click",function(){
+		table.ajax.reload(null, false);// 刷新表格数据，分页信息不会重置
+	})
+	table.on("click",'.place',function(){
+        var data = table.row($(this).parents('tr')).data();
+		var deliveryId=data['DELIVERY_ID'];
+		BootstrapDialog.show({
+			title: '查看位置',
+			draggable: true,
+		    message: $('<div></div>').load('${base}/delivery/placeSingle?deliveryId='+deliveryId),
+		    buttons:[{
+		        label: '关闭',
+		        cssClass: 'btn btn-link', 
+		        action: function(dialogRef){    
+		            dialogRef.close();
+		        }
+		    }]
+        });
+	});
+	table.on('click', '.refund', function(){
+	    var data = table.row($(this).parents('tr')).data();
+	    BootstrapDialog.show({
+			title: '操作结果',
+			draggable: true,
+			closeByBackdrop: false,
+		    message: $('<div></div>').load('${base}/order/refund?id='+data["ID"]),
+		    buttons: [{
+		        label: '关闭',
+		        cssClass: 'btn btn-link', 
+		        action: function(dialogRef){    
+		            dialogRef.close();
+		        	$(".reload").click();
+		        }
+		    }]
+        });
+	});
+	
+});
+</script>

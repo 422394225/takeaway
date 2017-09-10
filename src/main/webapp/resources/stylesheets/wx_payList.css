@@ -2,7 +2,7 @@ header {
     background-image: url("../images/shop_bg.png");
     background-size: cover;
 }
-.list-block{
+#mainPage .list-block{
     margin: 0.75rem 0;
 }
 .infoTable{
@@ -15,4 +15,25 @@ header {
 .infoTable td[rowspan='2']{
     min-width: 1.5em;
     text-align: center;
+}
+.order-table tr{
+    margin-top: .5em;
+    margin-bottom: .5em;
+}
+.order-table td img{
+    vertical-align: middle;
+}
+.order-table td,.order-table th {
+    padding: .25em;
+}
+.payBtn{
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2rem;
+    background-color: #0a8ddf;
+    color: white;
+    text-align: center;
+    line-height: 2rem;
 }

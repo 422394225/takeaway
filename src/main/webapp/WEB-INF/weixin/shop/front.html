@@ -160,7 +160,6 @@ function dealCart(){
     var tpl = $('#cart-tpl').html();
     var html = "";
     for(var id in cart){
-        debugger
         var p = Number($(".cartOp[data-id='"+id+"']").attr("data-price"));
         if(isNaN(p)){
             WxStore.cart.set(new Object());
@@ -170,7 +169,7 @@ function dealCart(){
             return;
 		}
         var c = cart[id];
-        //餐盘熟知、、数值计算
+        //餐盘数值计算
         totalCount += cart[id];
         totalPrize += p*c;
 
@@ -239,7 +238,7 @@ function showCart() {
 								<img src="${(shop.IMG)!}" width="120em" style="border: .1em solid white"/>
 							</td>
 							<td colspan="3">
-								<span>${(shop.NAME)!}</span>
+								<span>${(shop.NAME)!}&nbsp;<i class="fa fa-map-marker"></i></span>
 							</td>
 						</tr>
 						<tr>
@@ -377,6 +376,7 @@ function showCart() {
 <script id="cart-tpl" type="text/html">
 <div class="cart-item">
 	<div class="item-element">
+		{{# if(d.IMG==null){d.IMG=getProjectName()+'/resources/images/no-image.png'} }}
 		<img src="{{d.IMG}}">
 	</div>
 	<div class="item-element">
