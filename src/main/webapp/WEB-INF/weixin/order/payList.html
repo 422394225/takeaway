@@ -17,36 +17,36 @@
 	<table class="infoTable" onclick="javascript:$.router.loadPage('#recivePage');">
 		<tr>
 			<td rowspan="2"><i class="fa fa-map-marker color-primary"></i></td>
-			<td data="${(user.NAME)!}">
-				<#if (user.NAME)! == ''>
+			<td data="${(userAddress.NAME)!}">
+				<#if (userAddress.NAME)! == ''>
 					姓名未填写
 					<#else>
-						${(user.NAME)!}
+						${(userAddress.NAME)!}
 				</#if>
 			</td>
 			<td>
-				<#if (user.SEX)! == 1>
+				<#if (userAddress.SEX)! == '1'>
 					先生
-					<#elseif (user.SEX)! == 2>
+				<#elseif (userAddress.SEX)! == '2'>
 						女士
-						<#else>
+				<#else>
 				</#if>
 			</td>
-			<td data="${(user.PHONE)!}">
-				<#if (user.PHONE)! == ''>
+			<td data="${(userAddress.PHONE)!}">
+				<#if (userAddress.PHONE)! == ''>
 					手机号未填写
 					<#else>
-						${(user.NAME)!}
+						${(userAddress.NAME)!}
 				</#if>
 			</td>
 			<td rowspan="2"><i class="fa fa-chevron-right color-primary"></i></td>
 		</tr>
 		<tr>
-			<td colspan="3" data="${(user.ADDRESS)!}">
-				<#if (user.ADDRESS)! == ''>
+			<td colspan="3" data="${(userAddress.ADDRESS)!}">
+				<#if (userAddress.ADDRESS)! == ''>
 					地址未填写
 					<#else>
-						${(user.ADDRESS)!}
+						${(userAddress.ADDRESS)!}
 				</#if>
 			</td>
 		</tr>

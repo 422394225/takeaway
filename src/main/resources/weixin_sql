@@ -66,7 +66,7 @@
 	#sql("getDefault")
     		SELECT *
             FROM t_user_address
-            WHERE DELETED=0 AND USERID =?
+            WHERE DELETED=0 AND USERID =?  AND `DEFAULT` = 0
     	#end
 #end
 

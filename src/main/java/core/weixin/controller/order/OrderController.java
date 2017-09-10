@@ -54,7 +54,8 @@ public class OrderController extends WeixinMsgController {
 	}
 
 	public void payList() throws UnsupportedEncodingException {
-		UserAddress userAddress = UserAddress.dao.findFirst(Db.getSql(""));
+		UserAddress userAddress = UserAddress.dao.findFirst(Db.getSql("userAddress.getDefault"),getPara("openId"));
+		setAttr("userAddress",userAddress);
 		render("payList.html");
 	}
 
