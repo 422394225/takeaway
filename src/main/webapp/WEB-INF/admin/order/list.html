@@ -96,8 +96,8 @@ $(function(){
 					var returnDiv='';
 					if(row["CANCEL_STATE"]==null||row["CANCEL_STATE"]==1||row["CANCEL_STATE"]==3){
 		            	if(row["ORDER_STATE"]==2){
-		            		returnDiv=returnDiv+ "<button class='accept btn btn-info btn-xs' title='接单'><i class='fa fa-check-square'></i></button>"+
-		            		"<button class='refund btn btn-info btn-xs' title='退款'><i class='fa fa-window-close'></i></button>";
+		            		returnDiv=returnDiv+ "<button class='accept btn btn-success btn-xs' title='接单'><i class='fa fa-check-square'></i></button>"+
+		            		"<button class='refund btn btn-danger btn-xs' title='退款'><i class='fa fa-window-close'></i></button>";
 		            	}
 	            	}
 					else{
