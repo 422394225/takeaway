@@ -1,5 +1,6 @@
 package core.admin.controller.order;
 
+import java.net.URLEncoder;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -175,8 +176,9 @@ public class OrderController extends Controller {
 		paraMap.put("out_refund_no", order.getStr("REFUND_NO"));
 		paraMap.put("total_fee", payPrice + "");
 		paraMap.put("refund_fee", payPrice + "");
-		paraMap.put("refund_desc", "订单退款");
+		paraMap.put("refund_desc", URLEncoder.encode("order refund"));
 		paraMap.put("sign", WeiXinUtils.getSign(paraMap));
+		// paraMap.put("refund_desc", "订单退款");
 		String para = new String(WeiXinUtils.callMapToXML(paraMap));
 		String urlResult = null;
 		try {
