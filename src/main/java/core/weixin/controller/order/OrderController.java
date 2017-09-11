@@ -5,6 +5,7 @@
 
 package core.weixin.controller.order;
 
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -199,10 +200,10 @@ public class OrderController extends WeixinMsgController {
 			keyMap.put("device_info", "WEB");
 			keyMap.put("nonce_str", WeiXinUtils.getNonceNorString());
 			keyMap.put("sign_type", "MD5");
-			keyMap.put("body", "订单支付");
+			keyMap.put("body", URLEncoder.encode("订单支付"));
 			keyMap.put("out_trade_no", order.getInt("ID") + "");
 			keyMap.put("fee_type", "CNY");
-			keyMap.put("total_fee", ((int) (order.getDouble("PAY_PRICE") * 100)) + "");
+			keyMap.put("total_fee", (int) (order.getDouble("PAY_PRICE") * 100) + "");
 			keyMap.put("spbill_create_ip", PropKit.get("spbill_create_ip"));
 			keyMap.put("notify_url", PropKit.get("server.address") + "/wx/orderRecieve/orderPayed");
 			keyMap.put("trade_type", "JSAPI");
