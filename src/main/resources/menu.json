@@ -1,33 +1,39 @@
 {
-	"button":[{
-           "name":"点单",
-           "sub_button":[
-     {
-          "type":"view",
-          "name":"正式",
-          "url":"https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx7d654593ab6ec6a4&redirect_uri=http%3A%2F%2Fwww.nalicity.cn%2foauth&response_type=code&scope=snsapi_base&state=%2fwx%2forder#wechat_redirect"
-      }, {
-          "type":"view",
-          "name":"测式",
-          "url":"https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxabc1c52c7de5bbd4&redirect_uri=http%3A%2F%2F177l3a5827.51mypc.cn%2foauth&response_type=code&scope=snsapi_base&state=%2fwx%2forder#wechat_redirect"
-      }
-      ]}, {
-          "type":"view",
-          "name":"首页",
-          "url":"https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx7d654593ab6ec6a4&redirect_uri=http%3A%2F%2Fwww.nalicity.cn%2foauth&response_type=code&scope=snsapi_base&state=%2fwx#wechat_redirect"
-      }
-         ,{
-           "name":"菜单",
-           "sub_button":[
-     {
-          "type":"view",
-          "name":"店铺入驻",
-          "url":"http://www.nalicity.cn/wx/shop/add"
-      },
-     {
-          "type":"view",
-          "name":"配送员入口",
-          "url":"http://www.nalicity.cn/wx/delivery/"
-      }]
-      }]
+  "button": [
+    {
+      "name": "点单",
+      "sub_button": [
+        {
+          "type": "view",
+          "name": "正式",
+          "url": "https://open.weixin.qq.com/connect/oauth2/authorize?appid=@APPID@&redirect_uri=@DOMAIN_ENCODE@%2foauth&response_type=code&scope=snsapi_base&state=%2fwx%2forder#wechat_redirect"
+        },
+        {
+          "type": "view",
+          "name": "测式",
+          "url": "https://open.weixin.qq.com/connect/oauth2/authorize?appid=@APPID@&redirect_uri=@DOMAIN_ENCODE@%2foauth&response_type=code&scope=snsapi_base&state=%2fwx%2forder#wechat_redirect"
+        }
+      ]
+    },
+    {
+      "type": "view",
+      "name": "订个外卖",
+      "url": "https://open.weixin.qq.com/connect/oauth2/authorize?appid=@APPID@&redirect_uri=@DOMAIN_ENCODE@%2foauth&response_type=code&scope=snsapi_base&state=%2fwx#wechat_redirect"
+    },
+    {
+      "name": "我的",
+      "sub_button": [
+        {
+          "type": "view",
+          "name": "店铺入驻",
+          "url": "@DOMAIN@/wx/shop/add"
+        },
+        {
+          "type": "view",
+          "name": "配送员入口",
+          "url": "@DOMAIN@/wx/delivery/"
+        }
+      ]
+    }
+  ]
 }

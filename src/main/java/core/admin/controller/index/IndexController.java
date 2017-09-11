@@ -1,18 +1,17 @@
 package core.admin.controller.index;
 
-import java.util.List;
-
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Clear;
 import com.jfinal.core.Controller;
 import com.jfinal.kit.PropKit;
-
 import core.interceptor.AdminLoginInterceptor;
 import core.interceptor.PowerInterceptor;
 import core.model.Delivery;
 import core.model.Shop;
 import core.utils.SecurityCodeTool;
+
+import java.util.List;
 
 /**
  * 
@@ -25,7 +24,7 @@ public class IndexController extends Controller {
 
 	public void getShopPlaceDot() {
 		JSONArray result = new JSONArray();
-		List<Delivery> shops = Delivery.dao.find("select ID,`NAME`,LONGITUDE,LATITUDE from t_shop where state>-2");
+		List<Delivery> shops = Delivery.dao.find("select ID,`NAME`,IMG,LONGITUDE,LATITUDE,CREATE_TIME from t_shop where state>-2");
 		for (Delivery shop : shops) {
 			JSONObject jsonObject = new JSONObject();
 			jsonObject.put("NAME", shop.get("NAME"));
@@ -34,6 +33,8 @@ public class IndexController extends Controller {
 			place.add(shop.get("LONGITUDE"));
 			place.add(shop.get("LATITUDE"));
 			jsonObject.put("PLACE", place);
+			jsonObject.put("IMG", shop.get("IMG"));
+			jsonObject.put("CREATE_TIME", shop.get("CREATE_TIME"));
 			result.add(jsonObject);
 		}
 		renderJson(result);
@@ -41,7 +42,6 @@ public class IndexController extends Controller {
 	}
 
 	public void index() {
-		setAttr("amapKey", PropKit.get("amap.key"));
 		List<Shop> shops = Shop.dao.find("select LONGITUDE,LATITUDE from t_shop where state>-1");
 		double LONGITUDE = 0;
 		double LATITUDE = 0;
@@ -53,6 +53,7 @@ public class IndexController extends Controller {
 		LATITUDE /= shops.size();
 		setAttr("LONGITUDE", LONGITUDE);
 		setAttr("LATITUDE", LATITUDE);
+		setAttr("amapKey", PropKit.get("amap.key"));
 		render("index.html");
 	}
 
