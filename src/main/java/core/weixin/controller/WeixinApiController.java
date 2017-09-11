@@ -9,6 +9,8 @@ import core.vo.JSONSuccess;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 public class WeixinApiController extends ApiController {
 	private Log log = Log.getLog(WeixinApiController.class);
@@ -49,7 +51,7 @@ public class WeixinApiController extends ApiController {
 	/**
 	 * 创建菜单
 	 */
-	public void createMenu() {
+	public void createMenu() throws UnsupportedEncodingException {
 		StringBuffer sb = new StringBuffer("");
 		try {//从配置读取菜单
 			InputStreamReader reader = new InputStreamReader(
@@ -64,8 +66,13 @@ public class WeixinApiController extends ApiController {
 			renderJson(new JSONSuccess("菜单JSON文件读取失败"));
 			return;
 		}
-		log.info(sb.toString());
-		ApiResult apiResult = MenuApi.createMenu(sb.toString());
+		String menuStr = sb.toString();
+		String domian = PropKit.get("server.address");
+		menuStr = menuStr.replace("@DOMAIN_ENCODE@", URLEncoder.encode(domian,"UTF-8"));
+		menuStr = menuStr.replace("@DOMAIN@",domian);
+		menuStr = menuStr.replace("@APPID@",PropKit.get("appId"));
+		log.info(menuStr);
+		ApiResult apiResult = MenuApi.createMenu(menuStr);
 		if (apiResult.isSucceed()){
 			renderJson(new JSONSuccess("菜单生成成功!"));
 		}
