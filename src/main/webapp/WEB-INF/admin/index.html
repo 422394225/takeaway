@@ -5,15 +5,17 @@
 	rel="stylesheet" type="text/css" />
 <style>
 .circle {
-	border-radius: 6px;
-	border: solid 1px silver;
-	height: 17px;
+	border-radius: .5rem;
+	border: 1px solid #26889c;
 	padding: 3px;
 	text-align: center;
-	line-height: 10px;
-	min-width: 50px;
+	vertical-align: middle;
 	color: white;
-	background-color: #09f;
+	background-color: #00a4ff;
+}
+.circle:hover{
+	background-color: #ff7f00;
+	border: 1px solid #9c2626;
 }
 
 #content {
@@ -24,8 +26,8 @@
 <script
 	src="http://webapi.amap.com/maps?v=1.3&key=${amapKey}&plugin=AMap.Geocoder"></script>
 <script src="${base}/resources/javascripts/main-async.js"></script>
-<@dashboard pageTitle="首页" pageMeta=pageMeta pageCss=pageCss
-pageJavascript=pageJavascript currentMenu="index"> <@tool map="首页">
+<@dashboard pageTitle="首页" pageMeta=pageMeta pageCss=pageCss pageJavascript=pageJavascript currentMenu="index">
+<@tool map="商家地图">
 
 </@tool>
 <div id='content'>
@@ -43,67 +45,68 @@ pageJavascript=pageJavascript currentMenu="index"> <@tool map="首页">
 	}
 	$(function() {
 
-		$
-				.ajax({
-					url : '${base}/getShopPlaceDot', // /api/leds/1
-					async : true,
-					type : 'GET',
-					success : function(arrList) {
+		$.ajax({
+				url : '${base}/getShopPlaceDot', // /api/leds/1
+				async : true,
+				type : 'GET',
+				success : function(arrList) {
+					var totalLongitude = 0;
+					var totalLatidute = 0;
+					for (var intTmp = 0; intTmp < arrList.length; intTmp++) {
+						totalLongitude += arrList[intTmp].PLACE[0];
+						totalLatidute += arrList[intTmp].PLACE[1];
 
-						var totalLongitude = 0;
-						var totalLatidute = 0;
-						for (var intTmp = 0; intTmp < arrList.length; intTmp++) {
-							totalLongitude += arrList[intTmp].PLACE[0];
-							totalLatidute += arrList[intTmp].PLACE[1];
-
-							/* var infoWindow = new AMap.InfoWindow({
-							    offset: new AMap.Pixel(0, -20)
-							});
-							console.log(parseFloat(arrList[intTmp].PLACE[0]))
-							console.log(parseFloat(arrList[intTmp].PLACE[1]))
-							var lnglat=new AMap.LngLat(parseFloat(arrList[intTmp].PLACE[0]), parseFloat(arrList[intTmp].PLACE[1]));
-							infoWindow.setPosition(lnglat);
-							infoWindow.setContent( arrList[intTmp].NAME);
-							infoWindow.open(map, lnglat); */
-						}
-						totalLongitude = totalLongitude / arrList.length;
-						totalLatidute = totalLatidute / arrList.length;
-						var map;
-						map = new AMap.Map('containerMap', {
-							zoom : 15,
-							center : [ totalLongitude, totalLatidute ]
+						/* var infoWindow = new AMap.InfoWindow({
+							offset: new AMap.Pixel(0, -20)
 						});
-						map.plugin([ "AMap.ToolBar" ], function() {
-							var toolBar =new AMap.ToolBar({position:'RT',ruler:true,direction:false});
-							map.addControl(toolBar);
+						console.log(parseFloat(arrList[intTmp].PLACE[0]))
+						console.log(parseFloat(arrList[intTmp].PLACE[1]))
+						var lnglat=new AMap.LngLat(parseFloat(arrList[intTmp].PLACE[0]), parseFloat(arrList[intTmp].PLACE[1]));
+						infoWindow.setPosition(lnglat);
+						infoWindow.setContent( arrList[intTmp].NAME);
+						infoWindow.open(map, lnglat); */
+					}
+					totalLongitude = totalLongitude / arrList.length;
+					totalLatidute = totalLatidute / arrList.length;
+					var map;
+					map = new AMap.Map('containerMap', {
+						zoom : 15,
+						center : [ totalLongitude, totalLatidute ]
+					});
+					map.plugin([ "AMap.ToolBar" ], function() {
+						var toolBar =new AMap.ToolBar({position:'RT',ruler:true,direction:false});
+						map.addControl(toolBar);
+					});
+					map.plugin([ "AMap.OverView" ], function() { //在地图中添加鹰眼插件
+						//加载鹰眼
+						overView = new AMap.OverView({
+							visible : true
+						//初始化显示鹰眼
 						});
-						map.plugin([ "AMap.OverView" ], function() { //在地图中添加鹰眼插件
-							//加载鹰眼
-							overView = new AMap.OverView({
-								visible : true
-							//初始化显示鹰眼
-							});
-							map.addControl(overView);
-							overView.open(); //展开鹰眼
-						});
-						for (var intTmp = 0; intTmp < arrList.length; intTmp++) {
-							var marker = new AMap.Marker(
-									{
-										position : arrList[intTmp].PLACE,
-										content : "<div class='placeDot' onclick='showShop("
-												+ arrList[intTmp].ID
-												+ ")'><a class='fa fa-globe'></a><div class='circle'>"
-												+ arrList[intTmp].NAME
-												+ "</div></div>",
-										offset : new AMap.Pixel(0, 0),
-										title : arrList[intTmp].NAME,
-										map : map
-									});
-						}
-					},
-					error : function(jqXHR, textStatus, errorThrown) {
-						console.log("获取数据错误");
-					},
-				});
+						map.addControl(overView);
+						overView.open(); //展开鹰眼
+					});
+					for (var intTmp = 0; intTmp < arrList.length; intTmp++) {
+					    var img = arrList[intTmp].IMG;
+					    var name = arrList[intTmp].NAME;
+					    var createTime = arrList[intTmp].CREATE_TIME;
+						var marker = new AMap.Marker({
+									position : arrList[intTmp].PLACE,
+									content : "<div class='placeDot' onclick='showShop(" + arrList[intTmp].ID + ")'>" +
+													"<div class='circle' style='width:"+(name.length+2)+"em'>" +
+														"<img src='"+img+"' width='15px'/>" + name +
+													"</div>" +
+											  "</div>",
+									offset : new AMap.Pixel(0, 0),
+                            		topWhenMouseOver:true,
+									title:"于"+createTime+"加入那里",
+									map : map
+								});
+					}
+				},
+				error : function(jqXHR, textStatus, errorThrown) {
+					console.log("获取数据错误");
+				},
+			});
 	})
 </script>

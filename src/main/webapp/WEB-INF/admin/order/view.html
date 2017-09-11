@@ -25,70 +25,70 @@
 		    <div class="tab-pane" id="tab1">
 				<form action="#" class="form-horizontal" id="baseForm" enctype="multipart/form-data" >
 				    <div class="form-group form-group-md">
-					    <label class="col-sm-3" for="formGroupInputLarge"style="text-align:right">买家</label>
-					    <label class="col-sm-6" for="formGroupInputLarge">${USER_NAME}</label>
+					    <label class="col-sm-3"style="text-align:right">买家</label>
+					    <label class="col-sm-6">${USER_NAME}</label>
 					</div>
 				    <div class="form-group form-group-md">
-					    <label class="col-sm-3" for="formGroupInputLarge"style="text-align:right">店铺</label>
-					    <label class="col-sm-6" for="formGroupInputLarge">${SHOP_NAME}</label>
+					    <label class="col-sm-3"style="text-align:right">店铺</label>
+					    <label class="col-sm-6">${SHOP_NAME}</label>
 					</div>
 				    <div class="form-group form-group-md">
-					    <label class="col-sm-3" for="formGroupInputLarge"style="text-align:right">总价</label>
-					    <label class="col-sm-6" for="formGroupInputLarge">${(TOTAL_PRICE)!}</label>
+					    <label class="col-sm-3"style="text-align:right">总价</label>
+					    <label class="col-sm-6">${(TOTAL_PRICE)!}</label>
 					</div>
 				    <div class="form-group form-group-md">
-					    <label class="col-sm-3" for="formGroupInputLarge"style="text-align:right">支付价格</label>
-					    <label class="col-sm-6" for="formGroupInputLarge">${(PAY_PRICE)!}</label>
+					    <label class="col-sm-3"style="text-align:right">支付价格</label>
+					    <label class="col-sm-6">${(PAY_PRICE)!}</label>
 					</div>
 				    <div class="form-group form-group-md">
-					    <label class="col-sm-3" for="formGroupInputLarge"style="text-align:right">买家姓名</label>
-					    <label class="col-sm-6" for="formGroupInputLarge">${(USER_NAME)!}</label>
+					    <label class="col-sm-3"style="text-align:right">买家姓名</label>
+					    <label class="col-sm-6">${(USER_NAME)!}</label>
 					</div>
 				    <div class="form-group form-group-md">
-					    <label class="col-sm-3" for="formGroupInputLarge"style="text-align:right">买家地址</label>
-					    <label class="col-sm-6" for="formGroupInputLarge">${(USER_ADDRESS)!}</label>
+					    <label class="col-sm-3"style="text-align:right">买家地址</label>
+					    <label class="col-sm-6">${(USER_ADDRESS)!}</label>
 					</div>
 				    <div class="form-group form-group-md">
-					    <label class="col-sm-3" for="formGroupInputLarge"style="text-align:right">买家电话</label>
-					    <label class="col-sm-6" for="formGroupInputLarge">${(USER_TEL)!}</label>
+					    <label class="col-sm-3"style="text-align:right">买家电话</label>
+					    <label class="col-sm-6">${(USER_TEL)!}</label>
 					</div>
 				    <div class="form-group form-group-md" id="cancelReason">
-					    <label class="col-sm-3" for="formGroupInputLarge"style="text-align:right">申请退款的原因</label>
-					    <label class="col-sm-6" for="formGroupInputLarge">${(CANCEL_USER_REASON)!}</label>
+					    <label class="col-sm-3"style="text-align:right">申请退款的原因</label>
+					    <label class="col-sm-6">${(CANCEL_USER_REASON)!}</label>
 					</div>
 				    <div class="form-group form-group-md" id="cancelReasonImg">
-					    <label class="col-sm-3" for="formGroupInputLarge"style="text-align:right">退款说明图片</label>
-					    <img class="col-sm-6" for="formGroupInputLarge" src="${(CANCEL_USER_REASON_IMG)!}"/>
+					    <label class="col-sm-3"style="text-align:right">退款说明图片</label>
+					    <img class="col-sm-6" src="${(CANCEL_USER_REASON_IMG)!}"/>
 					</div>
 				    <div class="form-group form-group-md" id="cancelRejectReason">
-					    <label class="col-sm-3" for="formGroupInputLarge"style="text-align:right">拒绝退款的原因</label>
-					    <label class="col-sm-6" for="formGroupInputLarge">${(CANCEL_SHOP_REASON)!}</label>
+					    <label class="col-sm-3"style="text-align:right">拒绝退款的原因</label>
+					    <label class="col-sm-6">${(CANCEL_SHOP_REASON)!}</label>
 					</div>
 				    <div class="form-group form-group-md" id="orderProcessText">
-					    <label class="col-sm-11" for="formGroupInputLarge"style="text-align:center">进度</label>
+					    <label class="col-sm-11"style="text-align:center">进度</label>
 					</div>
 				    <div class="progress progress-striped active progress-sm col-sm-13" id='orderProcessOuter'>
                     	<div style="width: 0%" aria-valuemax="6" aria-valuemin="0" aria-valuenow="6" role="progressbar" class="progress-bar progress-bar-success" id="orderProcess" >             
                     	</div>
                     </div>      
 				    <div class="form-group form-group-md" id="orderProcessLabels">
-						<label class="orderProcessLabel col-sm-2" for="formGroupInputLarge" style="text-align:right">未付款</label>
-						<label class="orderProcessLabel col-sm-2" for="formGroupInputLarge" style="text-align:right">未接单</label>
-						<label class="orderProcessLabel col-sm-2" for="formGroupInputLarge" style="text-align:right">正在准备商品</label>
-						<label class="orderProcessLabel col-sm-2" for="formGroupInputLarge" style="text-align:right">正在配送</label>
-						<label class="orderProcessLabel col-sm-2" for="formGroupInputLarge" style="text-align:right">买家已收货，未评价</label>
-						<label class="orderProcessLabel col-sm-2" for="formGroupInputLarge" style="text-align:right">已评价</label>
+						<label class="orderProcessLabel col-sm-2" style="text-align:right">未付款</label>
+						<label class="orderProcessLabel col-sm-2" style="text-align:right">未接单</label>
+						<label class="orderProcessLabel col-sm-2" style="text-align:right">正在准备商品</label>
+						<label class="orderProcessLabel col-sm-2" style="text-align:right">正在配送</label>
+						<label class="orderProcessLabel col-sm-2" style="text-align:right">买家已收货，未评价</label>
+						<label class="orderProcessLabel col-sm-2" style="text-align:right">已评价</label>
 					</div>
 				    <div class="form-group form-group-md" id = "CANCEL_STATE">
-					    <label class="col-sm-3" for="formGroupInputLarge"style="text-align:right">退款状态</label>
-					    <label class="col-sm-6" for="formGroupInputLarge">${(CANCEL_STRING)!}</label>
+					    <label class="col-sm-3"style="text-align:right">退款状态</label>
+					    <label class="col-sm-6">${(CANCEL_STRING)!}</label>
 					</div>
 				</form>
 			</div>
 		<div class="tab-pane" id="tab2">
 				<form action="#" class="form-horizontal" id="foodForm" enctype="multipart/form-data" >
 				  <div class="form-group form-group-md">
-					<label class="col-lg-3 control-label" for="formGroupInputLarge">
+					<label class="col-lg-3 control-label">
 					备注
 					</label>
 					<div class="col-lg-8 col-md-12">
