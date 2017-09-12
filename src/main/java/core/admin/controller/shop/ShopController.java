@@ -5,6 +5,15 @@
 
 package core.admin.controller.shop;
 
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang3.StringUtils;
+
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Clear;
@@ -14,6 +23,7 @@ import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
+
 import core.admin.controller.base.BaseController;
 import core.admin.service.audit.AuditService;
 import core.admin.service.audit.impl.AuditServiceImpl;
@@ -26,18 +36,13 @@ import core.interceptor.PowerInterceptor;
 import core.model.Shop;
 import core.model.ShopType;
 import core.model.ShopTypeRelation;
+import core.temple.AuditResultTemple;
 import core.utils.MD5Util;
 import core.validate.ModPassValidate;
 import core.validate.ShopValidate;
 import core.vo.DTParams;
 import core.vo.JSONError;
 import core.vo.JSONSuccess;
-import org.apache.commons.lang3.StringUtils;
-
-import java.io.File;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Description:
@@ -149,6 +154,16 @@ public class ShopController extends BaseController {
 		Shop shop = Shop.dao.findById(shopId);
 		if (shop != null) {
 			service.audit(this, shop, 1);
+			if (shop.get("OPENID") != null) {
+				AuditResultTemple auditResultTemple = new AuditResultTemple();
+				auditResultTemple.first = "审核通过了哦~";
+				auditResultTemple.keyword1 = shop.getStr("NAME");
+				auditResultTemple.keyword2 = shop.getStr("ADDRESS");
+				auditResultTemple.keyword3 = "通过审核！";
+				SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+				auditResultTemple.keyword4 = dateFormat.format(new Date());
+				auditResultTemple.remark = "欢迎加入那里外卖";
+			}
 			renderJson(new JSONSuccess("审核成功！"));
 		} else {
 			renderJson(new JSONError("商家ID不存在！"));
@@ -159,6 +174,16 @@ public class ShopController extends BaseController {
 		String shopId = getPara("id");
 		Shop shop = Shop.dao.findById(shopId);
 		if (shop != null) {
+			if (shop.get("OPENID") != null) {
+				AuditResultTemple auditResultTemple = new AuditResultTemple();
+				auditResultTemple.first = "审核没通过啊_(:з」∠)_";
+				auditResultTemple.keyword1 = shop.getStr("NAME");
+				auditResultTemple.keyword2 = shop.getStr("ADDRESS");
+				auditResultTemple.keyword3 = "没通过审核";
+				SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+				auditResultTemple.keyword4 = dateFormat.format(new Date());
+				auditResultTemple.remark = "信息核对下再申请试试吧~";
+			}
 			setAttr("shop", shop);
 		}
 		render("sendBack.html");

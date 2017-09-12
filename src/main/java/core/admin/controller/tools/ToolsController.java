@@ -22,6 +22,7 @@ import com.jfinal.kit.PropKit;
 
 import core.interceptor.WxApiConfigInterceptor;
 import core.model.Order;
+import core.temple.AuditResultTemple;
 import core.utils.ClientCustomSSL;
 import core.utils.SMSUtils;
 import core.utils.WeiXinUtils;
@@ -61,6 +62,19 @@ public class ToolsController extends Controller {
 		Order order = Order.dao.findById(107);
 		WeiXinUtils.sendOrderVideoAndMess(order);
 		renderJson(new JSONSuccess("发送成功"));
+	}
+
+	@Before(WxApiConfigInterceptor.class)
+	public void templeTest() {
+		AuditResultTemple auditResultTemple = new AuditResultTemple();
+		auditResultTemple.touser = "okQ2Rw9_v9M-Rb1fXW5KoMLrQCOw";
+		auditResultTemple.first = "下单成功";
+		auditResultTemple.keyword1 = "餐厅1";
+		auditResultTemple.keyword2 = "2017-9-13";
+		auditResultTemple.keyword3 = "红烧鱼1";
+		auditResultTemple.keyword4 = "12元";
+		auditResultTemple.remark = "请等待接单";
+		renderJson(new JSONSuccess(auditResultTemple.sendAndBackMsg()));
 	}
 
 	public void cutter() {
