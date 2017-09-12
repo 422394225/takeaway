@@ -1,0 +1,101 @@
+<#include "../base/main/_main.html"/>
+<#assign wxMeta>
+</#assign>
+<#assign wxCss>
+	<link href="${base}/resources/stylesheets/wx_center.css" rel="stylesheet" type="text/css"/>
+	<style>
+	</style>
+</#assign>
+<#assign wxJavascript>
+	<script src="${base}/resources/javascripts/lay/laytpl.js" type="text/javascript"></script>
+	<script>
+        $(function () {
+            Kit.post(
+                "${base}/wx/user/detail",
+				{openId:WxStore.user.getParams("openId")},
+				function (msg,data) {
+                    var tpl = $('#user-tpl').html();
+                    laytpl(tpl).render(data, function(html){
+                        $("#userTable").html(html);
+                    });
+                },function (msg,data) {
+					$.alert(msg)
+                }
+			)
+        });
+        function myAddress() {
+			window.location.href = "${base}/wx/user/addressList"
+        }
+        function myOrder() {
+            window.location.href = "${base}/wx/"
+        }
+        function myCollections() {
+            window.location.href = "${base}/wx/"
+        }
+        function myRate() {
+            window.location.href = "${base}/wx/"
+        }
+	</script>
+</#assign>
+<@mainLayout wxTitle="个人中心"  wxMeta=wxMeta wxCss=wxCss wxJavascript=wxJavascript>
+<div class="page page-current" id="mainPage">
+	<header class="bar bar-nav">
+		<h1 class="title  color-default">个人中心</h1>
+		<img src="${base}/resources/images/logo-text.png" class="pull-right" style="width: 2rem;">
+	</header>
+	<div class="pageContent">
+		<table id="userTable">
+
+		</table>
+		<div class="list-block">
+			<ul>
+				<li class="item-content item-link" onclick="myAddress();">
+					<div class="item-media"><i class="fa fa-map-marker color-primary"></i></div>
+					<div class="item-inner">
+						<div class="item-title">收货地址</div>
+					</div>
+				</li>
+				<li class="item-content item-link" onclick="myOrder();">
+					<div class="item-media"><i class="fa fa-file-text-o color-success"></i></div>
+					<div class="item-inner">
+						<div class="item-title">我的订单</div>
+					</div>
+				</li>
+				<li class="item-content item-link" onclick="myCollections();">
+					<div class="item-media"><i class="fa fa-star color-warning"></i></div>
+					<div class="item-inner">
+						<div class="item-title">我的收藏</div>
+					</div>
+				</li>
+			</ul>
+		</div>
+		<div class="list-block">
+			<ul>
+				<li class="item-content item-link" onclick="myRate();">
+					<div class="item-media"><i class="fa fa-tag color-danger"></i></div>
+					<div class="item-inner">
+						<div class="item-title">我的评价</div>
+					</div>
+				</li>
+			</ul>
+		</div>
+	</div>
+</div>
+<script id="user-tpl" type="text/html">
+	<tr>
+		<td rowspan="3">
+			<img src="{{d.AVATAR}}" id="avatar">
+		</td>
+		<td>
+			<span id="nickname">{{d.NICKNAME}}&nbsp;</span>
+			{{# if(d.SEX==0){ }}
+			<span class="fa fa-intersex" color="" id="sex"></span>
+			{{# }else if(d.SEX==1){ }}
+			<span class="fa fa-mars" color="" id="sex"></span>
+			{{# }else if(d.SEX==2){ }}
+			<span class="fa fa-venus" color="#ef9d9d" id="sex"></span>
+			{{# }}}
+		</td>
+	</tr>
+</script>
+</@mainLayout>

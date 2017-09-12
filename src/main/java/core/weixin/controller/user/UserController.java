@@ -5,7 +5,6 @@
 
 package core.weixin.controller.user;
 
-import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Before;
 import com.jfinal.core.Controller;
 import com.jfinal.plugin.activerecord.Db;
@@ -27,15 +26,12 @@ import java.util.List;
 public class UserController extends Controller {
 
 	public void detail() {
-		try {
-			String openId = getPara("openId");
-			User user = User.dao.findById(openId);
-			JSONObject jsonObject = new JSONObject();
-			jsonObject.put("user", user);
-			renderJson(new JSONSuccess(jsonObject));
-		} catch (Exception e) {
-			e.printStackTrace();
-			renderJson(new JSONError("获取列表失败！"));
+		String openId = getPara("openId");
+		User user = User.dao.findById(openId);
+		if(user!=null){
+			renderJson(new JSONSuccess(user));
+		}else{
+			renderJson(new JSONError("获取用户信息失败！"));
 		}
 	}
 
@@ -90,4 +86,7 @@ public class UserController extends Controller {
 		renderJson(new JSONSuccess("设为默认成功"));
 	}
 
+	public void center(){
+		render("center.html");
+	}
 }

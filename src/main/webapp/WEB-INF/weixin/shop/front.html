@@ -376,7 +376,7 @@ function showCart() {
 <script id="cart-tpl" type="text/html">
 <div class="cart-item">
 	<div class="item-element">
-		{{# if(d.IMG==null){d.IMG=getProjectName()+'/resources/images/no-image.png'} }}
+		{{# if(d.IMG==undefined){d.IMG='/resources/images/no-image.png'} }}
 		<img src="{{d.IMG}}">
 	</div>
 	<div class="item-element">

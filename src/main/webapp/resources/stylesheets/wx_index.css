@@ -12,6 +12,8 @@
 .searchbar{
 	box-sizing: border-box;
 	background-color: #0894ec !important;
+	background-image: url(../images/shop_bg.png);
+	background-size: cover;
 	padding: 8px !important;
 }
 .search-input input{

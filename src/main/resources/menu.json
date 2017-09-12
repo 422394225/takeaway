@@ -1,27 +1,12 @@
 {
   "button": [
     {
-      "name": "点单",
-      "sub_button": [
-        {
-          "type": "view",
-          "name": "正式",
-          "url": "https://open.weixin.qq.com/connect/oauth2/authorize?appid=@APPID@&redirect_uri=@DOMAIN_ENCODE@%2foauth&response_type=code&scope=snsapi_base&state=%2fwx%2forder#wechat_redirect"
-        },
-        {
-          "type": "view",
-          "name": "测式",
-          "url": "https://open.weixin.qq.com/connect/oauth2/authorize?appid=@APPID@&redirect_uri=@DOMAIN_ENCODE@%2foauth&response_type=code&scope=snsapi_base&state=%2fwx%2forder#wechat_redirect"
-        }
-      ]
-    },
-    {
       "type": "view",
-      "name": "订个外卖",
+      "name": "点个外单",
       "url": "https://open.weixin.qq.com/connect/oauth2/authorize?appid=@APPID@&redirect_uri=@DOMAIN_ENCODE@%2foauth&response_type=code&scope=snsapi_base&state=%2fwx#wechat_redirect"
     },
     {
-      "name": "我的",
+      "name": "服务",
       "sub_button": [
         {
           "type": "view",
@@ -32,6 +17,21 @@
           "type": "view",
           "name": "配送员入口",
           "url": "@DOMAIN@/wx/delivery/"
+        }
+      ]
+    },
+    {
+      "name": "用户中心",
+      "sub_button": [
+        {
+          "type": "view",
+          "name": "个人中心",
+          "url": "https://open.weixin.qq.com/connect/oauth2/authorize?appid=@APPID@&redirect_uri=@DOMAIN_ENCODE@%2foauth&response_type=code&scope=snsapi_base&state=%2fwx%2fuser%2fcenter#wechat_redirect"
+        },
+        {
+          "type": "view",
+          "name": "问题反馈",
+          "url": "https://open.weixin.qq.com/connect/oauth2/authorize?appid=@APPID@&redirect_uri=@DOMAIN_ENCODE@%2foauth&response_type=code&scope=snsapi_base&state=%2fwx%2ffeedback%2fadd#wechat_redirect"
         }
       ]
     }

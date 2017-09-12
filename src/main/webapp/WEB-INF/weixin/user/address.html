@@ -3,10 +3,6 @@
 </#assign>
 <#assign wxCss>
 	<style>
-		header {
-			background-image: url("${base}/resources/images/shop_bg.png");
-			background-size: cover;
-		}
 		.infoTable:nth-child(1){
 			margin-top: 2.2rem;
 		}
@@ -52,9 +48,6 @@
                 }
             );
         }
-        function back2payList() {
-            window.location.href="${base}/wx/order/payList?openId="+WxStore.user.getParams("openId");
-        }
         function editAddress(id) {
             window.location.href="${base}/wx/user/addressForm?id="+id;
         }
@@ -63,10 +56,10 @@
                 "${base}/wx/user/setDefault?id="+id,
 				{},
                 function(msg,data){
-                    loadUserAddress();
-                    $.confirm('是否返回结算？',msg, function () {
-                        back2payList();
+                    $.confirm('已设为默认值，是否返回上一页？',msg, function () {
+                        history.back();
                     });
+                    loadUserAddress();
                 },function (msg,data) {
                     $.toast(msg)
                 }
@@ -77,9 +70,9 @@
 <@mainLayout wxTitle="收货地址管理"  wxMeta=wxMeta wxCss=wxCss wxJavascript=wxJavascript>
 <div class="page" id="addressPage">
 	<header class="bar bar-nav">
-		<a class="icon icon-left pull-left color-default" href="javascript:void(0);" onclick="back2payList();"></a>
-		<img src="${base}/resources/images/logo-text.png" class="pull-right" style="width: 2rem;">
+		<a class="icon icon-left pull-left color-default" href="javascript:void(0);" onclick="javascript:history.back();"></a>
 		<h1 class="title  color-default">收货地址管理</h1>
+		<img src="${base}/resources/images/logo-text.png" class="pull-right" style="width: 2rem;">
 	</header>
 	<div id="addressContainer"></div>
 	<div class="bg-default addAddressBtn" onclick="javascript:$.router.loadPage('#addressFormPage');">

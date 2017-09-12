@@ -1,0 +1,40 @@
+.bar{
+	border-bottom:0px;
+	height: 2.5rem;
+}
+.pageContent{
+	background-image: url("../images/shop_bg.png");
+	background-size: cover;
+	margin-top: 2.2rem;
+	height: 5rem;
+}
+#userTable{
+	text-align: center;
+	vertical-align: middle;
+	color: white;
+}
+#userTable td{
+	padding: 3px;
+}
+#avatar{
+	width: 5em;
+	border-radius: 3em;
+	-webkit-border-radius: 3em;
+	-moz-border-radius: 3em;
+}
+#nickname{
+	font-weight: 700;
+	font-size: 1.5rem;
+}
+#sex{
+	font-weight: bold;
+}
+#sex.fa-intersex{
+	color: #f9965a;
+}
+#sex.fa-mars{
+	color: #1141f7;
+}
+#sex.fa-venus{
+	color: #ef9d9d;
+}

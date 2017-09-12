@@ -2,6 +2,8 @@
 	box-sizing: border-box;
 	background-color: #0894ec !important;
 	padding: 8px !important;
+	background-image: url(../images/shop_bg.png);
+	background-size: cover;
 }
 .search-input input{
     display: inline-block;

@@ -1,0 +1,39 @@
+{
+  "button": [
+    {
+      "name": "点单",
+      "sub_button": [
+        {
+          "type": "view",
+          "name": "正式",
+          "url": "https://open.weixin.qq.com/connect/oauth2/authorize?appid=@APPID@&redirect_uri=@DOMAIN_ENCODE@%2foauth&response_type=code&scope=snsapi_base&state=%2fwx%2forder#wechat_redirect"
+        },
+        {
+          "type": "view",
+          "name": "测式",
+          "url": "https://open.weixin.qq.com/connect/oauth2/authorize?appid=@APPID@&redirect_uri=@DOMAIN_ENCODE@%2foauth&response_type=code&scope=snsapi_base&state=%2fwx%2forder#wechat_redirect"
+        }
+      ]
+    },
+    {
+      "type": "view",
+      "name": "订个外卖",
+      "url": "https://open.weixin.qq.com/connect/oauth2/authorize?appid=@APPID@&redirect_uri=@DOMAIN_ENCODE@%2foauth&response_type=code&scope=snsapi_base&state=%2fwx#wechat_redirect"
+    },
+    {
+      "name": "我的",
+      "sub_button": [
+        {
+          "type": "view",
+          "name": "店铺入驻",
+          "url": "@DOMAIN@/wx/shop/add"
+        },
+        {
+          "type": "view",
+          "name": "配送员入口",
+          "url": "@DOMAIN@/wx/delivery/"
+        }
+      ]
+    }
+  ]
+}

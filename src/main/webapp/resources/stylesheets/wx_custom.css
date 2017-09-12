@@ -1,6 +1,10 @@
 *{
 	box-sizing: content-box;
 }
+header {
+	background-image: url("../images/shop_bg.png");
+	background-size: cover;
+}
 .color-default{
 	color: white;
 }

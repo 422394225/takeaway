@@ -106,11 +106,11 @@ public class OrderController extends WeixinMsgController {
 					order.set("TOTAL_PRICE", totalPrice);
 					// 优惠计算
 					if (shop.getDouble("DELIVERY_OFF_THRESHOLD") != null
-							&& totalPrice > shop.getDouble("DELIVERY_OFF_THRESHOLD")) {
+							&& totalPrice >= shop.getDouble("DELIVERY_OFF_THRESHOLD")) {
 						totalPrice -= shop.getDouble("DELIVERY_OFF");
 					}
 					if (shop.getDouble("REDUCTION_THRESHOLD") != null
-							&& totalPrice > shop.getDouble("REDUCTION_THRESHOLD")) {
+							&& totalPrice >= shop.getDouble("REDUCTION_THRESHOLD")) {
 						totalPrice -= shop.getDouble("REDUCTION");
 					}
 					order.set("PAY_PRICE", Double.parseDouble(String.format("%.2f", totalPrice)));
