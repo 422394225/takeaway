@@ -1,26 +1,48 @@
 package core.weixin.controller;
 
-import com.jfinal.kit.PropKit;
-import com.jfinal.log.Log;
-import com.jfinal.weixin.sdk.api.*;
-import com.jfinal.weixin.sdk.api.CustomServiceApi.Articles;
-import com.jfinal.weixin.sdk.jfinal.MsgControllerAdapter;
-import com.jfinal.weixin.sdk.msg.in.*;
-import com.jfinal.weixin.sdk.msg.in.event.*;
-import com.jfinal.weixin.sdk.msg.in.speech_recognition.InSpeechRecognitionResults;
-import com.jfinal.weixin.sdk.msg.out.*;
-import core.model.User;
-import core.utils.WeiXinUtils;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.jfinal.kit.PropKit;
+import com.jfinal.log.Log;
+import com.jfinal.weixin.sdk.api.ApiConfig;
+import com.jfinal.weixin.sdk.api.ApiConfigKit;
+import com.jfinal.weixin.sdk.api.ApiResult;
+import com.jfinal.weixin.sdk.api.CustomServiceApi;
+import com.jfinal.weixin.sdk.api.CustomServiceApi.Articles;
+import com.jfinal.weixin.sdk.api.TemplateData;
+import com.jfinal.weixin.sdk.api.TemplateMsgApi;
+import com.jfinal.weixin.sdk.api.UserApi;
+import com.jfinal.weixin.sdk.jfinal.MsgControllerAdapter;
+import com.jfinal.weixin.sdk.msg.in.InImageMsg;
+import com.jfinal.weixin.sdk.msg.in.InLinkMsg;
+import com.jfinal.weixin.sdk.msg.in.InLocationMsg;
+import com.jfinal.weixin.sdk.msg.in.InShortVideoMsg;
+import com.jfinal.weixin.sdk.msg.in.InTextMsg;
+import com.jfinal.weixin.sdk.msg.in.InVideoMsg;
+import com.jfinal.weixin.sdk.msg.in.InVoiceMsg;
+import com.jfinal.weixin.sdk.msg.in.event.InCustomEvent;
+import com.jfinal.weixin.sdk.msg.in.event.InFollowEvent;
+import com.jfinal.weixin.sdk.msg.in.event.InLocationEvent;
+import com.jfinal.weixin.sdk.msg.in.event.InMassEvent;
+import com.jfinal.weixin.sdk.msg.in.event.InMenuEvent;
+import com.jfinal.weixin.sdk.msg.in.event.InQrCodeEvent;
+import com.jfinal.weixin.sdk.msg.in.event.InTemplateMsgEvent;
+import com.jfinal.weixin.sdk.msg.in.speech_recognition.InSpeechRecognitionResults;
+import com.jfinal.weixin.sdk.msg.out.News;
+import com.jfinal.weixin.sdk.msg.out.OutCustomMsg;
+import com.jfinal.weixin.sdk.msg.out.OutNewsMsg;
+import com.jfinal.weixin.sdk.msg.out.OutTextMsg;
+import com.jfinal.weixin.sdk.msg.out.OutVoiceMsg;
+
+import core.model.User;
+import core.utils.WeiXinUtils;
+
 /**
- * 将此 DemoController 在YourJFinalConfig 中注册路由，
- * 并设置好weixin开发者中心的 URL 与 token ，使 URL 指向该
- * DemoController 继承自父类 WeixinController 的 index
+ * 将此 DemoController 在YourJFinalConfig 中注册路由， 并设置好weixin开发者中心的 URL 与 token ，使
+ * URL 指向该 DemoController 继承自父类 WeixinController 的 index
  * 方法即可直接运行看效果，在此基础之上修改相关的方法即可进行实际项目开发
  */
 public class WeixinMsgController extends MsgControllerAdapter {
@@ -28,8 +50,8 @@ public class WeixinMsgController extends MsgControllerAdapter {
 	private static final String helpStr = "\t你的品位不错哦  么么哒。";
 
 	/**
-	 * 如果要支持多公众账号，只需要在此返回各个公众号对应的  ApiConfig 对象即可
-	 * 可以通过在请求 url 中挂参数来动态从数据库中获取 ApiConfig 属性值
+	 * 如果要支持多公众账号，只需要在此返回各个公众号对应的 ApiConfig 对象即可 可以通过在请求 url 中挂参数来动态从数据库中获取
+	 * ApiConfig 属性值
 	 */
 	public ApiConfig getApiConfig() {
 		ApiConfig ac = new ApiConfig();
@@ -40,9 +62,8 @@ public class WeixinMsgController extends MsgControllerAdapter {
 		ac.setAppSecret(PropKit.get("appSecret"));
 
 		/**
-		 *  是否对消息进行加密，对应于微信平台的消息加解密方式：
-		 *  1：true进行加密且必须配置 encodingAesKey
-		 *  2：false采用明文模式，同时也支持混合模式
+		 * 是否对消息进行加密，对应于微信平台的消息加解密方式： 1：true进行加密且必须配置 encodingAesKey
+		 * 2：false采用明文模式，同时也支持混合模式
 		 */
 		ac.setEncryptMessage(PropKit.getBoolean("encryptMessage", false));
 		ac.setEncodingAesKey(PropKit.get("encodingAesKey", "setting it in config file"));
@@ -52,11 +73,11 @@ public class WeixinMsgController extends MsgControllerAdapter {
 	protected void processInTextMsg(InTextMsg inTextMsg) {
 		ApiConfig ac = getApiConfig();
 		ApiConfigKit.setThreadLocalApiConfig(ac);
-		logger.info("isEncryptMessage:"+ac.isEncryptMessage()+"");
-		logger.info("getEncodingAesKey:"+ac.getEncodingAesKey());
-		logger.info("getAppId:"+ac.getAppId());
-		logger.info("getAppSecret:"+ac.getAppSecret());
-		logger.info("getToken:"+ac.getToken());
+		logger.info("isEncryptMessage:" + ac.isEncryptMessage() + "");
+		logger.info("getEncodingAesKey:" + ac.getEncodingAesKey());
+		logger.info("getAppId:" + ac.getAppId());
+		logger.info("getAppSecret:" + ac.getAppSecret());
+		logger.info("getToken:" + ac.getToken());
 		String msgContent = inTextMsg.getContent().trim();
 		// 帮助提示
 		if ("help".equalsIgnoreCase(msgContent) || "帮助".equals(msgContent)) {
@@ -74,7 +95,7 @@ public class WeixinMsgController extends MsgControllerAdapter {
 			String url = "http://javen.ngrok.natapp.cn/paytest?openId=o_pncsidC-pRRfCP4zj98h6slREw";
 			String urlStr = "<a href=\"" + url + "\">微信支付测试</a>";
 			renderOutTextMsg(urlStr);
-		}  else if ("jssdk".equalsIgnoreCase(msgContent)) {
+		} else if ("jssdk".equalsIgnoreCase(msgContent)) {
 			String url = PropKit.get("domain") + "/jssdk";
 			String urlStr = "<a href=\"" + url + "\">JSSDK</a>";
 			renderOutTextMsg("地址" + urlStr);
@@ -131,25 +152,25 @@ public class WeixinMsgController extends MsgControllerAdapter {
 				}
 			}).start();
 
-			//回复被动响应消息
+			// 回复被动响应消息
 			renderOutTextMsg("你发的内容为：" + msgContent);
 
 		}
 
 		else {
 			renderOutTextMsg("你发的内容为：" + msgContent);
-			//转发给多客服PC客户端
-			//			OutCustomMsg outCustomMsg = new OutCustomMsg(inTextMsg);
-			//			render(outCustomMsg);
+			// 转发给多客服PC客户端
+			// OutCustomMsg outCustomMsg = new OutCustomMsg(inTextMsg);
+			// render(outCustomMsg);
 		}
 
 	}
 
 	@Override
 	protected void processInVoiceMsg(InVoiceMsg inVoiceMsg) {
-		//转发给多客服PC客户端
-		//		OutCustomMsg outCustomMsg = new OutCustomMsg(inVoiceMsg);
-		//		render(outCustomMsg);
+		// 转发给多客服PC客户端
+		// OutCustomMsg outCustomMsg = new OutCustomMsg(inVoiceMsg);
+		// render(outCustomMsg);
 		OutVoiceMsg outMsg = new OutVoiceMsg(inVoiceMsg);
 		// 将刚发过来的语音再发回去
 		outMsg.setMediaId(inVoiceMsg.getMediaId());
@@ -188,7 +209,7 @@ public class WeixinMsgController extends MsgControllerAdapter {
 
 	@Override
 	protected void processInLinkMsg(InLinkMsg inLinkMsg) {
-		//转发给多客服PC客户端
+		// 转发给多客服PC客户端
 		OutCustomMsg outCustomMsg = new OutCustomMsg(inLinkMsg);
 		render(outCustomMsg);
 	}
