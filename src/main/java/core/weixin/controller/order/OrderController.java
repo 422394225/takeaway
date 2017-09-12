@@ -12,7 +12,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.sun.org.apache.xpath.internal.operations.Or;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -173,93 +172,93 @@ public class OrderController extends WeixinMsgController {
 	 * prepay_id<br>
 	 * 
 	 */
-    public void pay() {
-        try {
-            /** 返回的json */
-            JSONObject result = new JSONObject();
-            String openId = getPara("openId");
-            if (StringUtils.isEmpty(openId)) {
-                renderJson(new JSONError("无法获取用户信息"));
-            }
-            /** 更新订单 **/
-            UserAddress defaultAddress = UserAddress.dao.findFirst(Db.getSql("userAddress.getDefault"),
-                    getPara("openId"));
-            Order order = CacheKit.get("preOrder", openId);
-            if (order == null) {
-                renderJson(new JSONError("订单超时"));
-            } else {
-                order.set("REMARK", getPara("remark"));
-                order.set("ORDER_STATE", 1);
-                order.set("PAY_STATE", 0);
-                order.set("USER_ADDRESS", defaultAddress.getStr("ADDRESS"));
-                order.set("USER_TEL", defaultAddress.getStr("TEL"));
-                order.set("USER_NAME", defaultAddress.getStr("NAME"));
-                order.save();
-                result.put("orderid", order.getInt("ID"));
-                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
-                java.util.Map<String, String> keyMap = new HashMap<>();
-                keyMap.put("appid", PropKit.get("appId"));
-                keyMap.put("mch_id", PropKit.get("mch_id"));
-                keyMap.put("device_info", "WEB");
-                keyMap.put("nonce_str", WeiXinUtils.getNonceNorString());
-                keyMap.put("sign_type", "MD5");
-                keyMap.put("body", "订单支付");
-                keyMap.put("out_trade_no", order.getInt("ID") + "");
-                keyMap.put("fee_type", "CNY");
-                keyMap.put("total_fee", ((int) (order.getDouble("PAY_PRICE") * 100)) + "");
-                keyMap.put("spbill_create_ip", PropKit.get("spbill_create_ip"));
-                keyMap.put("notify_url", PropKit.get("server.address") + "/wx/orderRecieve/orderPayed");
-                keyMap.put("trade_type", "JSAPI");
-                keyMap.put("openid", openId);
-                keyMap.put("sign", WeiXinUtils.getSign(keyMap));
-                String paraXml = new String(WeiXinUtils.callMapToXML(keyMap));
-                System.out.println(paraXml);
-                String urlResult = HttpUtils.post(WEIXIN_PRE_PAY_URL, paraXml);
+	public void pay() {
+		try {
+			/** 返回的json */
+			JSONObject result = new JSONObject();
+			String openId = getPara("openId");
+			if (StringUtils.isEmpty(openId)) {
+				renderJson(new JSONError("无法获取用户信息"));
+			}
+			/** 更新订单 **/
+			UserAddress defaultAddress = UserAddress.dao.findFirst(Db.getSql("userAddress.getDefault"),
+					getPara("openId"));
+			Order order = CacheKit.get("preOrder", openId);
+			if (order == null) {
+				renderJson(new JSONError("订单超时"));
+			} else {
+				order.set("REMARK", getPara("remark"));
+				order.set("ORDER_STATE", 1);
+				order.set("PAY_STATE", 0);
+				order.set("USER_ADDRESS", defaultAddress.getStr("ADDRESS"));
+				order.set("USER_TEL", defaultAddress.getStr("TEL"));
+				order.set("USER_NAME", defaultAddress.getStr("NAME"));
+				order.save();
+				result.put("orderid", order.getInt("ID"));
+				SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
+				java.util.Map<String, String> keyMap = new HashMap<>();
+				keyMap.put("appid", PropKit.get("appId"));
+				keyMap.put("mch_id", PropKit.get("mch_id"));
+				keyMap.put("device_info", "WEB");
+				keyMap.put("nonce_str", WeiXinUtils.getNonceNorString());
+				keyMap.put("sign_type", "MD5");
+				keyMap.put("body", "订单支付");
+				keyMap.put("out_trade_no", order.getInt("ID") + "");
+				keyMap.put("fee_type", "CNY");
+				keyMap.put("total_fee", ((int) (order.getDouble("PAY_PRICE") * 100)) + "");
+				keyMap.put("spbill_create_ip", PropKit.get("spbill_create_ip"));
+				keyMap.put("notify_url", PropKit.get("server.address") + "/wx/orderRecieve/orderPayed");
+				keyMap.put("trade_type", "JSAPI");
+				keyMap.put("openid", openId);
+				keyMap.put("sign", WeiXinUtils.getSign(keyMap));
+				String paraXml = new String(WeiXinUtils.callMapToXML(keyMap));
+				System.out.println(paraXml);
+				String urlResult = HttpUtils.post(WEIXIN_PRE_PAY_URL, paraXml);
 
-                Document doc = Jsoup.parse(urlResult);
-                if ("SUCCESS".equals(doc.getElementsByTag("result_code").text())) {
-                    long timeStamp = new Date().getTime() / 1000;
-                    String nonceNor = WeiXinUtils.getNonceNorString();
-                    String prepayId = doc.getElementsByTag("prepay_id").text();
-                    String appId = PropKit.get("appId");
-                    String package1 = "prepay_id=" + doc.getElementsByTag("prepay_id").text();
-                    String signType = "MD5";
-                    order.set("PREPAY_ID", prepayId);
-                    order.update();
-                    result.put("appId", appId);
-                    result.put("timeStamp", timeStamp + "");
-                    result.put("nonceStr", nonceNor);
-                    result.put("package1", package1);
-                    result.put("signType", signType);
-                    Map<String, String> map = new HashMap<>();
-                    map.put("appId", appId);
-                    map.put("timeStamp", timeStamp + "");
-                    map.put("nonceStr", nonceNor);
-                    map.put("package", package1);
-                    map.put("signType", signType);
-                    result.put("paySign", WeiXinUtils.getSign(map));
-                    result.put("orderId",order.getStr("ID"));
-                    renderJson(new JSONSuccess(result));
-                } else {
-                    System.out.println(urlResult);
-                    renderJson(new JSONError(doc.getElementsByTag("return_msg").text()));
-                }
-            }
-        } catch (Exception e) {
-            renderJson(new JSONError("支付出现了错误"));
-            log.info("支付出错", e);
-        }
+				Document doc = Jsoup.parse(urlResult);
+				if ("SUCCESS".equals(doc.getElementsByTag("result_code").text())) {
+					long timeStamp = new Date().getTime() / 1000;
+					String nonceNor = WeiXinUtils.getNonceNorString();
+					String prepayId = doc.getElementsByTag("prepay_id").text();
+					String appId = PropKit.get("appId");
+					String package1 = "prepay_id=" + doc.getElementsByTag("prepay_id").text();
+					String signType = "MD5";
+					order.set("PREPAY_ID", prepayId);
+					order.update();
+					result.put("appId", appId);
+					result.put("timeStamp", timeStamp + "");
+					result.put("nonceStr", nonceNor);
+					result.put("package1", package1);
+					result.put("signType", signType);
+					Map<String, String> map = new HashMap<>();
+					map.put("appId", appId);
+					map.put("timeStamp", timeStamp + "");
+					map.put("nonceStr", nonceNor);
+					map.put("package", package1);
+					map.put("signType", signType);
+					result.put("paySign", WeiXinUtils.getSign(map));
+					result.put("orderId", order.getInt("ID"));
+					renderJson(new JSONSuccess(result));
+				} else {
+					System.out.println(urlResult);
+					renderJson(new JSONError(doc.getElementsByTag("return_msg").text()));
+				}
+			}
+		} catch (Exception e) {
+			renderJson(new JSONError("支付出现了错误"));
+			log.info("支付出错", e);
+		}
 
-    }
+	}
 
-    public void ajaxPayState(){
-        String orderId = getPara("orderId");
-        Order order = Order.dao.findById(orderId);
-        if(order.getInt("PAY_STATE")==1){
-            renderJson(new JSONSuccess("支付成功"));
-        }else{
-            renderJson(new JSONError());
-        }
+	public void ajaxPayState() {
+		String orderId = getPara("orderId");
+		Order order = Order.dao.findById(orderId);
+		if (order.getInt("PAY_STATE") == 1) {
+			renderJson(new JSONSuccess("支付成功"));
+		} else {
+			renderJson(new JSONError());
+		}
 	}
 
 	// public void orderPayed() {
