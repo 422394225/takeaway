@@ -156,9 +156,9 @@
             Kit.get(
                 "${base}/wx/order/ajaxPayState?orderId="+id,{},
                 function (msg,data) {
-                    clearInterval(caller);
-                    $.hidePreloader();
-                    $.toast(msg);
+                    clearInterval(caller);//清除定时器
+                    $.hidePreloader();//隐藏loading
+                    $.toast(msg);//输出信息
                 },function (msg,data) {
 
                 }
