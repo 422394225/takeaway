@@ -152,18 +152,27 @@
     }
     function payCallBack(id) {
 	    //TODO 不知为何无法清空定时器
-        /*var caller = setInterval(function(){
-            Kit.get(
-                "${base}/wx/order/ajaxPayState?orderId="+id,{},
-                function (msg,data) {
-                    clearInterval(caller);//清除定时器
-                    $.hidePreloader();//隐藏loading
-                    $.toast(msg);//输出信息
-                },function (msg,data) {
-
-                }
-            )
-        },3000);*/
+        var caller = self.setInterval(function(){
+        	$.ajax({
+	               url: "${base}/wx/order/ajaxPayState?orderId="+id, // /api/leds/1
+	               async: true,
+	               type: 'GET',
+	               success: function(data , textStatus){
+	            	   if(data.error==false){
+	                    clearInterval(caller);//清除定时器
+	                    $.hidePreloader();//隐藏loading
+	                    $.toast(data.msg);//输出信息
+	            	   }
+	            	   else
+	            		   { $.toast(data.msg);
+	            		   
+	            		   }
+	               },
+	               error: function(jqXHR , textStatus , errorThrown){
+	                 console.log("error");
+	               },
+	        });
+        },3000);
     }
 </script>
 <script id="payment-tpl" type="text/html">
