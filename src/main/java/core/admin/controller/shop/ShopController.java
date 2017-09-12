@@ -218,7 +218,8 @@ public class ShopController extends BaseController {
 		shop.set("PCODE", addressCode.substring(0, 2) + "0000");
 		shop.set("PCCODE", addressCode.substring(0, 4) + "00");
 		shop.set("PTCODE", addressCode);
-		shop.set("PASSWORD", MD5Util.encrypt(getPara("password"), PropKit.get("encrypt_key")));
+		String password = getPara("password");
+		shop.set("PASSWORD", MD5Util.encrypt(password, PropKit.get("encrypt_key")));
 		shop.set("TEL", getPara("phone"));
 		shop.set("QQ", getPara("qq"));
 		shop.set("OPEN_TIME", getPara("openTime"));

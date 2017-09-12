@@ -133,16 +133,46 @@
 						},
 						function (res) {
 							if (res.err_msg == "get_brand_wcpay_request:ok") {
+								$.toast("下单成功！")
+                                $.showPreloader('正在查询支付状态');
+                                payCallBack(result.data.orderId);
+							}else{
+                                $.alert("支付失败")
 							}     // 使用以上方式判断前端返回,微信团队郑重提示：res.err_msg将在用户支付成功后返回    ok，但并不保证它绝对可靠。
 						}
 					);
-				}
-            	newWinInfo(result.error)
+				}else{
+                    $.alert(result.msg)
+                }
 			}
 		);
 	}
 	function manageAddress() {
         window.location.href = "${base}/wx/user/addressList";
+    }
+    function payCallBack(id) {
+	    //TODO 不知为何无法清空定时器
+        var caller = self.setInterval(function(){
+        	$.ajax({
+	               url: "${base}/wx/order/ajaxPayState?orderId="+id, // /api/leds/1
+	               async: true,
+	               type: 'GET',
+	               success: function(data , textStatus){
+	            	   if(data.error==false){
+	                    clearInterval(caller);//清除定时器
+	                    $.hidePreloader();//隐藏loading
+	                    $.toast(data.msg);//输出信息
+	            	   }
+	            	   else
+	            		   { $.toast(data.msg);
+	            		   
+	            		   }
+	               },
+	               error: function(jqXHR , textStatus , errorThrown){
+	                 console.log("error");
+	               },
+	        });
+        },3000);
     }
 </script>
 <script id="payment-tpl" type="text/html">
