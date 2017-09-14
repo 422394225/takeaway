@@ -52,7 +52,7 @@ public class DeliveryController extends WeixinMsgController {
 		} else {
 			setAttr("deliveryId", LOGIN_ACCESS_KEY.get(accessKey));
 			List<Record> records = Db.find(
-					"SELECT A.ID,A.USER_NAME,A.USER_TEL,A.USER_ADDRESS,B.ADDRESS AS SHOP_ADDRESS,B.TEL AS SHOP_TEL,B.IMG,'' AS STYLE,B.NAME AS SHOP_NAME FROM T_ORDER A LEFT JOIN T_SHOP B ON A.SHOP_ID=B.ID WHERE A.DELIVERY_ID IS NULL AND A.ORDER_STATE<5 AND A.CANCEL_STATE IS NULL LIMIT 10");
+					"SELECT A.ID,A.USER_NAME,A.USER_TEL,A.USER_ADDRESS,B.ADDRESS AS SHOP_ADDRESS,B.TEL AS SHOP_TEL,B.IMG,'' AS STYLE,B.NAME AS SHOP_NAME FROM T_ORDER A LEFT JOIN T_SHOP B ON A.SHOP_ID=B.ID WHERE A.DELIVERY_ID IS NULL AND A.ORDER_STATE=3 AND A.CANCEL_STATE IS NULL LIMIT 10");
 			while (records.size() < 10) {
 				records.add(defaultOrder);
 			}
@@ -69,9 +69,10 @@ public class DeliveryController extends WeixinMsgController {
 			return;
 		}
 		List<Record> records = Db.find(
-				"SELECT A.ID,A.USER_NAME,A.USER_TEL,A.USER_ADDRESS,B.ADDRESS AS SHOP_ADDRESS,B.TEL AS SHOP_TEL,B.IMG,'' AS STYLE,B.NAME AS SHOP_NAME FROM T_ORDER A LEFT JOIN T_SHOP B ON A.SHOP_ID=B.ID WHERE A.DELIVERY_ID =? AND A.ORDER_STATE<5 AND ifnull(A.CANCEL_STATE,'-1')<>2",
+				"SELECT A.ID,A.USER_NAME,A.USER_TEL,A.USER_ADDRESS,B.ADDRESS AS SHOP_ADDRESS,B.TEL AS SHOP_TEL,B.IMG,'' AS STYLE,B.NAME AS SHOP_NAME FROM T_ORDER A LEFT JOIN T_SHOP B ON A.SHOP_ID=B.ID WHERE A.DELIVERY_ID =? AND A.ORDER_STATE=3 AND ifnull(A.CANCEL_STATE,'-1')<>2",
 				deliveryId);
 		setAttr("orderInfo", records);
+		setAttr("isFromTakeOrder", "0");
 		render("listOrder.html");
 	}
 
@@ -148,6 +149,7 @@ public class DeliveryController extends WeixinMsgController {
 				"SELECT A.ID,A.USER_NAME,A.USER_TEL,A.USER_ADDRESS,B.ADDRESS AS SHOP_ADDRESS,B.TEL AS SHOP_TEL,B.IMG,'' AS STYLE,B.NAME AS SHOP_NAME FROM T_ORDER A LEFT JOIN T_SHOP B ON A.SHOP_ID=B.ID WHERE A.DELIVERY_ID =? AND A.ORDER_STATE<5 AND ifnull(A.CANCEL_STATE,'-1')<>2",
 				deliveryId);
 		setAttr("orderInfo", records);
+		setAttr("isFromTakeOrder", "1");
 		render("listOrder.html");
 	}
 

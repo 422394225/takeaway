@@ -10,7 +10,7 @@
   <div class="content infinite-scroll">
     <div class="swiper-container swiper-container-horizontal" data-space-between="10">
     <header class="bar bar-nav">
-    <a class="button button-link button-nav pull-right open-popup" onclick="location.reload()">
+    <a class="button button-link button-nav pull-right open-popup" onclick="reloadList()">
     	  刷新
       <span class="icon icon-refresh"></span>
     </a>
@@ -25,11 +25,14 @@
 </div>
 <nav class="bar bar-tab">
 
-    <a class="title" onclick="location.reload()">刷新
+    <a class="title" onclick="reloadList()">刷新
       <span class="icon icon-refresh"></span></a>
 </nav>
 </@mainLayout>
 <script >
+function reloadList(){
+	window.location.href="/wx/delivery/listOrder?deliveryId=${deliveryId}";
+}
 function deliveryStart(orderId){
 	 $.ajax({
 	        url: '/wx/delivery/deliveryStart?orderId='+orderId, 
@@ -40,6 +43,7 @@ function deliveryStart(orderId){
 					$.toast(data.msg);
 				}else{
 					$.toast('成功！');
+					window.location.href="/wx/delivery/listOrder?deliveryId=${deliveryId}";
 				}
 	        }
 	 })
@@ -92,12 +96,15 @@ function deliveryStop(orderId){
 					$.toast(data.msg);
 				}else{
 					$.toast('成功！');
+					window.location.href="/wx/delivery/listOrder?deliveryId=${deliveryId}";
 				}
 	        }
 	 })
 }
 $(function(){
 	getData();
-	
+	if(${(isFromTakeOrder)!}=='1'){
+		$.toast("抢单成功！")
+	}
 })
 </script>

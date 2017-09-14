@@ -191,6 +191,62 @@
 	WHERE 1=1
 		#@dbCondition_alias(conditions,mainAlias,aliasMap)
 	#end
+	#sql("listAllThisWeek")
+		#set(aliasMap = {"SHOP_NAME":"t.`NAME`"})
+		#set(aliasMap = {"DELIVERY_NAME":"c.`NAME`"})
+		SELECT
+	d.*, t. NAME AS SHOP_NAME,c.NAME AS DELIVERY_NAME,IFNULL(cc1.`NAME`,cc2.`NAME`) as STATESTRING
+	FROM
+	t_order AS d
+	LEFT JOIN t_shop t ON d.SHOP_ID = t.ID
+	LEFT JOIN t_delivery c ON d.DELIVERY_ID=c.ID
+	LEFT JOIN t_dict_code cc1 ON cc1.FIELD='t_order.CANCEL_STATE' and d.CANCEL_STATE=cc1.`CODE` 
+	LEFT JOIN t_dict_code cc2 ON cc2.FIELD='t_order.ORDER_STATE' and d.ORDER_STATE=cc2.`CODE` 
+	WHERE 1=1 AND YEARWEEK(date_format(d.CREATE_TIME,'%Y-%m-%d')) = YEARWEEK(now())
+		#@dbCondition_alias(conditions,mainAlias,aliasMap)
+	#end
+	#sql("listAllThisMonth")
+		#set(aliasMap = {"SHOP_NAME":"t.`NAME`"})
+		#set(aliasMap = {"DELIVERY_NAME":"c.`NAME`"})
+		SELECT
+	d.*, t. NAME AS SHOP_NAME,c.NAME AS DELIVERY_NAME,IFNULL(cc1.`NAME`,cc2.`NAME`) as STATESTRING
+	FROM
+	t_order AS d
+	LEFT JOIN t_shop t ON d.SHOP_ID = t.ID
+	LEFT JOIN t_delivery c ON d.DELIVERY_ID=c.ID
+	LEFT JOIN t_dict_code cc1 ON cc1.FIELD='t_order.CANCEL_STATE' and d.CANCEL_STATE=cc1.`CODE` 
+	LEFT JOIN t_dict_code cc2 ON cc2.FIELD='t_order.ORDER_STATE' and d.ORDER_STATE=cc2.`CODE` 
+	WHERE 1=1 AND date_format(d.CREATE_TIME,'%Y-%m')=date_format(now(),'%Y-%m')
+		#@dbCondition_alias(conditions,mainAlias,aliasMap)
+	#end
+	#sql("listAllLastWeek")
+		#set(aliasMap = {"SHOP_NAME":"t.`NAME`"})
+		#set(aliasMap = {"DELIVERY_NAME":"c.`NAME`"})
+		SELECT
+	d.*, t. NAME AS SHOP_NAME,c.NAME AS DELIVERY_NAME,IFNULL(cc1.`NAME`,cc2.`NAME`) as STATESTRING
+	FROM
+	t_order AS d
+	LEFT JOIN t_shop t ON d.SHOP_ID = t.ID
+	LEFT JOIN t_delivery c ON d.DELIVERY_ID=c.ID
+	LEFT JOIN t_dict_code cc1 ON cc1.FIELD='t_order.CANCEL_STATE' and d.CANCEL_STATE=cc1.`CODE` 
+	LEFT JOIN t_dict_code cc2 ON cc2.FIELD='t_order.ORDER_STATE' and d.ORDER_STATE=cc2.`CODE` 
+	WHERE 1=1 AND YEARWEEK(date_format(d.CREATE_TIME,'%Y-%m-%d')) = YEARWEEK(now())-1
+		#@dbCondition_alias(conditions,mainAlias,aliasMap)
+	#end
+	#sql("listAllLastMonth")
+		#set(aliasMap = {"SHOP_NAME":"t.`NAME`"})
+		#set(aliasMap = {"DELIVERY_NAME":"c.`NAME`"})
+		SELECT
+	d.*, t. NAME AS SHOP_NAME,c.NAME AS DELIVERY_NAME,IFNULL(cc1.`NAME`,cc2.`NAME`) as STATESTRING
+	FROM
+	t_order AS d
+	LEFT JOIN t_shop t ON d.SHOP_ID = t.ID
+	LEFT JOIN t_delivery c ON d.DELIVERY_ID=c.ID
+	LEFT JOIN t_dict_code cc1 ON cc1.FIELD='t_order.CANCEL_STATE' and d.CANCEL_STATE=cc1.`CODE` 
+	LEFT JOIN t_dict_code cc2 ON cc2.FIELD='t_order.ORDER_STATE' and d.ORDER_STATE=cc2.`CODE` 
+	WHERE 1=1 AND date_format(d.CREATE_TIME,'%Y-%m')=date_format(DATE_SUB(now(), INTERVAL 1 MONTH),'%Y-%m') 
+		#@dbCondition_alias(conditions,mainAlias,aliasMap)
+	#end
 #end
 
 #namespace("delivery")

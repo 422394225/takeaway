@@ -46,6 +46,8 @@ public class OrderController extends Controller {
 	public void index() {
 		String showType = getPara("showType");
 		setAttr("showType", showType);
+		String timeLimit = getPara("timeLimit");
+		setAttr("timeLimit", timeLimit);
 		render("list.html");
 	}
 
@@ -97,11 +99,32 @@ public class OrderController extends Controller {
 
 	public void getData() {
 		String showType = getPara("showType");
+		String timeLimit = getPara("timeLimit");
+		if (timeLimit == null)
+			timeLimit = "all";
 		DTParams params = new DTParams(getParaMap());
 		Page<Record> orders = null;
 		switch (showType) {
 		case "all":
-			orders = orderService.getDTPage(params, "order.listAll");
+			switch (timeLimit) {
+			case "all":
+				orders = orderService.getDTPage(params, "order.listAll");
+				break;
+			case "thisWeek":
+				orders = orderService.getDTPage(params, "order.listAllThisWeek");
+				break;
+			case "thisMonth":
+				orders = orderService.getDTPage(params, "order.listAllThisMonth");
+				break;
+			case "lastWeek":
+				orders = orderService.getDTPage(params, "order.listAllLastWeek");
+				break;
+			case "lastMonth":
+				orders = orderService.getDTPage(params, "order.listAllLastMonth");
+				break;
+			default:
+				orders = orderService.getDTPage(params, "order.listAll");
+			}
 			break;
 		case "active":
 			orders = orderService.getDTPage(params, "order.listActive");
