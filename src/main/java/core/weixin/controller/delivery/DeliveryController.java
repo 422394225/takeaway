@@ -100,6 +100,7 @@ public class DeliveryController extends WeixinMsgController {
 		order.set("ORDER_STATE", 4);
 		order.set("DELIVERY_TIME", new Date());
 		order.update();
+		renderJson(new JSONSuccess());
 	}
 
 	public void deliveryStop() {
@@ -114,6 +115,7 @@ public class DeliveryController extends WeixinMsgController {
 		order.set("ORDER_STATE", 5);
 		order.set("RECIEVE_TIME", new Date());
 		order.update();
+		renderJson(new JSONSuccess());
 	}
 
 	public synchronized void takeOrder() {
@@ -141,7 +143,12 @@ public class DeliveryController extends WeixinMsgController {
 		}
 		order.set("DELIVERY_ID", deliveryId);
 		order.update();
-		listOrder();
+		setAttr("deliveryId", deliveryId);
+		List<Record> records = Db.find(
+				"SELECT A.ID,A.USER_NAME,A.USER_TEL,A.USER_ADDRESS,B.ADDRESS AS SHOP_ADDRESS,B.TEL AS SHOP_TEL,B.IMG,'' AS STYLE,B.NAME AS SHOP_NAME FROM T_ORDER A LEFT JOIN T_SHOP B ON A.SHOP_ID=B.ID WHERE A.DELIVERY_ID =? AND A.ORDER_STATE<5 AND ifnull(A.CANCEL_STATE,'-1')<>2",
+				deliveryId);
+		setAttr("orderInfo", records);
+		render("listOrder.html");
 	}
 
 	protected static void addLoginAccessKey(String accessKey, int deliveryId) {

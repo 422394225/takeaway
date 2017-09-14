@@ -53,17 +53,29 @@ public class DeliveryApiController extends WeixinMsgController {
 			String uuid = UUID.randomUUID().toString();
 			log.info(deliveryId + " accessKey " + uuid);
 			DeliveryController.addLoginAccessKey(uuid, deliveryId);
-			new Timer().schedule(new TimerTask() {
-
-				@Override
-				public void run() {
-					// TODO Auto-generated method stub
-					DeliveryController.removeLoginAccessKey(uuid);
-				}
-			}, 1000 * 60 * 10);
+			Timer timer = new Timer();
+			timer.schedule(new AccessTask(uuid, timer), 1000 * 60 * 10);
 			renderJson(new JSONSuccess(uuid));
 		} else
 			renderJson(new JSONSuccess());
+	}
+
+	private static class AccessTask extends TimerTask {
+		String accessKey;
+		Timer timer;
+
+		public AccessTask(String accessKey, Timer timer) {
+			// TODO Auto-generated constructor stub
+			this.accessKey = accessKey;
+			this.timer = timer;
+		}
+
+		@Override
+		public void run() {
+			DeliveryController.removeLoginAccessKey(accessKey);
+			timer.cancel();
+		}
+
 	}
 
 	public void download() {

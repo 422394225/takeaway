@@ -1,4 +1,3 @@
-
 <#include "../base/main/_main.html"/>
 <#assign wxMeta>
 </#assign>
@@ -45,21 +44,7 @@ function deliveryStart(orderId){
 	        }
 	 })
 }
-function deliveryStop(orderId){
-	 $.ajax({
-	        url: '/wx/delivery/deliveryStop?orderId='+orderId, 
-	        async: true,
-	        type: 'GET',
-	        success: function(data , textStatus){
-	        	if(data.error){
-					$.toast(data.msg);
-				}else{
-					$.toast('成功！');
-				}
-	        }
-	 })
-}
-$(function(){
+function getData(){
 	 $.ajax({
 	        url: '/wx/delivery/getListOrder?deliveryId=${deliveryId}', 
 	        async: true,
@@ -96,7 +81,23 @@ $(function(){
 	        }
 	       
 	      });
+}
+function deliveryStop(orderId){
+	 $.ajax({
+	        url: '/wx/delivery/deliveryStop?orderId='+orderId, 
+	        async: true,
+	        type: 'GET',
+	        success: function(data , textStatus){
+	        	if(data.error){
+					$.toast(data.msg);
+				}else{
+					$.toast('成功！');
+				}
+	        }
+	 })
+}
+$(function(){
+	getData();
 	
-	 
 })
 </script>
