@@ -77,3 +77,13 @@
         ORDER BY ORDER_NUM ASC,CREATE_TIME DESC
     #end
 #end
+
+#namespace("order")
+    #sql("userList")
+       SELECT o.ID,s.`NAME` AS SHOP_NAME,o.PAY_PRICE,o.CREATE_TIME,o.ORDER_STATE,o.FOODS,s.IMG AS SHOP_IMG,o.CANCEL_STATE
+       FROM t_order AS o
+       LEFT JOIN t_shop AS s ON s.ID = o.SHOP_ID
+       WHERE o.USER_ID = '#(openId)'
+       ORDER BY o.CREATE_TIME DESC
+    #end
+#end

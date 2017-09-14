@@ -1,0 +1,27 @@
+#orderContainer .card-footer{
+    text-align: right;
+}
+.order-table{
+    width: 100%;
+    font-size: 0.6rem;
+}
+.createTime{
+    font-size: 0.3rem;
+    color: gray;
+}
+.shopName,.createTime{
+    padding-left: 5px;
+}
+.price,.stateName,.operation{
+    text-align: right;
+}
+.imgEle{
+    width: 4.5em;
+}
+.operation button{
+    display: inline-block;
+}
+.foodInfo{
+    height: 4em;
+    font-size: 0.7rem;
+}

@@ -5,37 +5,32 @@
 
 package core.weixin.controller.order;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.lang3.StringUtils;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Before;
 import com.jfinal.kit.HttpKit;
+import com.jfinal.kit.Kv;
 import com.jfinal.kit.PropKit;
 import com.jfinal.log.Log;
 import com.jfinal.plugin.activerecord.Db;
+import com.jfinal.plugin.activerecord.Page;
+import com.jfinal.plugin.activerecord.Record;
+import com.jfinal.plugin.activerecord.SqlPara;
 import com.jfinal.plugin.ehcache.CacheKit;
 import com.jfinal.weixin.sdk.jfinal.MsgInterceptor;
 import com.jfinal.weixin.sdk.utils.HttpUtils;
-
-import core.model.Food;
-import core.model.Order;
-import core.model.Shop;
-import core.model.User;
-import core.model.UserAddress;
+import core.common.constants.DictConstants;
+import core.model.*;
 import core.utils.WeiXinUtils;
 import core.vo.JSONError;
 import core.vo.JSONSuccess;
 import core.weixin.controller.WeixinMsgController;
+import org.apache.commons.lang3.StringUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * Description:
@@ -342,4 +337,134 @@ public class OrderController extends WeixinMsgController {
 	 * foods); render("interShop.html"); }
 	 */
 
+	public void ajaxUserOrder() {
+		try {
+			JSONObject params = JSONObject.parseObject(HttpKit.readData(getRequest()));
+			Integer pageNumber = params.getInteger("pageNumber");
+			Integer pageSize = params.getInteger("pageSize");
+			if (pageNumber != null) {
+				if (pageSize == null) {
+					pageSize = 10;
+				}
+				SqlPara sqlPara = Db.getSqlPara("order.userList", params.getString("openId"));
+				Page<Record> orders = Db.paginate(pageNumber, pageSize, Db.getSqlPara("order.userList", Kv.by("openId", params.getString("openId"))));
+				Map<String, Integer> pageInfo = new HashMap<>();
+				pageInfo.put("totalRow", orders.getTotalRow());
+				pageInfo.put("pageNumber", orders.getPageNumber());
+				pageInfo.put("pageSize", orders.getPageSize());
+				pageInfo.put("totalPage", orders.getTotalPage());
+				List<Record> list = orders.getList();
+				List<Record> result = new LinkedList<>();
+				for (Record record : list) {
+					Integer state = record.getInt("CANCEL_STATE");
+					String stateName = "";
+					if(state!=null){
+						stateName = DictConstants.getName("t_order.CANCEL_STATE", state + "");
+					}else{
+						stateName = DictConstants.getName("t_order.ORDER_STATE", record.getInt("ORDER_STATE") + "");
+					}
+					record.set("STATE_NAME", stateName);
+
+					String foodNmae = "";
+					JSONArray foods = JSONArray.parseArray(record.getStr("FOODS"));
+					Food food = food = Food.dao.findById(foods.getJSONObject(0).get("id"));//只取第一个
+					if (food == null) {
+						//TODO
+                           /* FoodHistroy foodHistroy = FoodHistroy.dao.findById(key);
+                            foodNmae =foodHistroy.getStr("");*/
+					} else {
+						foodNmae = food.getStr("NAME");
+					}
+					int size = foods.size();
+					if (size > 0) {
+						foodNmae += "等" + size + "件商品";
+					}
+					record.set("FOOD_NAME", foodNmae);
+					result.add(record);
+				}
+				renderJson(new JSONSuccess(Kv.by("pageInfo", pageInfo).set("result", result)));
+			} else {
+				renderJson(new JSONError("分页参数错误！"));
+			}
+		} catch (Exception e) {
+			renderJson(new JSONError("请求参数出错！"));
+			log.error("JSON参数出错", e);
+		}
+
+	}
+
+	public void cancelOrder(){
+		Integer orderId = getParaToInt("id");
+		if(orderId!=null){
+			Order order = Order.dao.findById(orderId);
+			if(order!=null){
+				Integer orderState = order.getInt("ORDER_STATE");
+				if(orderState!=null){
+					if(orderState==1){
+						order.set("ORDER_STATE",2);
+						renderJson(new JSONSuccess("取消订单成功"));
+					}else if(orderState==2){
+						Map<String,String> result = core.admin.controller.order.OrderController.refundAPI(orderId);
+						String payState = result.get("payState");
+						if("1".equals(payState)){
+							order.set("ORDER_STATE",2);
+							renderJson(new JSONSuccess("取消订单成功"));
+						}else{
+							order.set("ORDER_STATE",1);
+							renderJson(new JSONError("取消订单失败"));
+						}
+					}else{
+						renderJson(new JSONError("接单后不能取消订单"));
+					}
+					order.update();
+				}
+			}else{
+				renderJson(new JSONError("订单不存在"));
+			}
+		}else{
+			renderJson(new JSONError("订单不存在"));
+		}
+	}
+
+	public void tellShop(){
+		String id = getPara("id");
+		if(StringUtils.isNotEmpty(id)){
+			Order order = Order.dao.findById(id);
+			if(order!=null){
+
+			}else{
+				renderJson(new JSONError("订单不存在"));
+			}
+		}else{
+			renderJson(new JSONError("订单不存在"));
+		}
+	}
+
+	public void rateOrder(){
+		String id = getPara("id");
+		if(StringUtils.isNotEmpty(id)){
+			Order order = Order.dao.findById(id);
+			if(order!=null){
+
+			}else{
+				renderJson(new JSONError("订单不存在"));
+			}
+		}else{
+			renderJson(new JSONError("订单不存在"));
+		}
+	}
+
+	public void revertCancel(){
+		String id = getPara("id");
+		if(StringUtils.isNotEmpty(id)){
+			Order order = Order.dao.findById(id);
+			if(order!=null){
+
+			}else{
+				renderJson(new JSONError("订单不存在"));
+			}
+		}else{
+			renderJson(new JSONError("订单不存在"));
+		}
+	}
 }

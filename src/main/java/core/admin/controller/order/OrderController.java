@@ -176,7 +176,7 @@ public class OrderController extends Controller {
 	}
 
 	public void refund() {
-		int orderId = getParaToInt("id");
+		Integer orderId = getParaToInt("id");
 		Map<String,String> result = refundAPI(orderId);
 		String payState = result.get("payState");
 		if("-1".equals(payState)) {
@@ -188,7 +188,7 @@ public class OrderController extends Controller {
 		}
 	}
 
-	public static Map refundAPI(int orderId){
+	public static Map refundAPI(Integer orderId){
 		Map<String,String> result = new HashMap<>();
 		result.put("payState","0");
 		try {
