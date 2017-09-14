@@ -162,6 +162,7 @@
                         clearInterval(caller);//清除定时器
                         $.hidePreloader();//隐藏loading
                         $.toast(data.msg);//输出信息
+                        window.location.href = "${base}/wx/user/userOrder"
                     }
                     else {
                         $.toast(data.msg);

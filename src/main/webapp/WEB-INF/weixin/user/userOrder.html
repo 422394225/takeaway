@@ -156,19 +156,21 @@
 <script>
 	function cancelOrder(id) {
 		Kit.post(
-		    "${base}/order/cancelOrder",
+		    "${base}/wx/order/cancelOrder",
 			{id:id},
 			function(msg,data){
+                $.alert(msg);
                 $.pullToRefreshTrigger(".pull-to-refresh-content")
 			},
 			function(msg,data){
 			    $.alert(msg);
+                $.pullToRefreshTrigger(".pull-to-refresh-content")
 			}
 		)
     }
     function tellShop(id) {
         Kit.post(
-            "${base}/order/tellShop",
+            "${base}/wx/order/tellShop",
             {id:id},
             function(msg,data){
                 $.pullToRefreshTrigger(".pull-to-refresh-content")
@@ -178,27 +180,29 @@
             }
         )
     }
+    //TODO
     function rateOrder(id) {
         Kit.post(
-            "${base}/order/rateOrder",
+            "${base}/wx/order/rateOrder",
             {id:id},
             function(msg,data){
                 $.pullToRefreshTrigger(".pull-to-refresh-content")
             },
             function(msg,data){
-                $.alert(msg);
+                //$.alert(msg);
             }
         )
     }
+    //TODO
     function revertCancel(id) {
         Kit.post(
-            "${base}/order/revertCancel",
+            "${base}/wx/order/revertCancel",
             {id:id},
             function(msg,data){
                 $.pullToRefreshTrigger(".pull-to-refresh-content")
             },
             function(msg,data){
-                $.alert(msg);
+               // $.alert(msg);
             }
         )
     }
