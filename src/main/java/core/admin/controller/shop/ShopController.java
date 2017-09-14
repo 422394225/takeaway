@@ -56,6 +56,10 @@ public class ShopController extends BaseController {
 	private ShopService service = new ShopServiceImpl();
 	private ShopTypeRelationService strService = new ShopTypeRelationServiceImpl();
 	private AuditService auditService = new AuditServiceImpl();
+	private static final String LAST_MONTH_SQL = "select count(1) as order_num,sum(pay_price) as total_price from t_order where SHOP_ID=? and date_format(create_time,'%Y-%m')=date_format(DATE_SUB(curdate(), INTERVAL 1 MONTH),'%Y-%m') AND IFNULL(CANCEL_STATE,'-1')<>2 ";
+	private static final String THIS_MONTH_SQL = "select count(1) as order_num,sum(pay_price) as total_price from t_order where SHOP_ID=? and date_format(create_time,'%Y-%m')=date_format(now(),'%Y-%m') AND IFNULL(CANCEL_STATE,'-1')<>2 ";
+	private static final String THIS_WEEK_SQL = "select count(1) as order_num,sum(pay_price) as total_price from t_order where SHOP_ID=? and YEARWEEK(date_format(create_time,'%Y-%m-%d')) = YEARWEEK(now()) AND IFNULL(CANCEL_STATE,'-1')<>2 ";
+	private static final String LAST_WEEK_SQL = "select count(1) as order_num,sum(pay_price) as total_price from t_order where SHOP_ID=? and YEARWEEK(date_format(create_time,'%Y-%m-%d')) = YEARWEEK(now())-1 AND IFNULL(CANCEL_STATE,'-1')<>2 ";
 
 	@Override
 	public void index() {
@@ -67,6 +71,24 @@ public class ShopController extends BaseController {
 
 	public void audit() {
 		render("audit.html");
+	}
+
+	public void calc() {
+		int shopId = getParaToInt("id");
+		Record record = Db.findFirst(LAST_MONTH_SQL, shopId);
+		setAttr("LAST_MONTH_COUNT", record.get("order_num"));
+		setAttr("LAST_MONTH_PRICE", record.get("total_price"));
+		record = Db.findFirst(THIS_MONTH_SQL, shopId);
+		setAttr("THIS_MONTH_COUNT", record.get("order_num"));
+		setAttr("THIS_MONTH_PRICE", record.get("total_price"));
+		record = Db.findFirst(THIS_WEEK_SQL, shopId);
+		setAttr("THIS_WEEK_COUNT", record.get("order_num"));
+		setAttr("THIS_WEEK_PRICE", record.get("total_price"));
+		record = Db.findFirst(LAST_WEEK_SQL, shopId);
+		setAttr("LAST_WEEK_COUNT", record.get("order_num"));
+		setAttr("LAST_WEEK_PRICE", record.get("total_price"));
+		render("calc.html");
+		// renderText("123");
 	}
 
 	public void getData() {

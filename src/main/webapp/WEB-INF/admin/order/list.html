@@ -79,7 +79,7 @@ $("select[name='cc2.name']").change(function () {
 })
 $(function(){
 	var showType="${showType}";
-	var timeLimit="${timeLimit}";
+	var timeLimit="${(timeLimit)!}";
 	if(showType=='all'){
 		$('#filterTableTr').append(
 	  		"<td><a href=\"/order?showType=all&timeLimit=thisWeek\" class=\"btn btn-success \">本周</a></td>"+

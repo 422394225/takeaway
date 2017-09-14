@@ -89,7 +89,8 @@
 	            	else if(row["STATE"]==2){
 	            		stateIcon="<button class='rest btn btn-warning btn-xs' title='休息'><i class='fa fa-bed'></i></button>";
 	            	}
-            		return stateIcon+"<button class='edit btn btn-info btn-xs' title='编辑'><i class='fa fa-edit'></i></button>"+
+            		return stateIcon+"<button class='calc btn btn-info btn-xs' title='统计'><i class='fa fa-calculator'></i></button>"+
+            		"<button class='edit btn btn-info btn-xs' title='编辑'><i class='fa fa-edit'></i></button>"+
 				  	"<button class='delete btn btn-danger btn-xs' title='删除'><i class='fa fa-trash-o'></i></button>"+
 					"<button class='remove btn btn-primary btn-xs' title='移除'><i class='fa fa-minus-circle'></i></button>";
 	            }
@@ -178,7 +179,15 @@
 	        });
 	   
 	    });
-
+		table.on('click', '.calc',function(){
+			var d = table.row($(this).parents('tr')).data();
+			BootstrapDialog.show({
+				title: '统计数值',
+				draggable: true,
+				closeByBackdrop: false,
+			    message: $('<div></div>').load('${base}/shop/calc?id='+d["ID"])
+	        });
+		})
 		table.on('click', '.delete', function(){
 			var d = table.row($(this).parents('tr')).data();
 			layer.confirm('确认删除店铺\"'+d["NAME"]+'\"吗?(该操作不可撤销)', {
