@@ -31,6 +31,34 @@
 </nav>
 </@mainLayout>
 <script >
+function deliveryStart(orderId){
+	 $.ajax({
+	        url: '/wx/delivery/deliveryStart?orderId='+orderId, 
+	        async: true,
+	        type: 'GET',
+	        success: function(data , textStatus){
+	        	if(data.error){
+					$.toast(data.msg);
+				}else{
+					$.toast('成功！');
+				}
+	        }
+	 })
+}
+function deliveryStop(orderId){
+	 $.ajax({
+	        url: '/wx/delivery/deliveryStop?orderId='+orderId, 
+	        async: true,
+	        type: 'GET',
+	        success: function(data , textStatus){
+	        	if(data.error){
+					$.toast(data.msg);
+				}else{
+					$.toast('成功！');
+				}
+	        }
+	 })
+}
 $(function(){
 	 $.ajax({
 	        url: '/wx/delivery/getListOrder?deliveryId=${deliveryId}', 
@@ -43,15 +71,21 @@ $(function(){
 	          else{
 	        	  var orderIdUl=$("#orderIdUl");
 	        	  for(var i=0;i<data.data.length;i++){
-	        			orderIdUl.append("<li><a class='item-link item-content' >"+
+	        			orderIdUl.append("<li><div class='item-content' >"+
 	        		      "<div class='item-media'><img src='"+data.data[i].IMG+"' width='40'></div>"+
 	        		      "<div class='item-inner'>"+
 	        		          "<div class='item-title'>"+data.data[i].SHOP_NAME+"<br>电话："+data.data[i].SHOP_TEL+"</div>"+
 	        		       "	<div class='item-text'>商家地址："+data.data[i].SHOP_ADDRESS+"</div>"+
 	        		       " 	<div class='item-text'>顾客姓名："+data.data[i].USER_NAME+"<br>电话："+data.data[i].USER_TEL+"</div>"+
 	        		       "	<div class='item-text'>顾客地址："+data.data[i].USER_ADDRESS+"</div>"+
+	        		       "	<table ><tr> "+
+	        		       "		<td style='text-align:left;width:100%'><div class='item-text'>订单状态："+data.data[i].STATE_STRING+"</div></td>"+
+	        		       "		<td style='text-align:right;width:100%'><a class='button button-round' onclick='deliveryStart("+data.data[i].ID+")'>收到货物</a></td>"+
+	        		       "		<td style='text-align:right;width:100%'>&nbsp;</td>"+
+	        		       "		<td style='text-align:right;width:100%'><a class='button button-round' onclick='deliveryStop("+data.data[i].ID+")'>货物送达</a></td>"+
+	        		       "	</tr></table>"+
 	        		     " </div>"+
-	        		    "</a>"+
+	        		    "</div>"+
 	        		  "</li>");
 	        		}
 	          }
@@ -62,5 +96,7 @@ $(function(){
 	        }
 	       
 	      });
+	
+	 
 })
 </script>

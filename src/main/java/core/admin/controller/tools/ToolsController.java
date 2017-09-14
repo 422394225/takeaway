@@ -69,7 +69,7 @@ public class ToolsController extends Controller {
 		AuditResultTemple auditResultTemple = new AuditResultTemple();
 		auditResultTemple.touser = "okQ2Rw9_v9M-Rb1fXW5KoMLrQCOw";
 		auditResultTemple.first = "下单成功";
-		auditResultTemple.keyword1 = "餐厅1";
+		auditResultTemple.keyword1 = "餐厅1\n1";
 		auditResultTemple.keyword2 = "2017-9-13";
 		auditResultTemple.keyword3 = "红烧鱼1";
 		auditResultTemple.keyword4 = "12元";
