@@ -1,16 +1,5 @@
 package core.admin.controller.order;
 
-import java.net.URLEncoder;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.UUID;
-
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Before;
@@ -20,7 +9,6 @@ import com.jfinal.log.Log;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
-
 import core.admin.service.order.OrderService;
 import core.admin.service.order.impl.OrderServiceImpl;
 import core.interceptor.WxApiConfigInterceptor;
@@ -29,6 +17,12 @@ import core.utils.ClientCustomSSL;
 import core.utils.WeiXinUtils;
 import core.vo.DTParams;
 import core.vo.JSONSuccess;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+
+import java.net.URLEncoder;
+import java.util.*;
+import java.util.Map.Entry;
 
 /**
  * 
@@ -160,50 +154,75 @@ public class OrderController extends Controller {
 
 	public void refund() {
 		int orderId = getParaToInt("id");
-		Order order = Order.dao.findById(orderId);
-		if (order.getStr("REFUND_NO") == null) {
-			order.set("REFUND_NO", UUID.randomUUID().toString().replace("-", ""));
-			order.update();
-		}
-		double tempPayPrice = order.getDouble("PAY_PRICE") * 100;
-		int payPrice = (int) tempPayPrice;
-		Map<String, String> paraMap = new HashMap<>();
-		paraMap.put("appid", PropKit.get("appId"));
-		paraMap.put("mch_id", PropKit.get("mch_id"));
-		paraMap.put("nonce_str", WeiXinUtils.getNonceNorString());
-		paraMap.put("sign_type", "MD5");
-		paraMap.put("out_trade_no", orderId + "");
-		paraMap.put("out_refund_no", order.getStr("REFUND_NO"));
-		paraMap.put("total_fee", payPrice + "");
-		paraMap.put("refund_fee", payPrice + "");
-		paraMap.put("refund_desc", URLEncoder.encode("order refund"));
-		paraMap.put("sign", WeiXinUtils.getSign(paraMap));
-		// paraMap.put("refund_desc", "订单退款");
-		String para = new String(WeiXinUtils.callMapToXML(paraMap));
-		String urlResult = null;
-		try {
-			urlResult = ClientCustomSSL.post(WEIXIN_REFUND_URL, para);
-		} catch (Exception exception) {
+		Map<String,String> result = refundAPI(orderId);
+		String payState = result.get("payState");
+		if("-1".equals(payState)) {
 			renderText("接口调用失败");
-		}
-		System.out.println(urlResult);
-		Document doc = Jsoup.parse(urlResult);
-		if ("SUCCESS".equals(doc.getElementsByTag("result_code").text())
-				|| "订单已全额退款".equals(doc.select("err_code_des").text())) {
+		}else if("1".equals(payState)){
 			renderText("退款成功！");
-			order.set("PAY_STATE", -2);
-			order.set("CANCEL_STATE", 2);
-			order.set("FINISH_CANCEL_TIME", new Date());
-			order.update();
-			return;
+		}else{
+			renderText("退款失败：" + result.get("msg"));
 		}
-		order.set("PAY_STATE", -1);
-		order.set("CANCEL_STATE", 1);
-		order.update();
-		if (doc.select("err_code_des").size() == 0)
-			renderText("退款失败：" + doc.select("return_msg").text());
-		else
-			renderText("退款失败：" + doc.select("err_code_des").text());
+	}
+
+	public static Map refundAPI(int orderId){
+		Map<String,String> result = new HashMap<>();
+		result.put("payState","0");
+		try {
+			Order order = Order.dao.findById(orderId);
+			if (order.getStr("REFUND_NO") == null) {
+				order.set("REFUND_NO", UUID.randomUUID().toString().replace("-", ""));
+				order.update();
+			}
+			double tempPayPrice = order.getDouble("PAY_PRICE") * 100;
+			int payPrice = (int) tempPayPrice;
+			Map<String, String> paraMap = new HashMap<>();
+			paraMap.put("appid", PropKit.get("appId"));
+			paraMap.put("mch_id", PropKit.get("mch_id"));
+			paraMap.put("nonce_str", WeiXinUtils.getNonceNorString());
+			paraMap.put("sign_type", "MD5");
+			paraMap.put("out_trade_no", orderId + "");
+			paraMap.put("out_refund_no", order.getStr("REFUND_NO"));
+			paraMap.put("total_fee", payPrice + "");
+			paraMap.put("refund_fee", payPrice + "");
+			paraMap.put("refund_desc", URLEncoder.encode("order refund","UTF-8"));
+			paraMap.put("sign", WeiXinUtils.getSign(paraMap));
+			// paraMap.put("refund_desc", "订单退款");
+			String para = new String(WeiXinUtils.callMapToXML(paraMap));
+			String urlResult = null;
+			try {
+				urlResult = ClientCustomSSL.post(WEIXIN_REFUND_URL, para);
+			} catch (Exception exception) {
+				result.put("payState","-1");
+				return result;
+			}
+			System.out.println(urlResult);
+			Document doc = Jsoup.parse(urlResult);
+			if ("SUCCESS".equals(doc.getElementsByTag("result_code").text())
+					|| "订单已全额退款".equals(doc.select("err_code_des").text())) {
+				order.set("PAY_STATE", -2);
+				order.set("CANCEL_STATE", 2);
+				order.set("FINISH_CANCEL_TIME", new Date());
+				order.update();
+				result.put("payState","1");
+				return result;
+			}
+			order.set("PAY_STATE", -1);
+			order.set("CANCEL_STATE", 1);
+			order.update();
+			if (doc.select("err_code_des").size() == 0){
+				result.put("payState","-2");
+				result.put("msg",doc.select("return_msg").text());
+			}
+			else{
+				result.put("payState","-3");
+				result.put("msg",doc.select("err_code_des").text());
+			}
+		}catch (Exception e){
+			result.put("msg",e.getClass().getName());
+			e.printStackTrace();
+		}
+		return result;
 	}
 
 	public void rejectRefund() {
