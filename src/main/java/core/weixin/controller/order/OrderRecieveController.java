@@ -5,6 +5,8 @@
 
 package core.weixin.controller.order;
 
+import java.text.SimpleDateFormat;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -13,6 +15,9 @@ import com.jfinal.kit.HttpKit;
 import com.jfinal.log.Log;
 
 import core.model.Order;
+import core.model.Shop;
+import core.temple.OrderCreateTemple;
+import core.utils.WeiXinUtils;
 import core.vo.OrderPayResult;
 import core.weixin.controller.WeixinMsgController;
 
@@ -51,6 +56,46 @@ public class OrderRecieveController extends WeixinMsgController {
 				order.set("PAY_STATE", 1);
 				order.update();
 			}
+			Shop shop = Shop.dao.findById(order.get("SHOP_ID"));
+			// 用户的消息
+			try {
+				OrderCreateTemple orderCreateTemple = new OrderCreateTemple();
+				orderCreateTemple.touser = order.getStr("USER_ID");
+				orderCreateTemple.first = "下单成功！";
+				orderCreateTemple.storeName = shop.getStr("NAME");
+				SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+				orderCreateTemple.bookTime = simpleDateFormat.format(order.getDate("CREATE_TIME"));
+				orderCreateTemple.orderId = order.getInt("ID") + "";
+				orderCreateTemple.orderType = "个人订单";
+				orderCreateTemple.remark = "请耐心等待哦~";
+				orderCreateTemple.send();
+			} catch (Exception e) {
+				// TODO: handle exception
+			}
+			// // 商家的消息
+			// try {
+			// if (shop.get("OPENID") != null) {
+			// OrderCreateTemple orderCreateTemple = new OrderCreateTemple();
+			// orderCreateTemple.touser = shop.getStr("OPENID");
+			// orderCreateTemple.first = "收到订单了哦~";
+			// orderCreateTemple.storeName = shop.getStr("NAME");
+			// SimpleDateFormat simpleDateFormat = new
+			// SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			// orderCreateTemple.bookTime =
+			// simpleDateFormat.format(order.getDate("CREATE_TIME"));
+			// orderCreateTemple.orderId = order.getInt("ID") + "";
+			// orderCreateTemple.orderType = "个人订单";
+			// orderCreateTemple.remark = "请及时回复哦~";
+			// orderCreateTemple.send();
+			// }
+			// } catch (Exception e) {
+			// // TODO: handle exception
+			// }
+			try {
+				WeiXinUtils.sendOrderVideoAndMess(order);
+			} catch (Exception e) {
+				// TODO: handle exception
+			}
 		}
 		renderText(RECIEVE_SUCCESS_RESULT);
 	}
@@ -74,6 +119,7 @@ public class OrderRecieveController extends WeixinMsgController {
 				order.update();
 			}
 		}
+
 		renderText(RECIEVE_SUCCESS_RESULT);
 	}
 	// public void orderPayed1() {

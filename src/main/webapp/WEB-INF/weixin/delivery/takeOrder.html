@@ -20,112 +20,112 @@
     <div class="list-block media-list">
       <ul>
         <li>
-          <a href="/wx/delivery/takeOrder?orderId=${orderInfo[0].ID}&deliveryId=${deliveryId}" class="item-link item-content" style="${orderInfo[0].STYLE}">
-            <div class="item-media"><img src="${orderInfo[0].IMG}" width="40"></div>
+          <a onclick='takeOrderFun(${orderInfo[0].ID})' class="item-link item-content" style="${(orderInfo[0].STYLE)!}">
+            <div class="item-media"><img src="${(orderInfo[0].IMG)!}" width="40"></div>
             <div class="item-inner">
-                <div class="item-title">${orderInfo[0].SHOP_NAME}<br>电话：${orderInfo[0].SHOP_TEL}</div>
-             	<div class="item-text">商家地址：${orderInfo[0].SHOP_ADDRESS}</div>
-              	<div class="item-text">顾客姓名：${orderInfo[0].USER_NAME}<br>电话：${orderInfo[0].USER_TEL}</div>
-             	<div class="item-text">顾客地址：${orderInfo[0].USER_ADDRESS}</div>
+                <div class="item-title">${(orderInfo[0].SHOP_NAME)!}<br>电话：${(orderInfo[0].SHOP_TEL)!}</div>
+             	<div class="item-text">商家地址：${(orderInfo[0].SHOP_ADDRESS)!}</div>
+              	<div class="item-text">顾客姓名：${(orderInfo[0].USER_NAME)!}<br>电话：${(orderInfo[0].USER_TEL)!}</div>
+             	<div class="item-text">顾客地址：${(orderInfo[0].USER_ADDRESS)!}</div>
             </div>
           </a>
         </li>
         <li>
-          <a href="/wx/delivery/takeOrder?orderId=${orderInfo[1].ID}&deliveryId=${deliveryId}" class="item-link item-content" style="${orderInfo[1].STYLE}">
-            <div class="item-media"><img src="${orderInfo[1].IMG}" width="40"></div>
+          <a onclick='takeOrderFun(${orderInfo[1].ID})' class="item-link item-content" style="${(orderInfo[1].STYLE)!}">
+            <div class="item-media"><img src="${(orderInfo[1].IMG)!}" width="40"></div>
             <div class="item-inner">
-                <div class="item-title">${orderInfo[1].SHOP_NAME}<br>电话：${orderInfo[1].SHOP_TEL}</div>
-             	<div class="item-text">商家地址：${orderInfo[1].SHOP_ADDRESS}</div>
-              	<div class="item-text">顾客姓名：${orderInfo[1].USER_NAME}<br>电话：${orderInfo[1].USER_TEL}</div>
-             	<div class="item-text">顾客地址：${orderInfo[1].USER_ADDRESS}</div>
+                <div class="item-title">${(orderInfo[1].SHOP_NAME)!}<br>电话：${(orderInfo[1].SHOP_TEL)!}</div>
+             	<div class="item-text">商家地址：${(orderInfo[1].SHOP_ADDRESS)!}</div>
+              	<div class="item-text">顾客姓名：${(orderInfo[1].USER_NAME)!}<br>电话：${(orderInfo[1].USER_TEL)!}</div>
+             	<div class="item-text">顾客地址：${(orderInfo[1].USER_ADDRESS)!}</div>
             </div>
           </a>
         </li>
         <li>
-          <a href="/wx/delivery/takeOrder?orderId=${orderInfo[2].ID}&deliveryId=${deliveryId}" class="item-link item-content" style="${orderInfo[2].STYLE}">
-            <div class="item-media"><img src="${orderInfo[2].IMG}" width="40"></div>
+          <a onclick='takeOrderFun(${orderInfo[2].ID})' class="item-link item-content" style="${(orderInfo[2].STYLE)!}">
+            <div class="item-media"><img src="${(orderInfo[2].IMG)!}" width="40"></div>
             <div class="item-inner">
-                <div class="item-title">${orderInfo[2].SHOP_NAME}<br>电话：${orderInfo[2].SHOP_TEL}</div>
-             	<div class="item-text">商家地址：${orderInfo[2].SHOP_ADDRESS}</div>
-              	<div class="item-text">顾客姓名：${orderInfo[2].USER_NAME}<br>电话：${orderInfo[2].USER_TEL}</div>
-             	<div class="item-text">顾客地址：${orderInfo[2].USER_ADDRESS}</div>
+                <div class="item-title">${(orderInfo[2].SHOP_NAME)!}<br>电话：${(orderInfo[2].SHOP_TEL)!}</div>
+             	<div class="item-text">商家地址：${(orderInfo[2].SHOP_ADDRESS)!}</div>
+              	<div class="item-text">顾客姓名：${(orderInfo[2].USER_NAME)!}<br>电话：${(orderInfo[2].USER_TEL)!}</div>
+             	<div class="item-text">顾客地址：${(orderInfo[2].USER_ADDRESS)!}</div>
             </div>
           </a>
         </li>
         <li>
-          <a href="/wx/delivery/takeOrder?orderId=${orderInfo[3].ID}&deliveryId=${deliveryId}" class="item-link item-content" style="${orderInfo[3].STYLE}">
-            <div class="item-media"><img src="${orderInfo[3].IMG}" width="40"></div>
+          <a onclick='takeOrderFun(${orderInfo[3].ID})' class="item-link item-content" style="${(orderInfo[3].STYLE)!}">
+            <div class="item-media"><img src="${(orderInfo[3].IMG)!}" width="40"></div>
             <div class="item-inner">
-                <div class="item-title">${orderInfo[3].SHOP_NAME}<br>电话：${orderInfo[3].SHOP_TEL}</div>
-             	<div class="item-text">商家地址：${orderInfo[3].SHOP_ADDRESS}</div>
-              	<div class="item-text">顾客姓名：${orderInfo[3].USER_NAME}<br>电话：${orderInfo[3].USER_TEL}</div>
-             	<div class="item-text">顾客地址：${orderInfo[3].USER_ADDRESS}</div>
+                <div class="item-title">${(orderInfo[3].SHOP_NAME)!}<br>电话：${(orderInfo[3].SHOP_TEL)!}</div>
+             	<div class="item-text">商家地址：${(orderInfo[3].SHOP_ADDRESS)!}</div>
+              	<div class="item-text">顾客姓名：${(orderInfo[3].USER_NAME)!}<br>电话：${(orderInfo[3].USER_TEL)!}</div>
+             	<div class="item-text">顾客地址：${(orderInfo[3].USER_ADDRESS)!}</div>
             </div>
           </a>
         </li>
         <li>
-          <a href="/wx/delivery/takeOrder?orderId=${orderInfo[4].ID}&deliveryId=${deliveryId}" class="item-link item-content" style="${orderInfo[4].STYLE}">
-            <div class="item-media"><img src="${orderInfo[4].IMG}" width="40"></div>
+          <a onclick='takeOrderFun(${orderInfo[4].ID})' class="item-link item-content" style="${(orderInfo[4].STYLE)!}">
+            <div class="item-media"><img src="${(orderInfo[4].IMG)!}" width="40"></div>
             <div class="item-inner">
-                <div class="item-title">${orderInfo[4].SHOP_NAME}<br>电话：${orderInfo[4].SHOP_TEL}</div>
-             	<div class="item-text">商家地址：${orderInfo[4].SHOP_ADDRESS}</div>
-              	<div class="item-text">顾客姓名：${orderInfo[4].USER_NAME}<br>电话：${orderInfo[4].USER_TEL}</div>
-             	<div class="item-text">顾客地址：${orderInfo[4].USER_ADDRESS}</div>
+                <div class="item-title">${(orderInfo[4].SHOP_NAME)!}<br>电话：${(orderInfo[4].SHOP_TEL)!}</div>
+             	<div class="item-text">商家地址：${(orderInfo[4].SHOP_ADDRESS)!}</div>
+              	<div class="item-text">顾客姓名：${(orderInfo[4].USER_NAME)!}<br>电话：${(orderInfo[4].USER_TEL)!}</div>
+             	<div class="item-text">顾客地址：${(orderInfo[4].USER_ADDRESS)!}</div>
             </div>
           </a>
         </li>
         <li>
-          <a href="/wx/delivery/takeOrder?orderId=${orderInfo[5].ID}&deliveryId=${deliveryId}" class="item-link item-content" style="${orderInfo[5].STYLE}">
-            <div class="item-media"><img src="${orderInfo[5].IMG}" width="40"></div>
+          <a onclick='takeOrderFun(${orderInfo[5].ID})' class="item-link item-content" style="${(orderInfo[5].STYLE)!}">
+            <div class="item-media"><img src="${(orderInfo[5].IMG)!}" width="40"></div>
             <div class="item-inner">
-                <div class="item-title">${orderInfo[5].SHOP_NAME}<br>电话：${orderInfo[5].SHOP_TEL}</div>
-             	<div class="item-text">商家地址：${orderInfo[5].SHOP_ADDRESS}</div>
-              	<div class="item-text">顾客姓名：${orderInfo[5].USER_NAME}<br>电话：${orderInfo[5].USER_TEL}</div>
-             	<div class="item-text">顾客地址：${orderInfo[5].USER_ADDRESS}</div>
+                <div class="item-title">${(orderInfo[5].SHOP_NAME)!}<br>电话：${(orderInfo[5].SHOP_TEL)!}</div>
+             	<div class="item-text">商家地址：${(orderInfo[5].SHOP_ADDRESS)!}</div>
+              	<div class="item-text">顾客姓名：${(orderInfo[5].USER_NAME)!}<br>电话：${(orderInfo[5].USER_TEL)!}</div>
+             	<div class="item-text">顾客地址：${(orderInfo[5].USER_ADDRESS)!}</div>
             </div>
           </a>
         </li>
         <li>
-          <a href="/wx/delivery/takeOrder?orderId=${orderInfo[6].ID}&deliveryId=${deliveryId}" class="item-link item-content" style="${orderInfo[6].STYLE}">
-            <div class="item-media"><img src="${orderInfo[6].IMG}" width="40"></div>
+          <a onclick='takeOrderFun(${orderInfo[6].ID})' class="item-link item-content" style="${(orderInfo[6].STYLE)!}">
+            <div class="item-media"><img src="${(orderInfo[6].IMG)!}" width="40"></div>
             <div class="item-inner">
-                <div class="item-title">${orderInfo[6].SHOP_NAME}<br>电话：${orderInfo[6].SHOP_TEL}</div>
-             	<div class="item-text">商家地址：${orderInfo[6].SHOP_ADDRESS}</div>
-              	<div class="item-text">顾客姓名：${orderInfo[6].USER_NAME}<br>电话：${orderInfo[6].USER_TEL}</div>
-             	<div class="item-text">顾客地址：${orderInfo[6].USER_ADDRESS}</div>
+                <div class="item-title">${(orderInfo[6].SHOP_NAME)!}<br>电话：${(orderInfo[6].SHOP_TEL)!}</div>
+             	<div class="item-text">商家地址：${(orderInfo[6].SHOP_ADDRESS)!}</div>
+              	<div class="item-text">顾客姓名：${(orderInfo[6].USER_NAME)!}<br>电话：${(orderInfo[6].USER_TEL)!}</div>
+             	<div class="item-text">顾客地址：${(orderInfo[6].USER_ADDRESS)!}</div>
             </div>
           </a>
         </li>
         <li>
-          <a href="/wx/delivery/takeOrder?orderId=${orderInfo[7].ID}&deliveryId=${deliveryId}" class="item-link item-content" style="${orderInfo[7].STYLE}">
-            <div class="item-media"><img src="${orderInfo[7].IMG}" width="40"></div>
+          <a onclick='takeOrderFun(${orderInfo[7].ID})' class="item-link item-content" style="${(orderInfo[7].STYLE)!}">
+            <div class="item-media"><img src="${(orderInfo[7].IMG)!}" width="40"></div>
             <div class="item-inner">
-                <div class="item-title">${orderInfo[7].SHOP_NAME}<br>电话：${orderInfo[7].SHOP_TEL}</div>
-             	<div class="item-text">商家地址：${orderInfo[7].SHOP_ADDRESS}</div>
-              	<div class="item-text">顾客姓名：${orderInfo[7].USER_NAME}<br>电话：${orderInfo[7].USER_TEL}</div>
-             	<div class="item-text">顾客地址：${orderInfo[7].USER_ADDRESS}</div>
+                <div class="item-title">${(orderInfo[7].SHOP_NAME)!}<br>电话：${(orderInfo[7].SHOP_TEL)!}</div>
+             	<div class="item-text">商家地址：${(orderInfo[7].SHOP_ADDRESS)!}</div>
+              	<div class="item-text">顾客姓名：${(orderInfo[7].USER_NAME)!}<br>电话：${(orderInfo[7].USER_TEL)!}</div>
+             	<div class="item-text">顾客地址：${(orderInfo[7].USER_ADDRESS)!}</div>
             </div>
           </a>
         </li>
         <li>
-          <a href="/wx/delivery/takeOrder?orderId=${orderInfo[8].ID}&deliveryId=${deliveryId}" class="item-link item-content" style="${orderInfo[8].STYLE}">
-            <div class="item-media"><img src="${orderInfo[8].IMG}" width="40"></div>
+          <a onclick='takeOrderFun(${orderInfo[8].ID})' class="item-link item-content" style="${(orderInfo[8].STYLE)!}">
+            <div class="item-media"><img src="${(orderInfo[8].IMG)!}" width="40"></div>
             <div class="item-inner">
-                <div class="item-title">${orderInfo[8].SHOP_NAME}<br>电话：${orderInfo[8].SHOP_TEL}</div>
-             	<div class="item-text">商家地址：${orderInfo[8].SHOP_ADDRESS}</div>
-              	<div class="item-text">顾客姓名：${orderInfo[8].USER_NAME}<br>电话：${orderInfo[8].USER_TEL}</div>
-             	<div class="item-text">顾客地址：${orderInfo[8].USER_ADDRESS}</div>
+                <div class="item-title">${(orderInfo[8].SHOP_NAME)!}<br>电话：${(orderInfo[8].SHOP_TEL)!}</div>
+             	<div class="item-text">商家地址：${(orderInfo[8].SHOP_ADDRESS)!}</div>
+              	<div class="item-text">顾客姓名：${(orderInfo[8].USER_NAME)!}<br>电话：${(orderInfo[8].USER_TEL)!}</div>
+             	<div class="item-text">顾客地址：${(orderInfo[8].USER_ADDRESS)!}</div>
             </div>
           </a>
         </li>
         <li>
-          <a href="/wx/delivery/takeOrder?orderId=${orderInfo[9].ID}&deliveryId=${deliveryId}" class="item-link item-content" style="${orderInfo[9].STYLE}">
-            <div class="item-media"><img src="${orderInfo[9].IMG}" width="40"></div>
+          <a onclick='takeOrderFun(${orderInfo[9].ID})' class="item-link item-content" style="${(orderInfo[9].STYLE)!}">
+            <div class="item-media"><img src="${(orderInfo[9].IMG)!}" width="40"></div>
             <div class="item-inner">
-                <div class="item-title">${orderInfo[9].SHOP_NAME}<br>电话：${orderInfo[9].SHOP_TEL}</div>
-             	<div class="item-text">${orderInfo[9].SHOP_ADDRESS}</div>
-              	<div class="item-text">顾客姓名：${orderInfo[9].USER_NAME}<br>电话：${orderInfo[9].USER_TEL}</div>
-             	<div class="item-text">顾客地址：${orderInfo[9].USER_ADDRESS}</div>
+                <div class="item-title">${(orderInfo[9].SHOP_NAME)!}<br>电话：${(orderInfo[9].SHOP_TEL)!}</div>
+             	<div class="item-text">${(orderInfo[9].SHOP_ADDRESS)!}</div>
+              	<div class="item-text">顾客姓名：${(orderInfo[9].USER_NAME)!}<br>电话：${(orderInfo[9].USER_TEL)!}</div>
+             	<div class="item-text">顾客地址：${(orderInfo[9].USER_ADDRESS)!}</div>
             </div>
           </a>
         </li>
@@ -141,5 +141,7 @@
 </nav>
 </@mainLayout>
 <script>
-
+function takeOrderFun(orderId){
+	window.location.href="/wx/delivery/takeOrder?orderId="+orderId+"&deliveryId=${deliveryId}";
+}
 </script>

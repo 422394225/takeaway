@@ -19,9 +19,9 @@
    </div>
 </@tool>
 <div id='content'>
-	<form id="filterForm" action="javascript:void(0);">
+	<form id="filterForm" action="javascript:void(0);" >
 	   <table class="filterTable">
-	  	<tr>
+	  	<tr id="filterTableTr">
 	  		<td><label>商家名称</label></td>
 	  		<td><input name="t.NAME" class="form-control"></td>
 	  		<td><label>正常状态</label></td>
@@ -46,11 +46,12 @@
 					<option value="已取消退款">已取消退款</option>
 	  			</select>
 	  		</td>
-	  		<td><button class="btn btn-success dataTableSortBtn">筛选</button></td>
 	  		<td><button class="btn btn-default dataTableResetBtn">重置</button></td>
+	  		<td><button class="btn btn-success dataTableSortBtn">筛选</button></td>
 	  	</tr>
 	  </table>
-  </form>
+	  		
+  </form>	
   <table class='table table-bordered' id="table">
     <thead>
       <tr>
@@ -78,9 +79,17 @@ $("select[name='cc2.name']").change(function () {
 })
 $(function(){
 	var showType="${showType}";
+	var timeLimit="${timeLimit}";
+	if(showType=='all'){
+		$('#filterTableTr').append(
+	  		"<td><a href=\"/order?showType=all&timeLimit=thisWeek\" class=\"btn btn-success \">本周</a></td>"+
+	  		"<td><a href=\"/order?showType=all&timeLimit=thisMonth\" class=\"btn btn-success \">本月</a></td>"+
+	  		"<td><a href=\"/order?showType=all&timeLimit=lastWeek\" class=\"btn btn-success \">上周</a></td>"+
+	  		"<td><a href=\"/order?showType=all&timeLimit=lastMonth\" class=\"btn btn-success \">上月</a></td>");
+	}
 	var table = Kit.table("#table",
 	{
-		"ajax": "${base}/order/getData?showType="+showType,
+		"ajax": "${base}/order/getData?showType="+showType+"&timeLimit="+timeLimit,
 			"columns": [
 				{ "data": "ID" },
 				{ "data": "USER_NAME" },
