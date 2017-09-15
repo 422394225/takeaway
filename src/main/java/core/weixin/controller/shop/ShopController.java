@@ -153,8 +153,12 @@ public class ShopController extends BaseController {
 	public void getSaleNum() {
 		try {
 			Integer shopId = Integer.valueOf(getCookie("shopId"));
-			renderJson(new JSONSuccess(
-					Db.queryDouble("SELECT SUM(PAY_PRICE) FROM T_ORDER WHERE SHOP_ID=? GROUP BY SHOP_ID", shopId)));
+			Double sale = Db.queryDouble("SELECT SUM(PAY_PRICE) FROM T_ORDER WHERE SHOP_ID=? GROUP BY SHOP_ID", shopId);
+			if (sale == null)
+				sale = 0.0;
+			String string = String.format("%.2f", sale);
+			System.out.println(string);
+			renderJson(new JSONSuccess(string));
 		} catch (Exception e) {
 			renderJson(new JSONError(e.toString()));
 		}
@@ -302,7 +306,7 @@ public class ShopController extends BaseController {
 				Record collections = Db.findFirst(Db.getSql("user.getCollections"), openId);
 				if (collections != null) {
 					String collectionsStr = collections.getStr("COLLECTION");
-					if(StringUtils.isNotEmpty(collectionsStr)){
+					if (StringUtils.isNotEmpty(collectionsStr)) {
 						String sqlParams = "'" + collectionsStr.replace(",", "','") + "'";
 						sqlPara = Db.getSqlPara("shop.inId", Kv.by("inParams", sqlParams));
 					}
@@ -335,7 +339,7 @@ public class ShopController extends BaseController {
 				renderJson(new JSONSuccess(shops));
 			}
 		} else {
-			renderJson(new JSONError("暂时没有找到"+ShopConstants.getValue(flag,"")+"哦"));
+			renderJson(new JSONError("暂时没有找到" + ShopConstants.getValue(flag, "") + "哦"));
 		}
 	}
 
@@ -369,10 +373,10 @@ public class ShopController extends BaseController {
 		render("typeMore.html");
 	}
 
-	public void front(){
+	public void front() {
 		String id = getPara("id");
-		setAttr("shop",Shop.dao.findById(id));
-		setAttr("types", FoodType.dao.find(Db.getSqlPara("foodType.getByShopId",Kv.by("id",id))));
+		setAttr("shop", Shop.dao.findById(id));
+		setAttr("types", FoodType.dao.find(Db.getSqlPara("foodType.getByShopId", Kv.by("id", id))));
 		render("front.html");
 	}
 

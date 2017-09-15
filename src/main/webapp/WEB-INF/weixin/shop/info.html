@@ -15,7 +15,7 @@ wxJavascript=wxJavascript>
 			<ul>
 				<li><a class="item-content">
 						<div class="item-media">
-							<img src="${shop.IMG}" width="80">
+							<img src="${shop.IMG}" width="50">
 						</div>
 						<div class="item-inner">
 							<div class="item-title-row">
@@ -36,7 +36,7 @@ wxJavascript=wxJavascript>
 				</a></li>
 				<li><a class="item-content">
 						<div class="item-media" style="visibility: hidden">
-							<img src="#" width="80">
+							<img src="#" width="50">
 						</div>
 						<div class="item-inner">
 							<div class="item-title-row">
@@ -47,7 +47,7 @@ wxJavascript=wxJavascript>
 				</a></li>
 				<li><a class="item-content">
 						<div class="item-media" style="visibility: hidden">
-							<img src="#" width="80">
+							<img src="#" width="50">
 						</div>
 						<div class="item-inner">
 							<div class="item-title-row">
@@ -57,20 +57,21 @@ wxJavascript=wxJavascript>
 						</div>
 				</a></li>
 				<li><a class="item-content">
-						<div class="item-media">
+						<div class="item-media"  style="visibility: hidden">
 							<div href="#" class="button button-round" id="takeSaleNumBtn"
-								style="width: 80px;" onclick="lookSaleNum()">查看</div>
+								style="width: 50px;" onclick="lookSaleNum()">查看</div>
 						</div>
 						<div class="item-inner">
 							<div class="item-title-row">
 								<div class="item-title">总销售额</div>
 							</div>
-							<div class="item-subtitle" id="saleNumDiv">?</div>
+							<div class="item-subtitle" id="saleNumDiv"><div href="#" class="button button-round" id="takeSaleNumBtn"
+								style="width: 80px;" onclick="lookSaleNum()">查看</div></div>
 						</div>
 				</a></li>
 				<li><a class="item-content">
 						<div class="item-media" style="visibility: hidden">
-							<img src="#" width="80">
+							<img src="#" width="50">
 						</div>
 						<div class="item-inner">
 							<div class="item-title-row">
@@ -81,7 +82,7 @@ wxJavascript=wxJavascript>
 				</a></li>
 				<li><a class="item-content">
 						<div class="item-media" style="visibility: hidden">
-							<img src="#" width="80">
+							<img src="#" width="50">
 						</div>
 						<div class="item-inner">
 							<div class="content-padded">
@@ -200,7 +201,7 @@ wxJavascript=wxJavascript>
 	        	  alert(data.msg)
 	      	  }
 	          else{
-	        	$("#saleNumDiv").html(data.data);
+	        	$("#saleNumDiv").html(data.msg);
 	          }
 	        },
 	       
