@@ -62,6 +62,14 @@
 	</div>
 	<div class="form-group form-group-md">
 	    <label class="col-sm-3 control-label" >
+	    	采购价<span style="color:red">*</span>
+	    </label>
+	    <div class="col-sm-6">
+			<input class="form-control" type="text" name="PURCHASING_PRICE"  value="">
+	    </div>
+	</div>
+	<div class="form-group form-group-md">
+	    <label class="col-sm-3 control-label" >
 	    	单位<span style="color:red">*</span>
 	    </label>
 	    <div class="col-sm-6">
@@ -293,6 +301,7 @@ Kit.form({btnId:"#submitBtn",formId:"#add-form",
 		NAME: {validators: {notEmpty: {}}},
 		price: {validators: {notEmpty: {}}},
 		ORIGN_PRICE: {validators: {notEmpty: {}}},
+		PURCHASING_PRICE: {validators: {notEmpty: {}}},
 		UNIT: {validators: {notEmpty: {}}},
 		DECSRIPTION: {validators: {notEmpty: {}}},
 		USE_STOCK: {validators: {}},

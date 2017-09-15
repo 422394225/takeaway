@@ -71,6 +71,14 @@
 	</div>
 	<div class="form-group form-group-md">
 	    <label class="col-sm-3 control-label" >
+	    	采购价<span style="color:red">*</span>
+	    </label>
+	    <div class="col-sm-6">
+			<input class="form-control" type="text" name="PURCHASING_PRICE"  value="${PURCHASING_PRICE}">
+	    </div>
+	</div>
+	<div class="form-group form-group-md">
+	    <label class="col-sm-3 control-label" >
 	    	单位<span style="color:red">*</span>
 	    </label>
 	    <div class="col-sm-6">
@@ -160,7 +168,8 @@ Kit.form({btnId:"#submitBtn",formId:"#add-form",
 		DECSRIPTION: {validators: {notEmpty: {}}},
 		USE_STOCK: {validators: {}},
 		STOCK: {validators: {}},
-		SALE_MINIT: {validators: {}}
+		SALE_MINIT: {validators: {}},
+		PURCHASING_PRICE:{validators: {notEmpty: {}}}
 	},
     successFunc:function(msg,data){
     	$(".reload ").click();

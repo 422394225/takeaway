@@ -68,6 +68,7 @@ public class FoodController extends Controller {
 		setAttr("nowType", record.get("TYPE_ID"));
 		setAttr("UNIT", record.get("UNIT"));
 		setAttr("DESCRIPTION", record.get("DESCRIPTION"));
+		setAttr("PURCHASING_PRICE", record.get("PURCHASING_PRICE"));
 		setAttr("USE_STOCK", record.get("USE_STOCK"));
 		setAttr("STOCK", record.get("STOCK"));
 		setAttr("SALE_LIMIT", record.get("SALE_LIMIT"));
@@ -120,6 +121,7 @@ public class FoodController extends Controller {
 				return;
 			}
 			String price = getPara("price");
+			String PURCHASING_PRICE = getPara("PURCHASING_PRICE");// 2017-9-15采购价
 			String UNIT = getPara("UNIT");
 			String DESCRIPTION = getPara("DESCRIPTION");
 			if (DESCRIPTION.length() > 50) {
@@ -133,6 +135,7 @@ public class FoodController extends Controller {
 			String SALE_LIMIT = getPara("SALE_LIMIT");
 			food.set("SHOP_ID", shop.get("ID"));
 			food.set("NAME", name);
+			food.set("PURCHASING_PRICE", PURCHASING_PRICE);
 			food.set("PRICE", price);
 			food.set("TYPE_ID", TYPE);
 			food.set("ORIGN_PRICE",
@@ -184,6 +187,7 @@ public class FoodController extends Controller {
 			String name = getPara("NAME");
 			String price = getPara("price");
 			String UNIT = getPara("UNIT");
+			String PURCHASING_PRICE = getPara("PURCHASING_PRICE");
 			String DESCRIPTION = getPara("DESCRIPTION");
 			if (DESCRIPTION.length() > 50) {
 				renderJson(new JSONError("描述不能超过50字哦~"));
@@ -200,6 +204,7 @@ public class FoodController extends Controller {
 			food.set("SHOP_ID", shop.get("ID"));
 			food.set("NAME", name);
 			food.set("PRICE", price);
+			food.set("PURCHASING_PRICE", PURCHASING_PRICE);
 			food.set("TYPE_ID", TYPE);
 			food.set("SALE_LIMIT", SALE_LIMIT == null ? 0 : Integer.valueOf(SALE_LIMIT));
 			food.set("ORIGN_PRICE",
