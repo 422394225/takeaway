@@ -13,38 +13,61 @@
 <div id="rootwizard">
 	<form action="#" class="form-horizontal" id="baseForm" enctype="multipart/form-data" >
 	    <div class="form-group form-group-md">
-		    <label class="col-sm-3"style="text-align:right">本周</label>
-		    <label class="col-sm-6">
-		    <table>
-		    <tr><td>单数：&nbsp;&nbsp;</td><td>${THIS_WEEK_COUNT}&nbsp;&nbsp;</td><td>销售额：&nbsp;&nbsp;</td><td>${(THIS_WEEK_PRICE)!0}</td></tr>
-		    </table>
-		    </label>
+		    <label class="col-sm-2">本周</label>
+		    	<label class="col-sm-2">单数：&nbsp;${THIS_WEEK_COUNT}&nbsp;&nbsp;</label>
+		    	<label class="col-sm-3">销售额：&nbsp;${(THIS_WEEK_PRICE)!0}</label>
+		    	<label class="col-sm-3">商品进货价：&nbsp;</label>
+		    	<label class="col-sm-1" id='THIS_WEEK_PURCHASING_PRICE'>
+		    		<button class="btn btn-success btn-xs" title="" data-original-title="营业" onclick="getPurchasingPrice('THIS_WEEK_PURCHASING_PRICE')"><i class="fa fa-eye"></i></button>
+		    	</label>
 		</div> 
 		<div class="form-group form-group-md">
-		    <label class="col-sm-3"style="text-align:right">本月</label>
-		    <label class="col-sm-6">
-		    <table>
-		    <tr><td>单数：&nbsp;&nbsp;</td><td>${THIS_MONTH_COUNT}&nbsp;&nbsp;</td><td>销售额：&nbsp;&nbsp;</td><td>${(THIS_MONTH_PRICE)!0}</td></tr>
-		    </table>
-		    </label>
+		    <label class="col-sm-2">本月</label>
+			    <label class="col-sm-2">单数：&nbsp;${THIS_MONTH_COUNT}&nbsp;&nbsp;</label>
+			    <label class="col-sm-3">销售额：&nbsp;${(THIS_MONTH_PRICE)!0}</label>
+		    	<label class="col-sm-3">商品进货价：&nbsp;</label>
+		    	<label class="col-sm-1" id='THIS_MONTH_PURCHASING_PRICE'>
+		    		<button class="btn btn-success btn-xs" title="" data-original-title="营业" onclick="getPurchasingPrice('THIS_MONTH_PURCHASING_PRICE')"><i class="fa fa-eye"></i></button>
+		    	</label>
 		</div> 
 		<div class="form-group form-group-md">
-		    <label class="col-sm-3"style="text-align:right">上周</label>
-		    <label class="col-sm-6">
-		    <table>
-		    <tr><td>单数：&nbsp;&nbsp;</td><td>${LAST_WEEK_COUNT}&nbsp;&nbsp;</td><td>销售额：&nbsp;&nbsp;</td><td>${(LAST_WEEK_PRICE)!0}</td></tr>
-		    </table>
-		    </label>
+		    <label class="col-sm-2">上周</label>
+		   		<label class="col-sm-2">单数：&nbsp;${LAST_WEEK_COUNT}&nbsp;&nbsp;</label>
+		   		<label class="col-sm-3">销售额：&nbsp;${(LAST_WEEK_PRICE)!0}</label>
+		    	<label class="col-sm-3">商品进货价：&nbsp;</label>
+		    	<label class="col-sm-1" id='LAST_WEEK_PURCHASING_PRICE'>
+		    		<button class="btn btn-success btn-xs" title="" data-original-title="营业" onclick="getPurchasingPrice('LAST_WEEK_PURCHASING_PRICE')"><i class="fa fa-eye"></i></button>
+		    	</label>
 		</div> 
 		<div class="form-group form-group-md">
-		    <label class="col-sm-3"style="text-align:right">上月</label>
-		    <label class="col-sm-6">
-		    <table>
-		    <tr><td>单数：&nbsp;&nbsp;</td><td>${LAST_MONTH_COUNT}&nbsp;&nbsp;</td><td>销售额：&nbsp;&nbsp;</td><td>${(LAST_MONTH_PRICE)!0}</td></tr>
-		    </table>
+		    <label class="col-sm-2">上月</label>
+		    	<label class="col-sm-2">单数：&nbsp;${LAST_MONTH_COUNT}</label>
+		    	<label class="col-sm-3">销售额：&nbsp;${(LAST_MONTH_PRICE)!0}</label>
+		    	<label class="col-sm-3">商品进货价：&nbsp;</label>
+		    	<label class="col-sm-1" id='LAST_MONTH_PURCHASING_PRICE'>
+		    		<button class="btn btn-success btn-xs" title="" data-original-title="营业" onclick="getPurchasingPrice('LAST_MONTH_PURCHASING_PRICE')"><i class="fa fa-eye"></i></button>
+		    	</label>
 		    </label>
 		</div>
 	</form>
 </div>
 <script>
+function getPurchasingPrice(viewType){
+	 $.ajax({
+         url: "${base}/shop/getPurchasingPrice?shopId=" + ${shopId} + "&viewType=" + viewType,
+         async: true,
+         type: 'GET',
+         success: function (data, textStatus) {
+             if (data.error == false) {
+               $("#"+viewType).html(data.data)
+             }
+             else {
+                alert(data.msg);
+             }
+         },
+         error: function (jqXHR, textStatus, errorThrown) {
+             console.log("error");
+         },
+     });
+}
 </script>

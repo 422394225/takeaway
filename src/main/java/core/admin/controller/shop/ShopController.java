@@ -7,6 +7,7 @@ package core.admin.controller.shop;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Before;
 import com.jfinal.aop.Clear;
@@ -75,6 +77,7 @@ public class ShopController extends BaseController {
 
 	public void calc() {
 		int shopId = getParaToInt("id");
+		setAttr("shopId", shopId);
 		Record record = Db.findFirst(LAST_MONTH_SQL, shopId);
 		setAttr("LAST_MONTH_COUNT", record.get("order_num"));
 		setAttr("LAST_MONTH_PRICE", record.get("total_price"));
@@ -89,6 +92,38 @@ public class ShopController extends BaseController {
 		setAttr("LAST_WEEK_PRICE", record.get("total_price"));
 		render("calc.html");
 		// renderText("123");
+	}
+
+	public void getPurchasingPrice() {
+		int shopId = 0;
+		String viewType = null;
+		try {
+			shopId = getParaToInt("shopId");
+			viewType = getPara("viewType");
+			if (viewType == null || shopId == 0)
+				throw new Exception();
+		} catch (Exception e) {
+			renderJson(new JSONError("参数错误"));
+		}
+		// <foodId,purchasingPrice>
+		Map<Integer, Double> purchasingPriceMap = service.getFoodPurchasingPrice(shopId);
+		double purchasingPrice = 0;
+		ArrayList<JSONArray> orderFoodsList = service.getOrderFoodsMapByShop(shopId, viewType);
+		if (orderFoodsList == null) {
+			renderJson(new JSONError("类型错误"));
+			return;
+		}
+		for (JSONArray foodArray : orderFoodsList) {
+			for (Object object : foodArray) {
+				JSONObject foodObject = (JSONObject) object;
+				if (!purchasingPriceMap.containsKey(foodObject.getInteger("id"))) {
+					renderJson(new JSONError("商品永久从数据库中删除，无法统计"));
+					return;
+				}
+				purchasingPrice += purchasingPriceMap.get(foodObject.getInteger("id")) * foodObject.getIntValue("num");
+			}
+		}
+		renderJson(new JSONSuccess(purchasingPrice));
 	}
 
 	public void getData() {

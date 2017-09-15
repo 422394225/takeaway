@@ -24,4 +24,5 @@ public interface FoodService extends DataTableService {
 	public boolean existFoodType(int shopId, String type);
 
 	public Shop findShopById(int id);
+
 }
