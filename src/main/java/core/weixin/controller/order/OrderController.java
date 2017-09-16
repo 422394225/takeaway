@@ -393,21 +393,32 @@ public class OrderController extends WeixinMsgController {
 
 	}
 
+	/**
+	 * TODO 目前只实现了用户货到前的取消订单
+	 */
 	public void cancelOrder(){
 		Integer orderId = getParaToInt("id");
 		if(orderId!=null){
 			Order order = Order.dao.findById(orderId);
 			if(order!=null){
+				String reason = getPara("reason");
+				if(StringUtils.isNotEmpty(reason)){
+					order.set("CANCEL_USER_REASON",reason);
+				}else{
+					renderJson(new JSONError("请填写取消理由"));
+				}
 				Integer orderState = order.getInt("ORDER_STATE");
 				if(orderState!=null){
 					if(orderState==1){
 						order.set("ORDER_STATE",2);
+						order.update();
 						renderJson(new JSONSuccess("取消订单成功"));
 					}else if(orderState==2){
 						Map<String,String> result = core.admin.controller.order.OrderController.refundAPI(orderId);
 						String payState = result.get("payState");
 						if("1".equals(payState)){
 							order.set("ORDER_STATE",2);
+							order.update();
 							renderJson(new JSONSuccess("取消订单成功"));
 						}else{
 							order.set("ORDER_STATE",1);
@@ -416,7 +427,6 @@ public class OrderController extends WeixinMsgController {
 					}else{
 						renderJson(new JSONError("接单后不能取消订单"));
 					}
-					order.update();
 				}
 			}else{
 				renderJson(new JSONError("订单不存在"));
@@ -460,6 +470,20 @@ public class OrderController extends WeixinMsgController {
 			Order order = Order.dao.findById(id);
 			if(order!=null){
 
+			}else{
+				renderJson(new JSONError("订单不存在"));
+			}
+		}else{
+			renderJson(new JSONError("订单不存在"));
+		}
+	}
+
+	public void viewReason(){
+		String id = getPara("id");
+		if(StringUtils.isNotEmpty(id)){
+			Order order = Order.dao.findById(id);
+			if(order!=null){
+				renderJson(new JSONSuccess(order.getStr("CANCEL_USER_REASON")));
 			}else{
 				renderJson(new JSONError("订单不存在"));
 			}
