@@ -107,7 +107,7 @@
 		);
 	})
 	function createOrder() {
-	    if(WxStore.user.getParams("openId")!='oNCcWxGvY7TT1HHwo300MywcQs50'){
+	    if(WxStore.user.getParams("openId")!='oNCcWxGvY7TT1HHwo300MywcQs50'&&WxStore.user.getParams("openId")!='oNCcWxDAdFm-PsfV9h6yWfoFoirw'){
 	        $.alert("支付暂时关闭，请您谅解");
 	        return;
 		}
