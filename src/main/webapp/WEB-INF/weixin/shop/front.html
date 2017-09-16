@@ -231,7 +231,7 @@ function showShopLocation(name,lng,lat) {
 </script>
 </#assign>
 <@mainLayout wxTitle=shop.NAME wxMeta=wxMeta wxCss=wxCss wxJavascript=wxJavascript>
-<#if (shop.STATE)! == 20>
+<#if (shop.STATE)! != 2>
 	<shopmask class="mask-lg">
 		<span>${(shop.STATE_NAME)!}</span>
 	</shopmask>
