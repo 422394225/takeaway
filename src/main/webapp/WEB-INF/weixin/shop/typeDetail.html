@@ -54,6 +54,9 @@ $(function(){
 		          <li class="item-content">
 		            <div class="item-media">
 		              <img src="${(shop.IMG)!}" width="70">
+						<#if (shop.STATE)! != 2>
+						<shopmask>${(shop.STATE_NAME)!}</shopmask>
+						</#if>
 		            </div>
 		            <div class="item-inner">
 		              <div class="item-title-row">

@@ -10,7 +10,7 @@
 <@mainLayout wxTitle="订单结算"  wxMeta=wxMeta wxCss=wxCss wxJavascript=wxJavascript>
 <div class="page page-current" id="mainPage" style="overflow-y: scroll">
 	<header class="bar bar-nav">
-		<a class="icon icon-left pull-left color-default" href="javascript:void(0);" onclick="javascript:history.back();"></a>
+		<!--<a class="icon icon-left pull-left color-default" href="javascript:void(0);" onclick="javascript:history.back();"></a>-->
 		<img src="${base}/resources/images/logo-text.png" class="pull-right" style="width: 2rem;">
 		<h1 class="title  color-default">订单结算</h1>
 	</header>
@@ -107,6 +107,10 @@
 		);
 	})
 	function createOrder() {
+	    if(WxStore.user.getParams("openId")!='oNCcWxGvY7TT1HHwo300MywcQs50'){
+	        $.alert("支付暂时关闭，请您谅解");
+	        return;
+		}
         var name = $("[data-type='name']").attr("data");
         var phone = $("[data-type='phone']").attr("data");
         var address = $("[data-type='address']").attr("data");
@@ -215,7 +219,7 @@
 					{{# if(d.SHOP.DELIVERY_OFF>0 && totalPrice>=d.SHOP.DELIVERY_OFF_THRESHOLD){ }}
 					<tr>
 						<td colspan="3" style="text-align: left;padding-left: 1em">
-							满{{d.SHOP.DELIVERY_OFF_THRESHOLD}}元,减配送费<font class="color-warning">{{d.SHOP.DELIVERY_OFF}}</font>元
+							满{{d.SHOP.DELIVERY_OFF_THRESHOLD.toFixed(2)}}元,减配送费<font class="color-warning">{{d.SHOP.DELIVERY_OFF.toFixed(2)}}</font>元
 						</td>
 						<td>
 							<font class="color-success">-{{d.SHOP.DELIVERY_OFF}}元</font>
@@ -225,17 +229,17 @@
 					{{# if(d.SHOP.REDUCTION>0 && totalPrice>=d.SHOP.REDUCTION_THRESHOLD){ }}
 						<tr>
 							<td colspan="3" style="text-align: left;padding-left: 1em">
-								满{{d.SHOP.REDUCTION_THRESHOLD}}元,优惠<font class="color-primary">{{d.SHOP.REDUCTION}}</font>元
+								满{{d.SHOP.REDUCTION_THRESHOLD.toFixed(2)}}元,优惠<font class="color-primary">{{d.SHOP.REDUCTION.toFixed(2)}}</font>元
 							</td>
 							<td>
-								<font class="color-success">-{{d.SHOP.REDUCTION}}元</font>
+								<font class="color-success">-{{d.SHOP.REDUCTION.toFixed(2)}}元</font>
 							</td>
 						</tr>
 					{{# } }}
 					{{# if(d.SHOP.GIFT!=undefined && d.SHOP.GIFT!='' && totalPrice>=d.SHOP.GIFT_THRESHOLD){ }}
 						<tr>
 							<td colspan="3" style="text-align: left;padding-left: 1em">
-								满{{d.SHOP.GIFT_THRESHOLD}}元,送<font class="color-danger">{{d.SHOP.GIFT}}</font>
+								满{{d.SHOP.GIFT_THRESHOLD.toFixed(2)}}元,送<font class="color-danger">{{d.SHOP.GIFT}}</font>
 							</td>
 							<td></td>
 						</tr>
@@ -243,9 +247,9 @@
 				</table>
 			</div>
 			<div class="card-footer">
-				<span>订单:{{d.PRE_ORDER.TOTAL_PRICE}}元</span>
-				<span>优惠：{{d.PRE_ORDER.TOTAL_PRICE-d.PRE_ORDER.PAY_PRICE}}元</span>
-				<span>需支付：{{d.PRE_ORDER.PAY_PRICE}}元</span>
+				<span>订单:{{d.PRE_ORDER.TOTAL_PRICE.toFixed(2)}}元</span>
+				<span>优惠：{{(d.PRE_ORDER.TOTAL_PRICE-d.PRE_ORDER.PAY_PRICE).toFixed(2)}}元</span>
+				<span>需支付：{{d.PRE_ORDER.PAY_PRICE.toFixed(2)}}元</span>
 			</div>
 		</div>
 	</div>

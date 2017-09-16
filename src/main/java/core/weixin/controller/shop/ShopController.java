@@ -66,7 +66,7 @@ public class ShopController extends BaseController {
 	public void editShop() {
 		setAttr("shopId", getCookie("shopId"));
 		Map<String, String> params = new HashMap<>();
-		params.put("not_deleted", "1");
+		params.put("wxUsed", "1");
 		setAttr("shopTypes", ShopType.dao.find(Db.getSqlPara("shopType.list", params)));
 		Integer shopId = getCookieToInt("shopId");
 		if (shopId == null) {
@@ -189,7 +189,7 @@ public class ShopController extends BaseController {
 	@Before(JSSDKInterceptor.class)
 	public void add() {
 		Map<String, String> params = new HashMap<>();
-		params.put("not_deleted", "1");
+		params.put("wxUsed", "1");
 		setAttr("shopTypes", ShopType.dao.find(Db.getSqlPara("shopType.list", params)));
 		render("add.html");
 	}
@@ -278,6 +278,8 @@ public class ShopController extends BaseController {
 
 		String flag = params.getString("flag");
 		JSONObject loc = null;
+		Map<String,Object> filter = new HashMap<>();
+		filter.put("wxUsed","1");
 		if (StringUtils.isNotEmpty(flag)) {
 			switch (flag) {
 			case "hotShop": {
@@ -288,7 +290,8 @@ public class ShopController extends BaseController {
 				Map<String, Object> limit = new LinkedHashMap<>();
 				limit.put("STATE", "!=-2");
 				conditionsVO.getLimitCond().putAll(limit);
-				sqlPara = Db.getSqlPara("shop.list", conditionsVO.getConditions());
+				filter.putAll(conditionsVO.getConditions());
+				sqlPara = Db.getSqlPara("shop.list",filter);
 				break;
 			}
 			case "neighbor": {
@@ -298,7 +301,8 @@ public class ShopController extends BaseController {
 					renderJson(new JSONError(ShopConstants.getValue(flag) + "加载失败！"));
 					return;
 				}
-				sqlPara = Db.getSqlPara("shop.groupByDistant", loc);
+				filter.putAll(loc);
+				sqlPara = Db.getSqlPara("shop.groupByDistant", filter);
 				break;
 			}
 			case "collections": {
@@ -345,16 +349,20 @@ public class ShopController extends BaseController {
 
 	public void ajaxSearchShops() {
 		String keyword = getPara("keyword");
-		String type = getPara("type");
-		List<Record> records = null;
-		Map<String, String> map = new HashMap<>();
-		map.put("keyword", keyword);
-		if ("food".equals(type)) {
-			records = Db.find(Db.getSqlPara("food.search", map));
-		} else if ("shop".equals(type)) {
-			records = Db.find(Db.getSqlPara("shop.search", map));
+		if(StringUtils.isNotEmpty(keyword)){
+			String type = getPara("type");
+			List<Record> records = null;
+			Map<String, String> map = new HashMap<>();
+			map.put("keyword", keyword);
+			if ("food".equals(type)) {
+				records = Db.find(Db.getSqlPara("food.search", map));
+			} else if ("shop".equals(type)) {
+				records = Db.find(Db.getSqlPara("shop.search", map));
+			}
+			renderJson(new JSONSuccess(records));
+		}else{
+			renderJson(new JSONError("请输入关键词"));
 		}
-		renderJson(new JSONSuccess(records));
 	}
 
 	public void typeDetail() {
@@ -375,7 +383,8 @@ public class ShopController extends BaseController {
 
 	public void front() {
 		String id = getPara("id");
-		setAttr("shop", Shop.dao.findById(id));
+		Record shop = Db.findFirst(Db.getSql("shop.getById"),id);
+		setAttr("shop", shop);
 		setAttr("types", FoodType.dao.find(Db.getSqlPara("foodType.getByShopId", Kv.by("id", id))));
 		render("front.html");
 	}

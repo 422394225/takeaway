@@ -271,7 +271,10 @@
 		FROM t_shop AS s
 		LEFT JOIN t_dict_code AS d
 		ON s.STATE = d.`CODE` 
-		WHERE d.FIELD = 't_shop.STATE' 
+		WHERE d.FIELD = 't_shop.STATE'
+		#if(wxUsed)
+		AND s.AUDIT_STATE = 1
+		#end
 		#@dbCondition_alias(conditions,mainAlias,aliasMap)
 	#end
 	#sql("audit")
@@ -302,7 +305,7 @@
 		SELECT *
 		FROM t_shop_type
 		WHERE 1=1 
-		#if(not_deleted)
+		#if(wxUsed)
 		AND `DELETED` !=1
 		#end
 		#@dbCondition(conditions)

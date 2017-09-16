@@ -17,15 +17,23 @@ import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.plugin.activerecord.SqlPara;
 import com.jfinal.plugin.ehcache.CacheKit;
+import com.jfinal.weixin.sdk.api.ApiConfigKit;
+import com.jfinal.weixin.sdk.api.ApiResult;
+import com.jfinal.weixin.sdk.api.TemplateMsgApi;
 import com.jfinal.weixin.sdk.jfinal.MsgInterceptor;
 import com.jfinal.weixin.sdk.utils.HttpUtils;
 import core.common.constants.DictConstants;
 import core.model.*;
+import core.temple.OrderRemindTemple;
 import core.utils.WeiXinUtils;
 import core.vo.JSONError;
 import core.vo.JSONSuccess;
 import core.weixin.controller.WeixinMsgController;
+import core.weixin.utils.WeixinUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.joda.time.DateTime;
+import org.joda.time.Minutes;
+import org.joda.time.format.DateTimeFormat;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
@@ -43,14 +51,6 @@ public class OrderController extends WeixinMsgController {
 	private static final String WEIXIN_PRE_PAY_URL = "https://api.mch.weixin.qq.com/pay/unifiedorder";
 	private Log log = Log.getLog(OrderController.class);
 	private String[] getType = { "" };
-
-	@Before(MsgInterceptor.class)
-	public void index() {
-		String openid = getAttr("openId");
-		User user = User.dao.findById(openid);
-		setAttr("user", user);
-		render("index.html");
-	}
 
 	public void payList() {
 		UserAddress userAddress = UserAddress.dao.findFirst(Db.getSql("userAddress.getDefault"), getPara("openId"));
@@ -393,21 +393,32 @@ public class OrderController extends WeixinMsgController {
 
 	}
 
+	/**
+	 * TODO 目前只实现了用户货到前的取消订单
+	 */
 	public void cancelOrder(){
 		Integer orderId = getParaToInt("id");
 		if(orderId!=null){
 			Order order = Order.dao.findById(orderId);
 			if(order!=null){
+				String reason = getPara("reason");
+				if(StringUtils.isNotEmpty(reason)){
+					order.set("CANCEL_USER_REASON",reason);
+				}else{
+					renderJson(new JSONError("请填写取消理由"));
+				}
 				Integer orderState = order.getInt("ORDER_STATE");
 				if(orderState!=null){
 					if(orderState==1){
-						order.set("ORDER_STATE",2);
+						order.set("CANCEL_STATE",2);
+						order.update();
 						renderJson(new JSONSuccess("取消订单成功"));
 					}else if(orderState==2){
 						Map<String,String> result = core.admin.controller.order.OrderController.refundAPI(orderId);
 						String payState = result.get("payState");
 						if("1".equals(payState)){
-							order.set("ORDER_STATE",2);
+							order.set("CANCEL_STATE",2);
+							order.update();
 							renderJson(new JSONSuccess("取消订单成功"));
 						}else{
 							order.set("ORDER_STATE",1);
@@ -416,7 +427,6 @@ public class OrderController extends WeixinMsgController {
 					}else{
 						renderJson(new JSONError("接单后不能取消订单"));
 					}
-					order.update();
 				}
 			}else{
 				renderJson(new JSONError("订单不存在"));
@@ -431,7 +441,25 @@ public class OrderController extends WeixinMsgController {
 		if(StringUtils.isNotEmpty(id)){
 			Order order = Order.dao.findById(id);
 			if(order!=null){
-
+				int tellShopTime = PropKit.getInt("tellShopTime",15);
+				String createTimeStr = order.getDate("LAST_REMIND_TIME").toString().replace(".0","");
+				DateTime createTime = DateTime.parse(createTimeStr,DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss"));
+				int between = Minutes.minutesBetween(createTime,DateTime.now()).getMinutes();
+				if(between>tellShopTime){
+					ApiConfigKit.setThreadLocalApiConfig(WeixinUtils.getApiConfig());
+					String tplStr = OrderRemindTemple.setData(order).build();
+					ApiResult apiResult = TemplateMsgApi.send(tplStr);
+					if(apiResult.getInt("errcode")==0){
+						order.set("LAST_REMIND_TIME",new Date());
+						order.update();
+						renderJson(new JSONSuccess("催单成功"));
+					}else{
+						renderJson(new JSONError("催单失败"));
+						log.error("模板消息发送失败\n"+apiResult.getStr("errmsg")+"\n"+tplStr);
+					}
+				}else{
+					renderJson(new JSONError(tellShopTime+"分钟才能催单"));
+				}
 			}else{
 				renderJson(new JSONError("订单不存在"));
 			}
@@ -459,7 +487,23 @@ public class OrderController extends WeixinMsgController {
 		if(StringUtils.isNotEmpty(id)){
 			Order order = Order.dao.findById(id);
 			if(order!=null){
+				order.set("CANCEL_STATE",2);
+				order.update();
+				renderJson(new JSONSuccess("取消退款成功"));
+			}else{
+				renderJson(new JSONError("订单不存在"));
+			}
+		}else{
+			renderJson(new JSONError("订单不存在"));
+		}
+	}
 
+	public void viewReason(){
+		String id = getPara("id");
+		if(StringUtils.isNotEmpty(id)){
+			Order order = Order.dao.findById(id);
+			if(order!=null){
+				renderJson(new JSONSuccess(order.getStr("CANCEL_USER_REASON")));
 			}else{
 				renderJson(new JSONError("订单不存在"));
 			}

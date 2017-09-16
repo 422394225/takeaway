@@ -15,8 +15,10 @@ $(function(){
 	
 	var type= $("#searchWay").val();
 	var keyword = $("#searchAll").val();
-	ajaxSearchShops(type,keyword);
-	
+	if(keyword!=undefined && keyword!=null){
+        ajaxSearchShops(type,keyword);
+	}
+
 	$("#searchWay").on("change",function(){
 		var type= $("#searchWay").val();
 		var keyword = $("#searchAll").val();
@@ -44,7 +46,7 @@ function ajaxSearchShops(type,keyword){
 			$("#searchContainer").html("对不起,没有搜索到关于<font class='color-danger'>"+keyword+"</font>的内容");
 		}
 	},function(msg){
-		$.alert(msg)
+		$.toast(msg)
 	})
 }
 function renderTpl(tpl,data){
@@ -73,7 +75,7 @@ function renderTpl(tpl,data){
 		<div class="searchbar">
 			 <div class="row">
 			<div class="search-input col-75">
-			  <label class="icon icon-search" for="search"></label>
+			  <label class="icon icon-search" ></label>
 			  <input type="search" id="searchAll" placeholder='客官吃点什么吧...' value="${keyword}"/>
 			</div>
 			<div class="search-way col-25">
@@ -97,6 +99,9 @@ function renderTpl(tpl,data){
 	          <li class="item-content">
 	            <div class="item-media">
 	              <img src="{{d[i].IMG}}" width="70">
+					{{# if(-2<d[i].STATE && d[i].STATE<=0){ }}
+					<shopmask>{{d[i].STATE_NAME}}</shopmask>
+					{{# } }}
 	            </div>
 	            <div class="item-inner">
 	              <div class="item-title-row">
@@ -153,7 +158,9 @@ function renderTpl(tpl,data){
 	        <ul>
 	          <li class="item-content">
 	            <div class="item-media">
-	              <img src="{{d[i].IMG}}" width="70">
+					{{# if(d[i].IMG!=undefined){ }}
+	              		<img src="{{d[i].IMG}}" width="70">
+					{{# } }}
 	            </div>
 	            <div class="item-inner">
 	              <div class="item-title-row">
