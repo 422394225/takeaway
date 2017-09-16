@@ -458,7 +458,7 @@ public class OrderController extends WeixinMsgController {
 						log.error("模板消息发送失败\n"+apiResult.getStr("errmsg")+"\n"+tplStr);
 					}
 				}else{
-					renderJson(new JSONError(tellShopTime+"分钟才能催单"));
+					renderJson(new JSONError(tellShopTime+"分钟后才能催单"));
 				}
 			}else{
 				renderJson(new JSONError("订单不存在"));
