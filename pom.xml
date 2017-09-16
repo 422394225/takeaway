@@ -16,8 +16,23 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 	</properties>
+	<repositories>
+		<repository>
+			<id>goeasy</id>
+			<name>goeasy</name>
+			<url>
+			http://maven.goeasy.io/content/repositories/releases/
+			</url>
+		</repository>
+	</repositories>
 
 	<dependencies>
+	<!-- goeasy包 -->
+	<dependency>
+		<groupId>io.goeasy</groupId>
+		<artifactId>goeasy-sdk</artifactId>
+		<version>0.3.8</version>
+	</dependency>
 	<!-- 百度语音api -->
 	<dependency>
             <groupId>speech_sdk</groupId>

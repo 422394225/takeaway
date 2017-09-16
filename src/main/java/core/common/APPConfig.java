@@ -1,7 +1,13 @@
 package core.common;
 
-import cn.dreampie.quartz.QuartzPlugin;
-import com.jfinal.config.*;
+import java.io.File;
+
+import com.jfinal.config.Constants;
+import com.jfinal.config.Handlers;
+import com.jfinal.config.Interceptors;
+import com.jfinal.config.JFinalConfig;
+import com.jfinal.config.Plugins;
+import com.jfinal.config.Routes;
 import com.jfinal.core.JFinal;
 import com.jfinal.ext.handler.ContextPathHandler;
 import com.jfinal.kit.PathKit;
@@ -13,6 +19,8 @@ import com.jfinal.plugin.ehcache.EhCachePlugin;
 import com.jfinal.render.ViewType;
 import com.jfinal.template.Engine;
 import com.jfinal.weixin.sdk.api.ApiConfigKit;
+
+import cn.dreampie.quartz.QuartzPlugin;
 import core.common.constants.ConstantsLoader;
 import core.common.mapping._MappingKit;
 import core.common.routes.AdminRoutes;
@@ -20,8 +28,6 @@ import core.common.routes.WeixinRoutes;
 import core.common.utils.ConfigUtil;
 import core.interceptor.LogInterceptor;
 import core.weixin.controller.WeixinMsgController;
-
-import java.io.File;
 
 /**
  * @author Javen
@@ -105,13 +111,17 @@ public class APPConfig extends JFinalConfig {
 	public static void main(String[] args) {
 
 		// sql升级
-		/*ConfigUtil.loadProp("config_pro.properties", "config.properties");
-		FlywayMigration fm = new FlywayMigration();
-		fm.migrate(PropKit.get("jdbcUrl"), PropKit.get("user"), PropKit.get("password"));*/
+		/*
+		 * ConfigUtil.loadProp("config_pro.properties", "config.properties");
+		 * FlywayMigration fm = new FlywayMigration();
+		 * fm.migrate(PropKit.get("jdbcUrl"), PropKit.get("user"),
+		 * PropKit.get("password"));
+		 */
 
 		ConstantsLoader.load();
 
 		JFinal.start("src/main/webapp", 80, "/");// 启动配置项
+
 	}
 
 }
