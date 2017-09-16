@@ -107,10 +107,10 @@
 		);
 	})
 	function createOrder() {
-	    if(WxStore.user.getParams("openId")!='oNCcWxGvY7TT1HHwo300MywcQs50'&&WxStore.user.getParams("openId")!='oNCcWxDAdFm-PsfV9h6yWfoFoirw'){
+	   <!-- if(WxStore.user.getParams("openId")!='oNCcWxGvY7TT1HHwo300MywcQs50'&&WxStore.user.getParams("openId")!='oNCcWxDAdFm-PsfV9h6yWfoFoirw'){
 	        $.alert("支付暂时关闭，请您谅解");
 	        return;
-		}
+		}-->
         var name = $("[data-type='name']").attr("data");
         var phone = $("[data-type='phone']").attr("data");
         var address = $("[data-type='address']").attr("data");
