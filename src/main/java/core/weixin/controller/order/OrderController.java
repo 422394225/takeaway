@@ -52,14 +52,6 @@ public class OrderController extends WeixinMsgController {
 	private Log log = Log.getLog(OrderController.class);
 	private String[] getType = { "" };
 
-	@Before(MsgInterceptor.class)
-	public void index() {
-		String openid = getAttr("openId");
-		User user = User.dao.findById(openid);
-		setAttr("user", user);
-		render("index.html");
-	}
-
 	public void payList() {
 		UserAddress userAddress = UserAddress.dao.findFirst(Db.getSql("userAddress.getDefault"), getPara("openId"));
 		setAttr("userAddress", userAddress);

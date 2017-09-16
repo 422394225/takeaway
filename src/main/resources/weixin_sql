@@ -1,27 +1,49 @@
 #namespace("shop")
 	#sql("search")
-		SELECT * FROM t_shop AS s
+		SELECT s.*,d.`NAME` AS STATE_NAME
+		FROM t_shop AS s
+		LEFT JOIN t_dict_code AS d
+        ON s.STATE = d.`CODE`
 		WHERE s.`NAME` LIKE '%#(keyword)%' AND s.`STATE`!=-2
+		AND d.FIELD = 't_shop.STATE' AND s.AUDIT_STATE = 1
 		ORDER BY s.SALE_NUM DESC
 	#end
 	#sql("getByType")
-		SELECT s.* FROM 
-		t_shop_type_relation AS str
+		SELECT DISTINCT s.*,d.`NAME` AS STATE_NAME
+		FROM t_shop_type_relation AS str
 		JOIN t_shop AS s ON str.SHOPID = s.ID
-		WHERE str.TYPEID = ? AND s.`STATE`!=-2
+		LEFT JOIN t_dict_code AS d
+        ON s.STATE = d.`CODE`
+		WHERE str.TYPEID = ? AND s.`STATE`!=-2 AND s.AUDIT_STATE = 1
+		AND d.FIELD = 't_shop.STATE'
         ORDER BY s.SALE_NUM DESC
 	#end
 	#sql("inId")
-	    SELECT * FROM t_shop
-	    WHERE ID IN (#(inParams))
-	    AND STATE!=-2
-	    ORDER BY SALE_NUM DESC
+	    SELECT s.*,d.`NAME` AS STATE_NAME
+	    FROM t_shop AS s
+	    LEFT JOIN t_dict_code AS d
+        ON s.STATE = d.`CODE`
+	    WHERE s.ID IN (#(inParams))
+	    AND s.STATE!=-2 AND s.AUDIT_STATE = 1
+	    AND d.FIELD = 't_shop.STATE'
+	    ORDER BY s.SALE_NUM DESC
 	#end
 	#sql("groupByDistant")
-        SELECT s.*,((LONGITUDE-#(lng))*(LONGITUDE-#(lng))+ (LATITUDE-#(lat))* (LATITUDE-#(lat))) AS dst
+        SELECT s.*,((LONGITUDE-#(lng))*(LONGITUDE-#(lng))+ (LATITUDE-#(lat))* (LATITUDE-#(lat))) AS dst,d.`NAME` AS STATE_NAME
         FROM t_shop AS s
-        WHERE s.`STATE`!=-2
+        LEFT JOIN t_dict_code AS d
+        ON s.STATE = d.`CODE`
+        WHERE s.`STATE`!=-2 AND s.AUDIT_STATE = 1
+        AND d.FIELD = 't_shop.STATE'
         ORDER BY dst ASC,s.SALE_NUM DESC
+    #end
+    #sql("getById")
+        SELECT s.*,d.`NAME` AS STATE_NAME
+        FROM t_shop AS s
+        LEFT JOIN t_dict_code AS d
+        ON d.`CODE` = s.STATE
+        WHERE s.ID=?
+        AND d.FIELD = 't_shop.STATE'
     #end
 #end
 

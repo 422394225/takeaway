@@ -224,9 +224,18 @@ function showCart() {
     $("#cart").animate({top:"1rem",left:"1rem"},300);
     $(".layui-layer-tips").remove();
 }
+function showShopLocation(name,lng,lat) {
+	var url = 'http://uri.amap.com/marker?name='+name+'&callnative=0&position='+lng+','+lat;
+	window.location.href = url;
+}
 </script>
 </#assign>
 <@mainLayout wxTitle=shop.NAME wxMeta=wxMeta wxCss=wxCss wxJavascript=wxJavascript>
+<#if (shop.STATE)! == 20>
+	<shopmask class="mask-lg">
+		<span>${(shop.STATE_NAME)!}</span>
+	</shopmask>
+</#if>
 <div class="page page-current" id="mainPage">
 	<div class="content bg-default">
 		<div class="pageContent bg-default">
@@ -235,10 +244,11 @@ function showCart() {
 					<table>
 						<tr style="font-size: 1rem;font-weight: bold">
 							<td rowspan="4">
-								<img src="${(shop.IMG)!}" width="120em" style="border: .1em solid white"/>
+								<img src="${(shop.IMG)!}" width="120" style="border: .1em solid white"/>
 							</td>
 							<td colspan="3">
-								<span>${(shop.NAME)!}&nbsp;<i class="fa fa-map-marker"></i></span>
+								<span>${(shop.NAME)!}&nbsp;
+								<i class="fa fa-map-marker" onclick="showShopLocation('${(shop.NAME)!}','${(shop.LONGITUDE)!}','${(shop.LATITUDE)!}');"></i></span>
 							</td>
 						</tr>
 						<tr>
@@ -305,6 +315,7 @@ function showCart() {
 			<div class="rightList"></div>
 		</div>
 	</div>
+	<#if (shop.STATE)! == 2>
 	<div id="cart" title="点击结算">
 		<div class="color-primary count" onclick="showCart();">0</div>
 		<div class="color-warning amount" onclick="showCart();">￥<span class="prize">0</span></div>
@@ -322,6 +333,7 @@ function showCart() {
 	</div>
 	<!-- 用于显示组件的容器 -->
 	<div class="overlay" id="overlay"></div>
+	</#if>
 </div>
 <script id="food-tpl" type="text/html">
 	<div class="content-block-title" id="type{{d.typeInfo.id}}" style="margin:.75rem .75rem .5rem">

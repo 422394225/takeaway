@@ -235,62 +235,66 @@ function goto(url) {
 </div>
 <script id="shop-tpl" type="text/html">
 {{# for(var i = 0, len = d.length; i < len; i++){ }}
-	<div class="card" onclick="enterShop('{{d[i].ID}}')">
-	    <div class="card-content">
-	      <div class="list-block media-list">
-	        <ul>
-	          <li class="item-content">
-	            <div class="item-media">
-	              <img src="{{d[i].IMG}}" width="70">
-	            </div>
-	            <div class="item-inner">
-	              <div class="item-title-row">
-	                <div class="item-title">{{d[i].NAME}}</div>
-	              </div>
-	              <div class="item-subtitle">
-					<div class="row no-gutter">
-						<div class="col-40" data-score="{{d[i].RATE_AVG}}"></div>
-						<div class="col-20" style="text-align: center">
-							<font color="#ff6000">{{d[i].RATE_AVG}}</font>
+<div class="card" onclick="enterShop('{{d[i].ID}}')">
+	<div class="card-content">
+		<div class="list-block media-list">
+			<ul>
+				<li class="item-content">
+					<div class="item-media">
+						<img src="{{d[i].IMG}}" width="70">
+						{{# if(-2<d[i].STATE && d[i].STATE<=0){ }}
+						<shopmask>{{d[i].STATE_NAME}}</shopmask>
+						{{# } }}
+					</div>
+					<div class="item-inner">
+						<div class="item-title-row">
+							<div class="item-title">{{d[i].NAME}}</div>
 						</div>
-						<div class="col-20">
-							已售{{d[i].SALE_NUM}}单
+						<div class="item-subtitle">
+							<div class="row no-gutter">
+								<div class="col-40" data-score="{{d[i].RATE_AVG}}"></div>
+								<div class="col-20" style="text-align: center">
+									<font color="#ff6000">{{d[i].RATE_AVG}}</font>
+								</div>
+								<div class="col-20">
+									已售{{d[i].SALE_NUM}}单
+								</div>
+							</div>
+							<div class="row no-gutter">
+								<div class="col-100">
+									<font color="#ffd700">{{d[i].DELIVERY_THRESHOLD}}</font>元起送,配送费<font color="#ff8c00">{{d[i].DELIVERY_PRICE}}</font>元
+								</div>
+							</div>
+							<div class="row no-gutter">
+								<div class="col-100">
+									{{# if(d[i].DISTANCE!=undefined){ }}
+									距您约{{d[i].DISTANCE}}km&nbsp;/
+									{{# } }}
+									将于<font class="color-success">{{d[i].DELIVERYED_TIME}}分钟</font>后送达
+								</div>
+							</div>
 						</div>
 					</div>
-					<div class="row no-gutter">
-						<div class="col-100">
-							<font color="#ffd700">{{d[i].DELIVERY_THRESHOLD}}</font>元起送,配送费<font color="#ff8c00">{{d[i].DELIVERY_PRICE}}</font>元
-						</div>
-					</div>
-				  	<div class="row no-gutter">
-					  	<div class="col-100">
-						  {{# if(d[i].DISTANCE!=undefined){ }}
-							距您约{{d[i].DISTANCE}}km&nbsp;/
-						  {{# } }}
-						  将于<font class="color-success">{{d[i].DELIVERYED_TIME}}分钟</font>后送达
-					  	</div>
-				  	</div>
-	            </div>
-	          </li>
-	        </ul>
-	      </div>
-	    </div>
-		{{# if(d[i].REDUCTION>0){ }}
-		<div class="card-footer">
-      		<badge class="bg-primary">满</badge>&nbsp;满{{d[i].REDUCTION_THRESHOLD}}元,优惠<font class="color-primary">{{d[i].REDUCTION}}</font>元
-    	</div>
-		{{# } }}
-		{{# if(d[i].DELIVERY_OFF>0){ }}
-		<div class="card-footer">
-      		<badge class="bg-warning">配</badge>&nbsp;满{{d[i].DELIVERY_OFF_THRESHOLD}}元,减配送费<font class="color-warning">{{d[i].DELIVERY_OFF}}</font>元
-    	</div>
-		{{# } }}
-		{{# if(d[i].GIFT !=undefined && d[i].GIFT.length>0){ }}
-		<div class="card-footer">
-      		<badge class="bg-danger">赠</badge>&nbsp;满{{d[i].GIFT_THRESHOLD}}元,送<font class="color-danger">{{d[i].GIFT}}</font>
-    	</div>
-		{{# } }}
-	  </div>
+				</li>
+			</ul>
+		</div>
+	</div>
+	{{# if(d[i].REDUCTION>0){ }}
+	<div class="card-footer">
+		<badge class="bg-primary">满</badge>&nbsp;满{{d[i].REDUCTION_THRESHOLD}}元,优惠<font class="color-primary">{{d[i].REDUCTION}}</font>元
+	</div>
+	{{# } }}
+	{{# if(d[i].DELIVERY_OFF>0){ }}
+	<div class="card-footer">
+		<badge class="bg-warning">配</badge>&nbsp;满{{d[i].DELIVERY_OFF_THRESHOLD}}元,减配送费<font class="color-warning">{{d[i].DELIVERY_OFF}}</font>元
+	</div>
+	{{# } }}
+	{{# if(d[i].GIFT !=undefined && d[i].GIFT.length>0){ }}
+	<div class="card-footer">
+		<badge class="bg-danger">赠</badge>&nbsp;满{{d[i].GIFT_THRESHOLD}}元,送<font class="color-danger">{{d[i].GIFT}}</font>
+	</div>
+	{{# } }}
+  </div>
 {{# } }}
 </script>
 <#include "tools/map-mobile.html"/>
