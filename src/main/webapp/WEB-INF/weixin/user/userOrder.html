@@ -172,7 +172,7 @@
                             "${base}/wx/order/cancelOrder",
                             {id: id,reason:$("#reason").val()},
                             function (msg, data) {
-                                $.alert(msg);
+                                $.toast(msg);
                                 $.pullToRefreshTrigger(".pull-to-refresh-content")
                             },
                             function (msg, data) {
@@ -189,7 +189,7 @@
             "${base}/wx/order/tellShop",
             {id:id},
             function(msg,data){
-                $.pullToRefreshTrigger(".pull-to-refresh-content")
+                $.toast(msg);
             },
             function(msg,data){
                 $.alert(msg);
@@ -209,16 +209,16 @@
             }
         )
     }
-    //TODO
     function revertCancel(id) {
         Kit.post(
             "${base}/wx/order/revertCancel",
             {id:id},
             function(msg,data){
                 $.pullToRefreshTrigger(".pull-to-refresh-content")
+                $.toast(msg);
             },
             function(msg,data){
-               // $.alert(msg);
+               $.alert(msg);
             }
         )
     }
@@ -227,7 +227,7 @@
             "${base}/wx/order/viewReason",
             {id:id},
             function(msg,data){
-                $.alert(data);
+                $.alert(msg);
             },
             function(msg,data){
                 $.alert(msg);
