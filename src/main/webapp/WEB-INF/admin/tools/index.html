@@ -65,7 +65,17 @@
 	        keyboard: true
 	    })
 	}
-
+	function goeasyTest(){
+		layer.load(1, {shade: [0.3,'#000']});
+		Kit.post("${base}/tools/goeasyTest",{},function(msg){
+			layer.closeAll('loading');
+			layer.alert(msg);
+		},
+		function(msg){
+			layer.closeAll('loading');
+			layer.alert(msg,{icon:5});
+		});
+	}
 </script>
 </#assign>
 <@dashboard pageTitle="开发者工具" currentMenu="settings" pageMeta=pageMeta pageCss=pageCss pageJavascript=pageJavascript>
@@ -78,6 +88,7 @@
 	<button class="btn btn-danger" onclick="sendMess()">&nbsp;发个语音信息&nbsp;</button>
 	<button class="btn btn-danger" onclick="payToShop()">&nbsp;企业付款测试&nbsp;</button>
 	<button class="btn btn-danger" onclick="templeTest()">&nbsp;模板消息测试&nbsp;</button>
+	<button class="btn btn-danger" onclick="goeasyTest()">&nbsp;发送消息至后台测试&nbsp;</button>
 	<div><img src="/delivery/getAppAddr"/></div>
 	<div>配送员定位助手二维码</div>
 	<div><a href="${base}/api/v1/delivery/download"/>点这里下载</a></div>

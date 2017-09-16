@@ -28,6 +28,11 @@
           "name": "个人中心",
           "url": "https://open.weixin.qq.com/connect/oauth2/authorize?appid=@APPID@&redirect_uri=@DOMAIN_ENCODE@%2foauth&response_type=code&scope=snsapi_base&state=%2fwx%2fuser%2fcenter#wechat_redirect"
         },
+		{
+          "type": "view",
+          "name": "商家入口",
+          "url": "https://open.weixin.qq.com/connect/oauth2/authorize?appid=@APPID@&redirect_uri=@DOMAIN_ENCODE@%2foauth&response_type=code&scope=snsapi_base&state=%2fwx%2fshop#wechat_redirect"
+        },
         {
           "type": "view",
           "name": "问题反馈",

@@ -21,9 +21,10 @@ import com.jfinal.core.Controller;
 import com.jfinal.kit.PropKit;
 
 import core.interceptor.WxApiConfigInterceptor;
-import core.model.Order;
 import core.temple.AuditResultTemple;
+import core.utils.BaiduSpeechUtil;
 import core.utils.ClientCustomSSL;
+import core.utils.GoeasyUtil;
 import core.utils.SMSUtils;
 import core.utils.WeiXinUtils;
 import core.validate.PhoneValidate;
@@ -59,8 +60,16 @@ public class ToolsController extends Controller {
 
 	@Before(WxApiConfigInterceptor.class)
 	public void sendMess() {
-		Order order = Order.dao.findById(107);
-		WeiXinUtils.sendOrderVideoAndMess(order);
+		// Order order = Order.dao.findById(107);
+		// WeiXinUtils.sendOrderVideoAndMess(order);
+		// renderJson(new JSONSuccess("发送成功"));
+
+		BaiduSpeechUtil.synthesisToFile("新订单来啦！", "order-2.mp3");
+		renderJson(new JSONSuccess("发送成功"));
+	}
+
+	public void goeasyTest() {
+		GoeasyUtil.sendOrderMess();
 		renderJson(new JSONSuccess("发送成功"));
 	}
 

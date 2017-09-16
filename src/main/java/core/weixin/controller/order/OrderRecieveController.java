@@ -17,6 +17,7 @@ import com.jfinal.log.Log;
 import core.model.Order;
 import core.model.Shop;
 import core.temple.OrderCreateTemple;
+import core.utils.GoeasyUtil;
 import core.utils.WeiXinUtils;
 import core.vo.OrderPayResult;
 import core.weixin.controller.WeixinMsgController;
@@ -56,7 +57,7 @@ public class OrderRecieveController extends WeixinMsgController {
 				order.set("PAY_STATE", 1);
 				order.update();
 			}
-			Shop shop = Shop.dao.findById(order.get("SHOP_ID"));
+			Shop shop = Shop.dao.findById(order.getInt("SHOP_ID"));
 			// 用户的消息
 			try {
 				OrderCreateTemple orderCreateTemple = new OrderCreateTemple();
@@ -71,6 +72,11 @@ public class OrderRecieveController extends WeixinMsgController {
 				orderCreateTemple.send();
 			} catch (Exception e) {
 				// TODO: handle exception
+			}
+			try {
+				GoeasyUtil.sendOrderMess();
+			} catch (Exception exception) {
+
 			}
 			// // 商家的消息
 			// try {
@@ -97,6 +103,7 @@ public class OrderRecieveController extends WeixinMsgController {
 				// TODO: handle exception
 			}
 		}
+
 		renderText(RECIEVE_SUCCESS_RESULT);
 	}
 
