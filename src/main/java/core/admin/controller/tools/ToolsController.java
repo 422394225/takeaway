@@ -73,6 +73,11 @@ public class ToolsController extends Controller {
 		renderJson(new JSONSuccess("发送成功"));
 	}
 
+	public void goeasyDeliveryTest() {
+		GoeasyUtil.sendOrderAcceptMess();
+		renderJson(new JSONSuccess("发送成功"));
+	}
+
 	@Before(WxApiConfigInterceptor.class)
 	public void templeTest() {
 		AuditResultTemple auditResultTemple = new AuditResultTemple();

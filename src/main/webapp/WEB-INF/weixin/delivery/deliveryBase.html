@@ -9,7 +9,7 @@ $(function(){
 		appkey: "BS-6f9490c6b3be48718d07a3e077104546"
 	});
 	goEasy.subscribe({
-		channel: "ORDER_ALERT_ADMIN",
+		channel: "ORDER_ALERT_DELIVERY",
 		onMessage: function (message) {
 			if(message.content='有新订单啦'){
 		        $('embed').remove();  

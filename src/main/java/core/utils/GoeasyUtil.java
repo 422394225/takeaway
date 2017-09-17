@@ -33,4 +33,10 @@ public class GoeasyUtil {
 			initGoEasy();
 		GO_EASY.publish("ORDER_ALERT_ADMIN", "有新订单啦");
 	}
+
+	public static void sendOrderAcceptMess() {
+		if (GO_EASY == null)
+			initGoEasy();
+		GO_EASY.publish("ORDER_ALERT_DELIVERY", "有新订单啦");
+	}
 }

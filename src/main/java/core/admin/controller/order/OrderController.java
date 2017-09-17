@@ -1,5 +1,16 @@
 package core.admin.controller.order;
 
+import java.net.URLEncoder;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.UUID;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Before;
@@ -9,20 +20,16 @@ import com.jfinal.log.Log;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
+
 import core.admin.service.order.OrderService;
 import core.admin.service.order.impl.OrderServiceImpl;
 import core.interceptor.WxApiConfigInterceptor;
 import core.model.Order;
 import core.utils.ClientCustomSSL;
+import core.utils.GoeasyUtil;
 import core.utils.WeiXinUtils;
 import core.vo.DTParams;
 import core.vo.JSONSuccess;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-
-import java.net.URLEncoder;
-import java.util.*;
-import java.util.Map.Entry;
 
 /**
  * 
@@ -172,25 +179,26 @@ public class OrderController extends Controller {
 			renderText("接单成功啦~~~o(*￣▽￣*)ブ,<br>但是发送微信消息失败，<br>请电话通知：" + tel);
 			return;
 		}
+		GoeasyUtil.sendOrderAcceptMess();
 		renderText("接单成功啦~~~o(*￣▽￣*)ブ");
 	}
 
 	public void refund() {
 		Integer orderId = getParaToInt("id");
-		Map<String,String> result = refundAPI(orderId);
+		Map<String, String> result = refundAPI(orderId);
 		String payState = result.get("payState");
-		if("-1".equals(payState)) {
+		if ("-1".equals(payState)) {
 			renderText("接口调用失败");
-		}else if("1".equals(payState)){
+		} else if ("1".equals(payState)) {
 			renderText("退款成功！");
-		}else{
+		} else {
 			renderText("退款失败：" + result.get("msg"));
 		}
 	}
 
-	public static Map refundAPI(Integer orderId){
-		Map<String,String> result = new HashMap<>();
-		result.put("payState","0");
+	public static Map refundAPI(Integer orderId) {
+		Map<String, String> result = new HashMap<>();
+		result.put("payState", "0");
 		try {
 			Order order = Order.dao.findById(orderId);
 			if (order.getStr("REFUND_NO") == null) {
@@ -208,7 +216,7 @@ public class OrderController extends Controller {
 			paraMap.put("out_refund_no", order.getStr("REFUND_NO"));
 			paraMap.put("total_fee", payPrice + "");
 			paraMap.put("refund_fee", payPrice + "");
-			paraMap.put("refund_desc", URLEncoder.encode("order refund","UTF-8"));
+			paraMap.put("refund_desc", URLEncoder.encode("order refund", "UTF-8"));
 			paraMap.put("sign", WeiXinUtils.getSign(paraMap));
 			// paraMap.put("refund_desc", "订单退款");
 			String para = new String(WeiXinUtils.callMapToXML(paraMap));
@@ -216,7 +224,7 @@ public class OrderController extends Controller {
 			try {
 				urlResult = ClientCustomSSL.post(WEIXIN_REFUND_URL, para);
 			} catch (Exception exception) {
-				result.put("payState","-1");
+				result.put("payState", "-1");
 				return result;
 			}
 			System.out.println(urlResult);
@@ -227,22 +235,21 @@ public class OrderController extends Controller {
 				order.set("CANCEL_STATE", 2);
 				order.set("FINISH_CANCEL_TIME", new Date());
 				order.update();
-				result.put("payState","1");
+				result.put("payState", "1");
 				return result;
 			}
 			order.set("PAY_STATE", -1);
 			order.set("CANCEL_STATE", 1);
 			order.update();
-			if (doc.select("err_code_des").size() == 0){
-				result.put("payState","-2");
-				result.put("msg",doc.select("return_msg").text());
+			if (doc.select("err_code_des").size() == 0) {
+				result.put("payState", "-2");
+				result.put("msg", doc.select("return_msg").text());
+			} else {
+				result.put("payState", "-3");
+				result.put("msg", doc.select("err_code_des").text());
 			}
-			else{
-				result.put("payState","-3");
-				result.put("msg",doc.select("err_code_des").text());
-			}
-		}catch (Exception e){
-			result.put("msg",e.getClass().getName());
+		} catch (Exception e) {
+			result.put("msg", e.getClass().getName());
 			e.printStackTrace();
 		}
 		return result;
