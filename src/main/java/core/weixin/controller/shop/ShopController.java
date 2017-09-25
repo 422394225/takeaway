@@ -268,7 +268,8 @@ public class ShopController extends BaseController {
 		if (orderNum == null)
 			orderNum = 99;
 		if (typeId == null)
-			Db.update("insert into t_food_type(`name`,`order_num`) values(?,?,?)", typeName, orderNum);
+			Db.update("insert into t_food_type(`name`,`order_num`,`SHOP_ID`) values(?,?,?)", typeName, orderNum,
+					shopId);
 		else
 			Db.update("update t_food_type set `name`=?,order_num=? where id=?", typeName, orderNum, typeId);
 		renderJson(new JSONSuccess());
