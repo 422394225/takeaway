@@ -121,7 +121,6 @@ public class APPConfig extends JFinalConfig {
 		ConstantsLoader.load();
 
 		JFinal.start("src/main/webapp", 80, "/");// 启动配置项
-
 	}
 
 }

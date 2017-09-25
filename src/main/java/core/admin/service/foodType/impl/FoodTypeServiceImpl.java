@@ -1,13 +1,13 @@
 
 package core.admin.service.foodType.impl;
 
+import java.util.List;
+
 import core.admin.service.base.impl.DataTableServiceImpl;
 import core.admin.service.foodType.FoodTypeService;
 import core.model.Food;
 import core.model.FoodType;
 import core.model.Shop;
-
-import java.util.List;
 
 public class FoodTypeServiceImpl extends DataTableServiceImpl implements FoodTypeService {
 
@@ -69,6 +69,13 @@ public class FoodTypeServiceImpl extends DataTableServiceImpl implements FoodTyp
 		List<FoodType> foodType = FoodType.dao.find(
 				"select a.* from t_food_type a left join t_shop b on a.shop_id = b.id where b.name=? and a.id!=? and a.deleted!=1",
 				shopName, expId);
+		return foodType;
+	}
+
+	@Override
+	public List<FoodType> findFoodTypeByShopId(int shopId, int expId) {
+		List<FoodType> foodType = FoodType.dao
+				.find("select * from t_food_type where shop_id=? and id!=? and deleted!=1", shopId, expId);
 		return foodType;
 	}
 

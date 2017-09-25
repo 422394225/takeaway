@@ -217,7 +217,6 @@ $('#imgInput').on('fileloaded', function(event, file, previewId, index, reader) 
 	})
 });
 $(function(){
-	var nowType="${(nowType)!}";
 	if("${(USE_STOCK)!}"==1)
 		$("input[name='USE_STOCK']").val('ture');
 	else
@@ -228,7 +227,7 @@ $(function(){
 	    $.each(json.type, function(i, field){
 	    	 $("select[name='TYPE']").append("<option value='"+field.id+"'>"+field.name+"</option>");
 	      });
-		$("select[name='TYPE']>option[value='2']").selected(true);
+		$("select[name='TYPE']>option[value='${(nowType)!}']").selected(true);
 	    });
 });
 </script>

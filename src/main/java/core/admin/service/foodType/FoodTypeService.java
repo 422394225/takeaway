@@ -23,6 +23,8 @@ public interface FoodTypeService extends DataTableService {
 
 	public List<FoodType> findFoodTypeByShopName(String shopName, int expId);
 
+	public List<FoodType> findFoodTypeByShopId(int shopId, int expId);
+
 	public boolean existFoodType(int shopId, String type);
 
 	public Shop findShopById(int id);

@@ -61,6 +61,7 @@
 		$.ajax(defaultOption);
 	},
 	form:function(params){
+		alert(params.validate)
 		$(params.formId).bootstrapValidator({
  			submitButtons: params.btnId,
             feedbackIcons: false,

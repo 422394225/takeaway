@@ -15,6 +15,7 @@ import javax.servlet.http.Cookie;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Before;
 import com.jfinal.kit.HttpKit;
@@ -28,11 +29,14 @@ import com.jfinal.plugin.activerecord.SqlPara;
 import com.jfinal.weixin.sdk.api.ApiConfig;
 import com.jfinal.weixin.sdk.api.ApiConfigKit;
 
+import core.admin.service.foodType.FoodTypeService;
+import core.admin.service.foodType.impl.FoodTypeServiceImpl;
 import core.admin.service.shop.relation.ShopTypeRelationService;
 import core.admin.service.shop.relation.impl.ShopTypeRelationServiceImpl;
 import core.common.constants.ShopConstants;
 import core.common.utils.QiniuUtils;
 import core.interceptor.JSSDKInterceptor;
+import core.model.Food;
 import core.model.FoodType;
 import core.model.Shop;
 import core.model.ShopType;
@@ -57,9 +61,106 @@ public class ShopController extends BaseController {
 	private Log log = Log.getLog(ShopController.class);
 	private ShopTypeRelationService strService = new ShopTypeRelationServiceImpl();
 	private String encrypt_key = PropKit.get("encrypt_key");
+	private FoodTypeService foodTypeService = new FoodTypeServiceImpl();
 
 	public void editFood() {
-		renderText("123");
+		String id = getCookie("shopId");
+		Record shop = Db.findFirst(Db.getSql("shop.getById"), id);
+		setAttr("shopId", id);
+		setAttr("shop", shop);
+		setAttr("types", FoodType.dao.find(Db.getSqlPara("foodType.getByShopId", Kv.by("id", id))));
+		render("editFoodList.html");
+	}
+
+	public void saveFood() {
+		String id = getCookie("shopId");
+		Record shop = Db.findFirst(Db.getSql("shop.getById"), id);
+		setAttr("shopId", id);
+		setAttr("shop", shop);
+
+		render("editFoodList.html");
+	}
+
+	public void getTransferType() {
+		Integer shopid = getCookieToInt("shopId");
+		int typeId = getParaToInt("typeId");
+		JSONObject resultObject = new JSONObject();
+		JSONArray typeArray = new JSONArray();
+		if (foodTypeService.findShopById(shopid) != null) {
+			resultObject.put("mess", "存在商家");
+			Food food = Food.dao.findFirst(Db.getSql("foodType.exitsFood"), typeId);
+			if (food != null) {
+				List<FoodType> foodTypes = foodTypeService.findFoodTypeByShopId(shopid, typeId);
+				for (FoodType foodType : foodTypes) {
+					JSONObject typeObject = new JSONObject();
+					typeObject.put("id", foodType.get("ID"));
+					typeObject.put("name", foodType.get("NAME"));
+					typeArray.add(typeObject);
+				}
+			}
+		} else {
+			resultObject.put("mess", "不存在商家");
+		}
+		resultObject.put("type", typeArray);
+		renderJson(resultObject);
+	}
+
+	public void editSingleFood() {
+		String foodId = getPara("foodId");
+		if (foodId != null && !"-1".equals(foodId)) {
+			Record record = Db.findFirst(
+					"select a.*,b.name as SHOP_NAME from t_food a left join t_shop b on a.shop_id=b.id where a.id=?",
+					foodId);
+			setAttr("foodId", record.get("ID"));
+			setAttr("shopName", record.get("SHOP_NAME"));
+			setAttr("NAME", record.get("NAME"));
+			setAttr("ORIGN_PRICE", record.get("ORIGN_PRICE"));
+			setAttr("IMG", record.get("IMG") == null ? "" : record.get("IMG"));
+			setAttr("PRICE", record.get("PRICE"));
+			setAttr("nowType", record.get("TYPE_ID"));
+			setAttr("UNIT", record.get("UNIT"));
+			setAttr("DESCRIPTION", record.get("DESCRIPTION"));
+			setAttr("PURCHASING_PRICE", record.get("PURCHASING_PRICE"));
+			setAttr("USE_STOCK", record.get("USE_STOCK"));
+			setAttr("STOCK", record.get("STOCK"));
+			setAttr("SALE_LIMIT", record.get("SALE_LIMIT"));
+		}
+		// List<Record> records = Db.find("select * from t_food_type where
+		// SHOP_ID=? and deleted='0'",
+		// record.get("SHOP_ID") + "");
+		// JSONArray jsonArray = new JSONArray();
+		// for (Record record2 : records) {
+		// JSONObject jsonObject = new JSONObject();
+		// jsonObject.put("ID", record2.get("ID"));
+		// jsonObject.put("NAME", record2.get("NAME"));
+		// jsonArray.add(jsonObject);
+		// }
+		// setAttr("typeData", jsonArray.toJSONString());
+		render("foodPopup.html");
+	}
+
+	public void deleteType() {
+		try {
+			// 删除分类
+			int typeId = getParaToInt("foodTypeId");
+			FoodType foodType = FoodType.dao.findById(typeId);
+			foodType.set("DELETED", 1);
+			foodType.update();
+			// 分类转移
+			int dstTypeId = -1;
+			try {
+				dstTypeId = getParaToInt("dstTypeId");
+			} catch (Exception e) {
+			}
+			if (dstTypeId != -1) {
+				Db.update("update t_food set TYPE_ID=? WHERE TYPE_ID=?", dstTypeId, typeId);
+			}
+			renderJson(new JSONSuccess());
+		} catch (Exception e) {
+			log.info("error in delete");
+			e.printStackTrace();
+			renderJson(new JSONError(e.toString()));
+		}
 	}
 
 	@Before(JSSDKInterceptor.class)
@@ -123,6 +224,7 @@ public class ShopController extends BaseController {
 		}
 		record = Db.findFirst("SELECT * FROM T_SHOP WHERE USERNAME=? AND PASSWORD=?", username,
 				MD5Util.encrypt(password + encrypt_key));
+		System.out.println(MD5Util.encrypt(password + encrypt_key));
 		if (record == null) {
 			renderJson(new JSONError("密码错了哦~"));
 			return;
@@ -148,6 +250,28 @@ public class ShopController extends BaseController {
 			renderJson(new JSONError(e.toString()));
 		}
 
+	}
+
+	public void commitFoodType() {
+		Integer shopId = Integer.valueOf(getCookie("shopId"));
+		if (shopId == null) {
+			renderJson(new JSONError("请先登录"));
+			return;
+		}
+		Integer typeId = getParaToInt("typeId");
+		String typeName = getPara("typeName");
+		if (typeName == null || StringUtils.isBlank(typeName)) {
+			renderJson(new JSONError("请输入类型名"));
+			return;
+		}
+		Integer orderNum = getParaToInt("orderNum");
+		if (orderNum == null)
+			orderNum = 99;
+		if (typeId == null)
+			Db.update("insert into t_food_type(`name`,`order_num`) values(?,?,?)", typeName, orderNum);
+		else
+			Db.update("update t_food_type set `name`=?,order_num=? where id=?", typeName, orderNum, typeId);
+		renderJson(new JSONSuccess());
 	}
 
 	public void getSaleNum() {
@@ -262,6 +386,21 @@ public class ShopController extends BaseController {
 		renderJson(new JSONSuccess());
 	}
 
+	public void getFoodType() {
+		String id = getCookie("shopId");
+		List<Record> data = Db.find("select ID,NAME FROM T_FOOD_TYPE WHERE DELETED=0 AND SHOP_ID=?", id);
+		JSONArray resultArray = new JSONArray();
+		for (Record record : data) {
+			JSONObject object = new JSONObject();
+			object.put("ID", record.get("ID"));
+			object.put("NAME", record.get("NAME"));
+			resultArray.add(object);
+		}
+		System.out.println(resultArray);
+		renderJson(resultArray);
+
+	}
+
 	public void ajaxShopTypes() {
 		Map<String, Object> map = new HashMap<>();
 		if (getPara("type") == null) {
@@ -278,8 +417,8 @@ public class ShopController extends BaseController {
 
 		String flag = params.getString("flag");
 		JSONObject loc = null;
-		Map<String,Object> filter = new HashMap<>();
-		filter.put("wxUsed","1");
+		Map<String, Object> filter = new HashMap<>();
+		filter.put("wxUsed", "1");
 		if (StringUtils.isNotEmpty(flag)) {
 			switch (flag) {
 			case "hotShop": {
@@ -291,7 +430,7 @@ public class ShopController extends BaseController {
 				limit.put("STATE", "!=-2");
 				conditionsVO.getLimitCond().putAll(limit);
 				filter.putAll(conditionsVO.getConditions());
-				sqlPara = Db.getSqlPara("shop.list",filter);
+				sqlPara = Db.getSqlPara("shop.list", filter);
 				break;
 			}
 			case "neighbor": {
@@ -349,7 +488,7 @@ public class ShopController extends BaseController {
 
 	public void ajaxSearchShops() {
 		String keyword = getPara("keyword");
-		if(StringUtils.isNotEmpty(keyword)){
+		if (StringUtils.isNotEmpty(keyword)) {
 			String type = getPara("type");
 			List<Record> records = null;
 			Map<String, String> map = new HashMap<>();
@@ -360,7 +499,7 @@ public class ShopController extends BaseController {
 				records = Db.find(Db.getSqlPara("shop.search", map));
 			}
 			renderJson(new JSONSuccess(records));
-		}else{
+		} else {
 			renderJson(new JSONError("请输入关键词"));
 		}
 	}
@@ -383,7 +522,7 @@ public class ShopController extends BaseController {
 
 	public void front() {
 		String id = getPara("id");
-		Record shop = Db.findFirst(Db.getSql("shop.getById"),id);
+		Record shop = Db.findFirst(Db.getSql("shop.getById"), id);
 		setAttr("shop", shop);
 		setAttr("types", FoodType.dao.find(Db.getSqlPara("foodType.getByShopId", Kv.by("id", id))));
 		render("front.html");
